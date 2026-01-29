@@ -95,9 +95,11 @@ function updateStats() {
 
 function renderCollection() {
   const container = document.getElementById('collection');
-  container.innerHTML = filteredCollection.map(card => `
+  container.innerHTML = filteredCollection.map(card => {
+    const cachedImage = imageCache.get(card.scryfallId) || '';
+    return `
     <div class="card" data-scryfall-id="${card.scryfallId}">
-      <img src="" alt="${card.name}" class="card-image">
+      <img src="${cachedImage}" alt="${card.name}" class="card-image">
       <div class="card-header">
         <div class="card-name">${card.name}</div>
         <div class="card-value">$${(card.price * card.quantity).toFixed(2)}</div>
@@ -109,7 +111,8 @@ function renderCollection() {
         ${card.quantity > 1 ? `<span class="badge quantity">x${card.quantity}</span>` : ''}
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 function applyFilters() {
@@ -136,6 +139,7 @@ function applyFilters() {
   
   updateStats();
   renderCollection();
+  loadImages();
 }
 
 document.getElementById('search').addEventListener('input', applyFilters);
