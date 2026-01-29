@@ -33,29 +33,35 @@ async function loadCollection() {
 }
 
 async function loadImages() {
-  for (const card of filteredCollection) {
-    if (imageCache.has(card.scryfallId)) continue;
+  const batchSize = 10;
+  
+  for (let i = 0; i < filteredCollection.length; i += batchSize) {
+    const batch = filteredCollection.slice(i, i + batchSize);
+    
+    await Promise.all(batch.map(async (card) => {
+      if (imageCache.has(card.scryfallId)) return;
+      
+      try {
+        const response = await fetch(`https://api.scryfall.com/cards/${card.scryfallId}`, {
+          headers: {
+            'User-Agent': 'MTGCollectionViewer/1.0',
+            'Accept': 'application/json'
+          }
+        });
+        const data = await response.json();
+        const imageUrl = data.image_uris?.small || data.card_faces?.[0]?.image_uris?.small;
+        
+        if (imageUrl) {
+          imageCache.set(card.scryfallId, imageUrl);
+          const imgElement = document.querySelector(`[data-scryfall-id="${card.scryfallId}"] img`);
+          if (imgElement) imgElement.src = imageUrl;
+        }
+      } catch (error) {
+        console.error(`Failed to load image for ${card.name}:`, error);
+      }
+    }));
     
     await new Promise(resolve => setTimeout(resolve, 100));
-    
-    try {
-      const response = await fetch(`https://api.scryfall.com/cards/${card.scryfallId}`, {
-        headers: {
-          'User-Agent': 'MTGCollectionViewer/1.0',
-          'Accept': 'application/json'
-        }
-      });
-      const data = await response.json();
-      const imageUrl = data.image_uris?.normal || data.card_faces?.[0]?.image_uris?.normal;
-      
-      if (imageUrl) {
-        imageCache.set(card.scryfallId, imageUrl);
-        const imgElement = document.querySelector(`[data-scryfall-id="${card.scryfallId}"] img`);
-        if (imgElement) imgElement.src = imageUrl;
-      }
-    } catch (error) {
-      console.error(`Failed to load image for ${card.name}:`, error);
-    }
   }
 }
 
