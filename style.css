@@ -75,6 +75,15 @@ h1 {
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
 }
 
+.card-image {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  aspect-ratio: 488 / 680;
+  background: #1a1a1a;
+  object-fit: cover;
+}
+
 .card-header {
   display: flex;
   justify-content: space-between;
