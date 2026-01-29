@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MTG Collection Viewer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>MTG Collection Viewer</h1>
+    <div class="stats">
+      <span>Total Cards: <strong id="total-cards">0</strong></span>
+      <span>Total Value: <strong id="total-value">$0.00</strong></span>
+    </div>
+  </header>
+
+  <div class="filters">
+    <input type="text" id="search" placeholder="Search by name...">
+    <select id="rarity-filter">
+      <option value="">All Rarities</option>
+      <option value="common">Common</option>
+      <option value="uncommon">Uncommon</option>
+      <option value="rare">Rare</option>
+      <option value="mythic">Mythic</option>
+    </select>
+    <select id="foil-filter">
+      <option value="">All Finishes</option>
+      <option value="normal">Normal</option>
+      <option value="foil">Foil</option>
+      <option value="etched">Etched</option>
+    </select>
+    <select id="sort">
+      <option value="name">Name</option>
+      <option value="value">Value</option>
+      <option value="rarity">Rarity</option>
+      <option value="set">Set</option>
+    </select>
+  </div>
+
+  <div id="collection" class="collection"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
