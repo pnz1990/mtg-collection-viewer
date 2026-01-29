@@ -76,10 +76,10 @@ h1 {
 }
 
 .card-image {
-  width: 100%;
+  width: 146px;
+  height: 204px;
   border-radius: 8px;
   margin-bottom: 10px;
-  aspect-ratio: 488 / 680;
   background: #1a1a1a;
   object-fit: cover;
 }
