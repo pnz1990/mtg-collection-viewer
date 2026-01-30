@@ -67,8 +67,10 @@ An immersive, interactive web application for viewing and exploring your Magic: 
 ### 🔧 Additional Tools
 
 - **Deck Checker** - Paste a deck list to see which cards you own vs. need
+- **Collection Trivia** - 10-question quiz game testing your knowledge of your own collection
 - **Random Card** - Jump to a random card in your collection
 - **Load Full Data** - Fetch extended card data (types, colors, keywords) from Scryfall API
+- **Clear Filters** - Reset all filters with one click
 
 ### 🎨 Themes
 
@@ -108,7 +110,9 @@ mtg-collection-viewer/
 ├── timeline.html       # Timeline view
 ├── detail.html         # Card detail page
 ├── deck-checker.html   # Deck checker tool
-├── Collection.csv      # Your card collection data
+├── trivia.html         # Collection trivia game
+├── data/
+│   └── Collection.csv  # Your card collection data
 ├── js/
 │   ├── shared.js       # Shared functions and utilities
 │   ├── grid.js         # Collection Explorer logic
