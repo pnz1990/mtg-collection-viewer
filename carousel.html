@@ -8,6 +8,16 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="nav-menu">
+    <button type="button" class="menu-toggle" id="menu-toggle">☰</button>
+    <div class="menu-dropdown" id="menu-dropdown">
+      <a href="index.html" class="menu-item">⊞ Grid View</a>
+      <a href="binder.html" class="menu-item">📖 Binder View</a>
+      <a href="carousel.html" class="menu-item active">🎠 Carousel View</a>
+      <a href="timeline.html" class="menu-item">📅 Timeline View</a>
+      <a href="deck-checker.html" class="menu-item">🔍 Deck Checker</a>
+    </div>
+  </div>
   <header>
     <h1>MTG Collection Viewer</h1>
     <div class="stats">
@@ -93,12 +103,6 @@
       <option value="rarity">Rarity</option>
       <option value="set">Set</option>
     </select>
-    <div class="view-toggle">
-      <a href="index.html" class="view-btn" title="Grid View">⊞</a>
-      <a href="binder.html" class="view-btn" title="Binder View">📖</a>
-      <a href="carousel.html" class="view-btn active" title="Carousel View">🎠</a>
-      <a href="timeline.html" class="view-btn" title="Timeline View">📅</a>
-    </div>
   </div>
 
   <div id="carousel" class="carousel">

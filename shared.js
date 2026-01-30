@@ -340,6 +340,16 @@ if (themeSelect) {
   });
 }
 
+// Hamburger menu
+const menuToggle = document.getElementById('menu-toggle');
+const menuDropdown = document.getElementById('menu-dropdown');
+if (menuToggle && menuDropdown) {
+  menuToggle.addEventListener('click', () => menuDropdown.classList.toggle('show'));
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.nav-menu')) menuDropdown.classList.remove('show');
+  });
+}
+
 // Load noUiSlider then collection after DOM ready
 function initApp() {
   const nouislider = document.createElement('script');

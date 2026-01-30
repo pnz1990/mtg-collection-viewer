@@ -4,6 +4,64 @@
   box-sizing: border-box;
 }
 
+/* Hamburger Menu */
+.nav-menu {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1000;
+}
+
+.menu-toggle {
+  background: var(--bg-secondary);
+  border: 1px solid var(--accent);
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.menu-toggle:hover {
+  background: var(--bg-tertiary);
+}
+
+.menu-dropdown {
+  display: none;
+  position: absolute;
+  top: 50px;
+  left: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--bg-tertiary);
+  border-radius: 8px;
+  overflow: hidden;
+  min-width: 180px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.menu-dropdown.show {
+  display: block;
+}
+
+.menu-item {
+  display: block;
+  padding: 12px 16px;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.menu-item:hover {
+  background: var(--bg-tertiary);
+}
+
+.menu-item.active {
+  background: var(--accent);
+  color: var(--bg-primary);
+}
+
 :root {
   --bg-primary: #1a1a1a;
   --bg-secondary: #2a2a2a;
