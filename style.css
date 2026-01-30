@@ -784,6 +784,10 @@ h1 {
     gap: 5px;
     font-size: 0.9rem;
   }
+  
+  .binder-mobile-nav {
+    display: flex !important;
+  }
 }
 
 /* Carousel View */
