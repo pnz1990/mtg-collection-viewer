@@ -62,6 +62,11 @@ h1 {
   gap: 15px;
 }
 
+.card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
 .card {
   background: #2a2a2a;
   border: 1px solid #444;
