@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MTG Collection Viewer</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15/dist/nouislider.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -47,8 +48,7 @@
     </div>
     <div class="filter-group price-slider">
       <label>Price: $<span id="price-min-val">0</span> - $<span id="price-max-val">∞</span></label>
-      <input type="range" id="price-min" min="0" max="200" value="0">
-      <input type="range" id="price-max" min="0" max="200" value="200">
+      <div id="price-range"></div>
     </div>
     <select id="rarity-filter">
       <option value="">All Rarities</option>

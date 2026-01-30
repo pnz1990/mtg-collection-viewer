@@ -3,6 +3,8 @@ let filteredCollection = [];
 let charts = {};
 let imageObserver;
 let db;
+let priceSlider;
+let maxPriceValue = 200;
 
 // IndexedDB setup
 const dbPromise = new Promise((resolve, reject) => {
@@ -91,10 +93,8 @@ async function loadCollection() {
       };
     });
   
-  const maxPrice = Math.max(...collection.map(c => c.price));
-  document.getElementById('price-max').max = Math.ceil(maxPrice);
-  document.getElementById('price-min').max = Math.ceil(maxPrice);
-  document.getElementById('price-max').value = Math.ceil(maxPrice);
+  maxPriceValue = Math.ceil(Math.max(...collection.map(c => c.price)));
+  setupPriceSlider();
   
   filteredCollection = [...collection];
   filteredCollection.sort((a, b) => a.name.localeCompare(b.name));
@@ -102,6 +102,21 @@ async function loadCollection() {
   updateStats();
   renderCharts();
   renderCollection();
+}
+
+function setupPriceSlider() {
+  const slider = document.getElementById('price-range');
+  priceSlider = noUiSlider.create(slider, {
+    start: [0, maxPriceValue],
+    connect: true,
+    range: { min: 0, max: maxPriceValue },
+    step: 1
+  });
+  priceSlider.on('update', (values) => {
+    document.getElementById('price-min-val').textContent = Math.round(values[0]);
+    document.getElementById('price-max-val').textContent = values[1] >= maxPriceValue ? '∞' : Math.round(values[1]);
+  });
+  priceSlider.on('change', applyFilters);
 }
 
 function parseCSVLine(line) {
@@ -246,8 +261,7 @@ function applyFilters() {
   const rarity = document.getElementById('rarity-filter').value;
   const foil = document.getElementById('foil-filter').value;
   const sort = document.getElementById('sort').value;
-  const priceMin = parseFloat(document.getElementById('price-min').value);
-  const priceMax = parseFloat(document.getElementById('price-max').value);
+  const [priceMin, priceMax] = priceSlider ? priceSlider.get().map(Number) : [0, maxPriceValue];
   
   filteredCollection = collection.filter(card => {
     return card.name.toLowerCase().includes(search) &&
@@ -296,27 +310,23 @@ function setupAutocomplete(inputId, listId, getItems) {
   });
 }
 
-function updatePriceLabel() {
-  const min = document.getElementById('price-min').value;
-  const max = document.getElementById('price-max').value;
-  document.getElementById('price-min-val').textContent = min;
-  document.getElementById('price-max-val').textContent = max == document.getElementById('price-max').max ? '∞' : max;
-}
-
 // Event listeners
 document.getElementById('search').addEventListener('input', applyFilters);
 document.getElementById('set-filter').addEventListener('input', applyFilters);
 document.getElementById('rarity-filter').addEventListener('change', applyFilters);
 document.getElementById('foil-filter').addEventListener('change', applyFilters);
 document.getElementById('sort').addEventListener('change', applyFilters);
-document.getElementById('price-min').addEventListener('input', () => { updatePriceLabel(); applyFilters(); });
-document.getElementById('price-max').addEventListener('input', () => { updatePriceLabel(); applyFilters(); });
 
 setupAutocomplete('search', 'search-autocomplete', () => [...new Set(collection.map(c => c.name))]);
 setupAutocomplete('set-filter', 'set-autocomplete', () => [...new Set(collection.map(c => c.setName))]);
 
-// Load Chart.js then collection
-const script = document.createElement('script');
-script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-script.onload = loadCollection;
-document.head.appendChild(script);
+// Load libraries then collection
+const nouislider = document.createElement('script');
+nouislider.src = 'https://cdn.jsdelivr.net/npm/nouislider@15/dist/nouislider.min.js';
+nouislider.onload = () => {
+  const chartjs = document.createElement('script');
+  chartjs.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+  chartjs.onload = loadCollection;
+  document.head.appendChild(chartjs);
+};
+document.head.appendChild(nouislider);
