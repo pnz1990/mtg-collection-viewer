@@ -10,6 +10,7 @@ let binderPage = 0;
 let binderSide = 'right'; // For mobile: which page is showing
 let carouselIndex = 0;
 const CARDS_PER_BINDER_PAGE = 18;
+const CARDS_PER_MOBILE_PAGE = 4;
 const isMobile = () => window.innerWidth <= 768;
 
 // IndexedDB setup
@@ -344,22 +345,20 @@ function renderBinder(direction = null) {
   
   // Mobile single-page logic
   if (mobile) {
-    binder.classList.toggle('mobile-show-left', binderSide === 'left');
-    const currStart = binderPage * CARDS_PER_BINDER_PAGE;
-    const currCards = filteredCollection.slice(currStart, currStart + CARDS_PER_BINDER_PAGE);
+    binder.classList.remove('mobile-show-left');
+    const mobileStart = binderPage * CARDS_PER_MOBILE_PAGE;
+    const currCards = filteredCollection.slice(mobileStart, mobileStart + CARDS_PER_MOBILE_PAGE);
+    const totalMobilePages = Math.ceil(filteredCollection.length / CARDS_PER_MOBILE_PAGE);
+    
+    document.getElementById('binder-page-num').textContent = `${binderPage + 1} / ${totalMobilePages}`;
+    document.querySelector('.binder-prev').disabled = binderPage === 0;
+    document.querySelector('.binder-next').disabled = binderPage >= totalMobilePages - 1;
     
     if (direction === 'next') {
-      const oldSide = binderSide === 'left' ? 'right' : 'left';
-      const oldCards = oldSide === 'left' ? currCards.slice(0, 9) : 
-        (binderSide === 'left' ? filteredCollection.slice((binderPage - 1) * CARDS_PER_BINDER_PAGE + 9, (binderPage - 1) * CARDS_PER_BINDER_PAGE + 18) : currCards.slice(0, 9));
-      const newCards = binderSide === 'left' ? currCards.slice(0, 9) : currCards.slice(9, 18);
+      const prevStart = (binderPage - 1) * CARDS_PER_MOBILE_PAGE;
+      const oldCards = filteredCollection.slice(prevStart, prevStart + CARDS_PER_MOBILE_PAGE);
       
-      // Show new page underneath
-      if (binderSide === 'left') {
-        leftPage.innerHTML = renderPageCards(newCards);
-      } else {
-        rightPage.innerHTML = renderPageCards(newCards);
-      }
+      rightPage.innerHTML = renderPageCards(currCards);
       
       const flipPage = document.createElement('div');
       flipPage.className = 'flip-page flip-page-next';
@@ -373,15 +372,10 @@ function renderBinder(direction = null) {
       });
       
     } else if (direction === 'prev') {
-      const newCards = binderSide === 'left' ? currCards.slice(0, 9) : currCards.slice(9, 18);
-      const nextPageStart = binderSide === 'right' ? currStart : (binderPage + 1) * CARDS_PER_BINDER_PAGE;
-      const oldCards = binderSide === 'right' ? currCards.slice(9, 18) : filteredCollection.slice(nextPageStart, nextPageStart + 9);
+      const nextStart = (binderPage + 1) * CARDS_PER_MOBILE_PAGE;
+      const oldCards = filteredCollection.slice(nextStart, nextStart + CARDS_PER_MOBILE_PAGE);
       
-      if (binderSide === 'left') {
-        leftPage.innerHTML = renderPageCards(newCards);
-      } else {
-        rightPage.innerHTML = renderPageCards(newCards);
-      }
+      rightPage.innerHTML = renderPageCards(currCards);
       
       const flipPage = document.createElement('div');
       flipPage.className = 'flip-page flip-page-prev';
@@ -395,16 +389,10 @@ function renderBinder(direction = null) {
       });
       
     } else {
-      const cards = binderSide === 'left' ? currCards.slice(0, 9) : currCards.slice(9, 18);
-      if (binderSide === 'left') {
-        leftPage.innerHTML = renderPageCards(cards);
-      } else {
-        rightPage.innerHTML = renderPageCards(cards);
-      }
+      rightPage.innerHTML = renderPageCards(currCards);
       loadImages();
     }
     
-    updateNav();
     setupBinderHover();
     return;
   }
@@ -605,29 +593,11 @@ document.getElementById('list-view').addEventListener('click', () => setView('li
 document.getElementById('binder-view').addEventListener('click', () => setView('binder'));
 document.getElementById('carousel-view').addEventListener('click', () => setView('carousel'));
 document.querySelector('.binder-prev').addEventListener('click', () => {
-  if (isMobile()) {
-    if (binderSide === 'right') {
-      binderSide = 'left';
-    } else {
-      binderPage--;
-      binderSide = 'right';
-    }
-  } else {
-    binderPage--;
-  }
+  binderPage--;
   renderBinder('prev');
 });
 document.querySelector('.binder-next').addEventListener('click', () => {
-  if (isMobile()) {
-    if (binderSide === 'left') {
-      binderSide = 'right';
-    } else {
-      binderPage++;
-      binderSide = 'left';
-    }
-  } else {
-    binderPage++;
-  }
+  binderPage++;
   renderBinder('next');
 });
 document.querySelector('.carousel-prev').addEventListener('click', (e) => { e.preventDefault(); carouselIndex--; renderCarousel(); });

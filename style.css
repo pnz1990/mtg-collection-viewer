@@ -557,7 +557,15 @@ h1 {
   }
   
   .binder-page {
-    min-height: 400px;
+    min-height: auto;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 12px;
+    padding: 15px;
+  }
+  
+  .binder-card:nth-child(n+5) {
+    display: none;
   }
   
   .flip-page {
@@ -572,6 +580,17 @@ h1 {
   .flip-page-prev {
     left: 15px;
     right: 15px;
+  }
+  
+  .flip-page-front,
+  .flip-page-back {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .flip-page .binder-card:nth-child(n+5) {
+    display: none;
   }
   
   .flip-page-next.flipping {
