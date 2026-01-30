@@ -38,14 +38,30 @@ function getPriceRange(price) {
 function renderCharts() {
   const colors = ['#4CAF50', '#2196F3', '#FF9800', '#E91E63', '#9C27B0', '#00BCD4', '#FFEB3B', '#795548'];
   
-  const createChart = (id, data, label) => {
+  const createChart = (id, data, type = 'doughnut') => {
     const canvas = document.getElementById(id);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (charts[id]) charts[id].destroy();
     const labels = Object.keys(data);
     const values = Object.values(data);
-    charts[id] = new Chart(ctx, {
+    
+    const config = type === 'bar' ? {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{ data: values, backgroundColor: colors.slice(0, labels.length), borderWidth: 0 }]
+      },
+      options: {
+        responsive: true,
+        indexAxis: 'y',
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#e0e0e0' }, grid: { color: '#333' } },
+          y: { ticks: { color: '#e0e0e0' }, grid: { display: false } }
+        }
+      }
+    } : {
       type: 'doughnut',
       data: {
         labels,
@@ -56,18 +72,37 @@ function renderCharts() {
         plugins: { legend: { position: 'bottom', labels: { color: '#e0e0e0', boxWidth: 12, padding: 8 } } },
         animation: { animateRotate: true, duration: 800 }
       }
-    });
+    };
+    charts[id] = new Chart(ctx, config);
   };
   
   createChart('rarity-chart', countBy(collection, 'rarity'));
+  
   const setCounts = countBy(collection, 'setName');
   const topSets = Object.entries(setCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
-  const otherCount = Object.entries(setCounts).slice(6).reduce((s, [, v]) => s + v, 0);
-  const setData = Object.fromEntries(topSets);
-  if (otherCount > 0) setData['Other'] = otherCount;
-  createChart('set-chart', setData);
+  createChart('set-chart', Object.fromEntries(topSets));
+  
   createChart('finish-chart', countBy(collection, 'foil'));
   createChart('price-chart', countBy(collection, c => getPriceRange(c.price)));
+  
+  // Value by set (bar chart)
+  const setValues = {};
+  collection.forEach(c => {
+    setValues[c.setName] = (setValues[c.setName] || 0) + c.price * c.quantity;
+  });
+  const topSetValues = Object.entries(setValues).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  createChart('set-value-chart', Object.fromEntries(topSetValues.map(([k, v]) => [k, Math.round(v)])), 'bar');
+  
+  // Price stats
+  const prices = collection.map(c => c.price).sort((a, b) => a - b);
+  const avg = prices.reduce((s, p) => s + p, 0) / prices.length;
+  const median = prices.length % 2 ? prices[Math.floor(prices.length / 2)] : (prices[prices.length / 2 - 1] + prices[prices.length / 2]) / 2;
+  const currency = collection[0]?.currency || 'USD';
+  
+  document.getElementById('stat-avg').textContent = formatPrice(avg, currency);
+  document.getElementById('stat-median').textContent = formatPrice(median, currency);
+  document.getElementById('stat-max').textContent = formatPrice(prices[prices.length - 1], currency);
+  document.getElementById('stat-min').textContent = formatPrice(prices[0], currency);
 }
 
 function renderCollection() {

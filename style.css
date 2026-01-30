@@ -377,6 +377,29 @@ h1 {
   max-height: 150px;
 }
 
+.chart-box.stats-box {
+  text-align: left;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--bg-tertiary);
+}
+
+.stat-item:last-child {
+  border-bottom: none;
+}
+
+.stat-item span {
+  color: var(--text-secondary);
+}
+
+.stat-item strong {
+  color: var(--accent);
+}
+
 /* Autocomplete */
 .filter-group {
   position: relative;
