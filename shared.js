@@ -110,6 +110,7 @@ async function loadCollection() {
   setupPriceSlider();
   
   filteredCollection = [...collection];
+  filteredCollection.sort((a, b) => (b.price * b.quantity) - (a.price * a.quantity));
   updateStats();
   
   if (typeof onCollectionLoaded === 'function') {

@@ -97,7 +97,8 @@ async function loadTimelineImages() {
   const images = document.querySelectorAll('.timeline-card-img[data-scryfall-id]');
   for (const img of images) {
     const id = img.dataset.scryfallId;
-    if (!id || img.src) continue;
+    if (!id || img.dataset.loaded) continue;
+    img.dataset.loaded = '1';
     const url = await fetchCardImage(id, 'small');
     if (url) img.src = url;
   }
