@@ -809,6 +809,7 @@ h1 {
   flex: 1;
   overflow: hidden;
   padding: 20px 0;
+  min-height: 400px;
 }
 
 .carousel-cards {
@@ -816,6 +817,7 @@ h1 {
   align-items: center;
   justify-content: center;
   gap: 20px;
+  min-height: 350px;
 }
 
 .carousel-card {
