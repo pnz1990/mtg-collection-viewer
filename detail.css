@@ -1,71 +1,230 @@
 .detail-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
 }
 
 .detail-content {
   display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 40px;
+  grid-template-columns: 500px 1fr;
+  gap: 50px;
   align-items: start;
+}
+
+.detail-left {
+  position: sticky;
+  top: 20px;
 }
 
 .detail-image {
   width: 100%;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  margin-bottom: 20px;
+}
+
+.collection-info {
+  background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
+  border: 1px solid #444;
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  padding: 20px;
 }
 
-.detail-info h2 {
-  font-size: 2rem;
-  margin-bottom: 10px;
-  color: #fff;
-}
-
-.detail-section {
-  margin-bottom: 25px;
-}
-
-.detail-section h3 {
-  font-size: 1.2rem;
+.collection-info h3 {
   color: #4CAF50;
-  margin-bottom: 10px;
-  border-bottom: 1px solid #444;
-  padding-bottom: 5px;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
 }
 
-.detail-grid {
+.collection-stats {
   display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 10px;
-  font-size: 0.95rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
 }
 
-.detail-label {
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.stat-label {
   color: #999;
-  font-weight: 500;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.detail-value {
+.stat-value {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.card-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #4CAF50;
+}
+
+.card-title h2 {
+  font-size: 2.5rem;
+  color: #fff;
+  margin: 0;
+}
+
+.mana-cost {
+  font-size: 1.5rem;
+  display: flex;
+  gap: 3px;
+}
+
+.type-line {
+  font-size: 1.3rem;
+  color: #aaa;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.oracle-box {
+  background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+  padding: 20px;
+  border-radius: 12px;
+  border-left: 4px solid #4CAF50;
+  margin-bottom: 20px;
+  line-height: 1.8;
+}
+
+.oracle-box p {
+  margin-bottom: 10px;
   color: #e0e0e0;
 }
 
-.oracle-text {
-  background: #1a1a1a;
-  padding: 15px;
-  border-radius: 8px;
-  border-left: 3px solid #4CAF50;
-  line-height: 1.6;
-  white-space: pre-wrap;
+.oracle-box p:last-child {
+  margin-bottom: 0;
 }
 
 .flavor-text {
   font-style: italic;
-  color: #aaa;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid #333;
+  color: #888;
+  margin: 20px 0;
+  padding: 15px;
+  border-left: 3px solid #555;
+  background: #1a1a1a;
+  border-radius: 8px;
+}
+
+.stats-box {
+  background: #2a2a2a;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.power-toughness, .loyalty {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #4CAF50;
+}
+
+.meta-info {
+  background: #2a2a2a;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #333;
+}
+
+.meta-row:last-child {
+  border-bottom: none;
+}
+
+.meta-label {
+  color: #999;
+  font-weight: 500;
+}
+
+.meta-value {
+  color: #fff;
+  font-weight: bold;
+}
+
+.meta-value.rarity-mythic { color: #ff8c00; }
+.meta-value.rarity-rare { color: #ffd700; }
+.meta-value.rarity-uncommon { color: #c0c0c0; }
+.meta-value.rarity-common { color: #999; }
+
+.legality-section h3 {
+  color: #4CAF50;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+}
+
+.legality-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.legality-item {
+  background: #2a2a2a;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 3px solid #666;
+}
+
+.legality-item.legal {
+  border-left-color: #4CAF50;
+}
+
+.legality-item.restricted {
+  border-left-color: #FFA500;
+}
+
+.legality-item.banned {
+  border-left-color: #f44336;
+}
+
+.format-name {
+  color: #e0e0e0;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-badge {
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.legal .status-badge {
+  background: #4CAF50;
+  color: #000;
+}
+
+.restricted .status-badge {
+  background: #FFA500;
+  color: #000;
+}
+
+.banned .status-badge {
+  background: #f44336;
+  color: #fff;
 }
 
 .loading {
@@ -75,8 +234,12 @@
   color: #999;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .detail-content {
     grid-template-columns: 1fr;
+  }
+  
+  .detail-left {
+    position: static;
   }
 }

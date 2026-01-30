@@ -8,95 +8,161 @@ async function loadCardDetails() {
   }
 
   try {
-    const response = await fetch(`https://api.scryfall.com/cards/${scryfallId}`, {
-      headers: {
-        'User-Agent': 'MTGCollectionViewer/1.0',
-        'Accept': 'application/json'
-      }
-    });
-    const card = await response.json();
+    const [cardResponse, csvResponse] = await Promise.all([
+      fetch(`https://api.scryfall.com/cards/${scryfallId}`, {
+        headers: {
+          'User-Agent': 'MTGCollectionViewer/1.0',
+          'Accept': 'application/json'
+        }
+      }),
+      fetch('Collection.csv')
+    ]);
     
-    renderCardDetails(card);
+    const card = await cardResponse.json();
+    const csvText = await csvResponse.text();
+    const collectionCard = parseCollectionData(csvText, scryfallId);
+    
+    renderCardDetails(card, collectionCard);
   } catch (error) {
     document.getElementById('detail-container').innerHTML = '<div class="loading">Failed to load card details</div>';
     console.error('Error loading card:', error);
   }
 }
 
-function renderCardDetails(card) {
+function parseCollectionData(csvText, scryfallId) {
+  const lines = csvText.split('\n').slice(1);
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    const parts = parseCSVLine(line);
+    if (parts[8] === scryfallId) {
+      return {
+        quantity: parseInt(parts[6]) || 1,
+        price: parseFloat(parts[9]) || 0,
+        foil: parts[4],
+        condition: parts[12]
+      };
+    }
+  }
+  return null;
+}
+
+function parseCSVLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      result.push(current);
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  result.push(current);
+  return result;
+}
+
+function renderManaSymbols(text) {
+  if (!text) return '';
+  return text.replace(/\{([^}]+)\}/g, (match, symbol) => {
+    return `<i class="ms ms-${symbol.toLowerCase()} ms-cost"></i>`;
+  });
+}
+
+function renderCardDetails(card, collectionCard) {
   const imageUrl = card.image_uris?.large || card.card_faces?.[0]?.image_uris?.large;
   const oracleText = card.oracle_text || card.card_faces?.map(f => f.oracle_text).join('\n---\n') || 'N/A';
   const flavorText = card.flavor_text || '';
   
   document.getElementById('detail-container').innerHTML = `
     <div class="detail-content">
-      <div>
+      <div class="detail-left">
         <img src="${imageUrl}" alt="${card.name}" class="detail-image">
-      </div>
-      
-      <div class="detail-info">
-        <h2>${card.name}</h2>
-        
-        <div class="detail-section">
-          <h3>Card Information</h3>
-          <div class="detail-grid">
-            <span class="detail-label">Mana Cost:</span>
-            <span class="detail-value">${card.mana_cost || 'N/A'}</span>
-            
-            <span class="detail-label">Type:</span>
-            <span class="detail-value">${card.type_line}</span>
-            
-            <span class="detail-label">Rarity:</span>
-            <span class="detail-value">${card.rarity}</span>
-            
-            <span class="detail-label">Set:</span>
-            <span class="detail-value">${card.set_name} (${card.set.toUpperCase()})</span>
-            
-            <span class="detail-label">Collector #:</span>
-            <span class="detail-value">${card.collector_number}</span>
-            
-            ${card.power ? `<span class="detail-label">Power/Toughness:</span>
-            <span class="detail-value">${card.power}/${card.toughness}</span>` : ''}
-            
-            ${card.loyalty ? `<span class="detail-label">Loyalty:</span>
-            <span class="detail-value">${card.loyalty}</span>` : ''}
-            
-            <span class="detail-label">Artist:</span>
-            <span class="detail-value">${card.artist || 'Unknown'}</span>
-          </div>
-        </div>
-        
-        <div class="detail-section">
-          <h3>Oracle Text</h3>
-          <div class="oracle-text">
-            ${oracleText}
-            ${flavorText ? `<div class="flavor-text">${flavorText}</div>` : ''}
-          </div>
-        </div>
-        
-        <div class="detail-section">
-          <h3>Legality</h3>
-          <div class="detail-grid">
-            ${Object.entries(card.legalities)
-              .filter(([_, status]) => status === 'legal' || status === 'restricted' || status === 'banned')
-              .slice(0, 8)
-              .map(([format, status]) => `
-                <span class="detail-label">${format.charAt(0).toUpperCase() + format.slice(1)}:</span>
-                <span class="detail-value">${status}</span>
-              `).join('')}
-          </div>
-        </div>
-        
-        ${card.prices ? `
-        <div class="detail-section">
-          <h3>Prices</h3>
-          <div class="detail-grid">
-            ${card.prices.usd ? `<span class="detail-label">USD:</span><span class="detail-value">$${card.prices.usd}</span>` : ''}
-            ${card.prices.usd_foil ? `<span class="detail-label">USD Foil:</span><span class="detail-value">$${card.prices.usd_foil}</span>` : ''}
-            ${card.prices.eur ? `<span class="detail-label">EUR:</span><span class="detail-value">€${card.prices.eur}</span>` : ''}
+        ${collectionCard ? `
+        <div class="collection-info">
+          <h3>Your Collection</h3>
+          <div class="collection-stats">
+            <div class="stat">
+              <span class="stat-label">Quantity</span>
+              <span class="stat-value">${collectionCard.quantity}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Value</span>
+              <span class="stat-value">$${(collectionCard.price * collectionCard.quantity).toFixed(2)}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Finish</span>
+              <span class="stat-value">${collectionCard.foil}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Condition</span>
+              <span class="stat-value">${collectionCard.condition.replace('_', ' ')}</span>
+            </div>
           </div>
         </div>
         ` : ''}
+      </div>
+      
+      <div class="detail-info">
+        <div class="card-title">
+          <h2>${card.name}</h2>
+          <div class="mana-cost">${renderManaSymbols(card.mana_cost)}</div>
+        </div>
+        
+        <div class="type-line">${card.type_line}</div>
+        
+        ${card.oracle_text ? `
+        <div class="oracle-box">
+          ${renderManaSymbols(oracleText).split('\n').map(line => `<p>${line}</p>`).join('')}
+        </div>
+        ` : ''}
+        
+        ${flavorText ? `<div class="flavor-text">"${flavorText}"</div>` : ''}
+        
+        ${card.power ? `
+        <div class="stats-box">
+          <span class="power-toughness">${card.power}/${card.toughness}</span>
+        </div>
+        ` : ''}
+        
+        ${card.loyalty ? `
+        <div class="stats-box">
+          <span class="loyalty">Loyalty: ${card.loyalty}</span>
+        </div>
+        ` : ''}
+        
+        <div class="meta-info">
+          <div class="meta-row">
+            <span class="meta-label">Set:</span>
+            <span class="meta-value">${card.set_name} (${card.set.toUpperCase()} #${card.collector_number})</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Rarity:</span>
+            <span class="meta-value rarity-${card.rarity}">${card.rarity.toUpperCase()}</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Artist:</span>
+            <span class="meta-value">${card.artist || 'Unknown'}</span>
+          </div>
+        </div>
+        
+        <div class="legality-section">
+          <h3>Format Legality</h3>
+          <div class="legality-grid">
+            ${Object.entries(card.legalities)
+              .filter(([_, status]) => status === 'legal' || status === 'restricted' || status === 'banned')
+              .map(([format, status]) => `
+                <div class="legality-item ${status}">
+                  <span class="format-name">${format}</span>
+                  <span class="status-badge">${status}</span>
+                </div>
+              `).join('')}
+          </div>
+        </div>
       </div>
     </div>
   `;
