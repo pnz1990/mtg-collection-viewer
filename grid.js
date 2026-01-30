@@ -297,6 +297,7 @@ async function onCollectionLoaded() {
       
       updateLoadButton();
       renderCharts();
+      renderAchievements();
       applyFilters();
     });
   }
@@ -327,11 +328,32 @@ function renderAchievements() {
   const foils = { foil: 0, etched: 0 };
   let maxPrice = 0, languages = new Set();
   
+  // Type and color counts (if full data loaded)
+  const types = { Creature: 0, Instant: 0, Sorcery: 0, Artifact: 0, Enchantment: 0, Land: 0, Planeswalker: 0 };
+  const colors = { W: 0, U: 0, B: 0, R: 0, G: 0 };
+  let colorless = 0, fiveColor = false, lowCmc = 0, highCmc = 0;
+  
   collection.forEach(c => {
     rarities[c.rarity] = (rarities[c.rarity] || 0) + c.quantity;
     if (c.foil !== 'normal') foils[c.foil] = (foils[c.foil] || 0) + c.quantity;
     if (c.price > maxPrice) maxPrice = c.price;
     languages.add(c.language);
+    
+    // Full data stats
+    if (c.type_line) {
+      for (const t of Object.keys(types)) {
+        if (c.type_line.includes(t)) types[t] += c.quantity;
+      }
+    }
+    if (c.color_identity) {
+      if (c.color_identity.length === 0) colorless += c.quantity;
+      if (c.color_identity.length === 5) fiveColor = true;
+      c.color_identity.forEach(col => colors[col] = (colors[col] || 0) + c.quantity);
+    }
+    if (c.cmc !== undefined) {
+      if (c.cmc <= 2) lowCmc += c.quantity;
+      if (c.cmc >= 6) highCmc += c.quantity;
+    }
   });
   
   const badges = [
@@ -351,6 +373,27 @@ function renderAchievements() {
     { icon: '🌍', name: 'World Traveler', desc: '25+ sets', unlocked: uniqueSets >= 25 },
     { icon: '🌐', name: 'Polyglot', desc: '3+ languages', unlocked: languages.size >= 3 },
   ];
+  
+  // Full data badges
+  if (isFullDataLoaded()) {
+    badges.push(
+      { icon: '🐉', name: 'Bestiary', desc: '100+ creatures', unlocked: types.Creature >= 100 },
+      { icon: '⚡', name: 'Spell Slinger', desc: '50+ instants/sorceries', unlocked: (types.Instant + types.Sorcery) >= 50 },
+      { icon: '🏰', name: 'Land Lord', desc: '50+ lands', unlocked: types.Land >= 50 },
+      { icon: '🌈', name: 'Rainbow', desc: 'Own a 5-color card', unlocked: fiveColor },
+      { icon: '⚙️', name: 'Steel King', desc: '20+ colorless cards', unlocked: colorless >= 20 },
+      { icon: '🗡️', name: 'Artificer', desc: '30+ artifacts', unlocked: types.Artifact >= 30 },
+      { icon: '📜', name: 'Enchanter', desc: '30+ enchantments', unlocked: types.Enchantment >= 30 },
+      { icon: '👤', name: 'Superfriends', desc: '10+ planeswalkers', unlocked: types.Planeswalker >= 10 },
+      { icon: '🏃', name: 'Speed Demon', desc: '50+ cards CMC ≤2', unlocked: lowCmc >= 50 },
+      { icon: '🦣', name: 'Timmy', desc: '20+ cards CMC 6+', unlocked: highCmc >= 20 },
+      { icon: '☀️', name: 'Light Bringer', desc: '30+ white cards', unlocked: colors.W >= 30 },
+      { icon: '🌊', name: 'Mind Mage', desc: '30+ blue cards', unlocked: colors.U >= 30 },
+      { icon: '💀', name: 'Necromancer', desc: '30+ black cards', unlocked: colors.B >= 30 },
+      { icon: '🔥', name: 'Pyromancer', desc: '30+ red cards', unlocked: colors.R >= 30 },
+      { icon: '🌲', name: 'Druid', desc: '30+ green cards', unlocked: colors.G >= 30 },
+    );
+  }
   
   container.innerHTML = badges.map(b => `
     <div class="badge ${b.unlocked ? 'unlocked' : 'locked'}">
