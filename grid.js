@@ -187,11 +187,17 @@ function renderAchievements() {
   ];
   
   container.innerHTML = badges.map(b => `
-    <div class="badge ${b.unlocked ? 'unlocked' : 'locked'}" title="${b.desc}">
+    <div class="badge ${b.unlocked ? 'unlocked' : 'locked'}">
       <span class="badge-icon">${b.icon}</span>
       <span class="badge-name">${b.name}</span>
+      <span class="badge-tooltip">${b.desc}</span>
     </div>
   `).join('');
+  
+  // Toggle tooltip on tap for mobile
+  container.querySelectorAll('.badge').forEach(badge => {
+    badge.addEventListener('click', () => badge.classList.toggle('show-tooltip'));
+  });
 }
 
 function onFiltersApplied() {

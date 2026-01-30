@@ -118,6 +118,8 @@ h1 {
   border-radius: 20px;
   font-size: 0.85rem;
   transition: transform 0.2s;
+  position: relative;
+  cursor: pointer;
 }
 
 .badge.unlocked {
@@ -141,6 +143,29 @@ h1 {
 
 .badge-name {
   color: var(--text-primary);
+}
+
+.badge-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  margin-bottom: 6px;
+  z-index: 10;
+}
+
+.badge:hover .badge-tooltip,
+.badge.show-tooltip .badge-tooltip {
+  opacity: 1;
 }
 
 .filters {
