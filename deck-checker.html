@@ -87,22 +87,23 @@
   <a href="index.html" class="back-link">← Back to Collection</a>
 
   <script>
-    // Menu toggle
-    const menuToggle = document.getElementById('menu-toggle');
-    const menuDropdown = document.getElementById('menu-dropdown');
-    const menuOverlay = document.getElementById('menu-overlay');
-    menuToggle?.addEventListener('click', () => {
-      menuDropdown?.classList.toggle('show');
-      menuOverlay?.classList.toggle('show');
-    });
-    menuOverlay?.addEventListener('click', () => {
-      menuDropdown?.classList.remove('show');
-      menuOverlay?.classList.remove('show');
-    });
+    document.addEventListener('DOMContentLoaded', () => {
+      // Menu toggle
+      const menuToggle = document.getElementById('menu-toggle');
+      const menuDropdown = document.getElementById('menu-dropdown');
+      const menuOverlay = document.getElementById('menu-overlay');
+      menuToggle?.addEventListener('click', () => {
+        menuDropdown?.classList.toggle('show');
+        menuOverlay?.classList.toggle('show');
+      });
+      menuOverlay?.addEventListener('click', () => {
+        menuDropdown?.classList.remove('show');
+        menuOverlay?.classList.remove('show');
+      });
 
-    // Theme switcher
-    const themeSelect = document.getElementById('theme-select');
-    const savedTheme = localStorage.getItem('mtg-theme') || '';
+      // Theme switcher
+      const themeSelect = document.getElementById('theme-select');
+      const savedTheme = localStorage.getItem('mtg-theme') || '';
     document.documentElement.dataset.theme = savedTheme;
     themeSelect.value = savedTheme;
     themeSelect.addEventListener('change', () => {
@@ -254,6 +255,7 @@
     });
 
     loadCollection();
+    });
   </script>
 </body>
 </html>

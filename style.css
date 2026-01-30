@@ -1704,7 +1704,8 @@ h1 {
   font-size: 0.9rem;
   font-family: monospace;
   resize: vertical;
-  margin-bottom: 10px;
+  display: block;
+  margin: 0 auto 15px;
 }
 
 .check-btn {
@@ -1716,6 +1717,8 @@ h1 {
   font-size: 1rem;
   cursor: pointer;
   transition: transform 0.2s;
+  display: block;
+  margin: 0 auto;
 }
 
 .check-btn:hover {
