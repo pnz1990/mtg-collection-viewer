@@ -428,6 +428,22 @@ h1 {
   border: 1px solid var(--bg-tertiary);
 }
 
+.clear-filters-btn {
+  padding: 10px 14px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.clear-filters-btn:hover {
+  background: #c62828;
+  color: white;
+}
+
 .collection {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));

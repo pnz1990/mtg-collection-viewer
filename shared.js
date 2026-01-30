@@ -338,6 +338,20 @@ document.getElementById('color-filter')?.addEventListener('change', applyFilters
 document.getElementById('keyword-filter')?.addEventListener('change', applyFilters);
 document.querySelectorAll('.color-checkboxes input').forEach(cb => cb.addEventListener('change', applyFilters));
 
+document.getElementById('clear-filters')?.addEventListener('click', () => {
+  document.getElementById('search').value = '';
+  document.getElementById('set-filter').value = '';
+  document.getElementById('rarity-filter').value = '';
+  document.getElementById('foil-filter').value = '';
+  document.getElementById('type-filter') && (document.getElementById('type-filter').value = '');
+  document.getElementById('color-filter') && (document.getElementById('color-filter').value = '');
+  document.getElementById('keyword-filter') && (document.getElementById('keyword-filter').value = '');
+  document.querySelectorAll('.color-checkboxes input').forEach(cb => cb.checked = false);
+  if (priceSlider) priceSlider.set([0, maxPriceValue]);
+  window.cmcFilter = undefined;
+  applyFilters();
+});
+
 // Theme switcher
 const themeSelect = document.getElementById('theme-select');
 if (themeSelect) {
