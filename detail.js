@@ -239,7 +239,7 @@ function createParticles(colors) {
   const colorMap = {
     W: ['#fffbd5', '#f0e6c0'],
     U: ['#0e68ab', '#4a90c2'],
-    B: ['#5a5a5a', '#2a2a2a'],
+    B: ['#1a1a1a', '#0a0a0a'],
     R: ['#d32f2f', '#ff6659'],
     G: ['#388e3c', '#6abf69'],
     C: ['#9e9e9e', '#bdbdbd']

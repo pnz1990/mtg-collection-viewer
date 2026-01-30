@@ -293,6 +293,14 @@ body.has-art-bg::after {
   justify-content: space-between;
   align-items: center;
   border-left: 3px solid #666;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.legality-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .legality-item.legal {
