@@ -268,7 +268,7 @@ function updateStats() {
 }
 
 async function loadCollection() {
-  const response = await fetch('Collection.csv');
+  const response = await fetch('data/Collection.csv');
   const text = await response.text();
   const lines = text.split('\n').slice(1);
   
