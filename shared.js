@@ -110,7 +110,6 @@ async function loadCollection() {
   setupPriceSlider();
   
   filteredCollection = [...collection];
-  filteredCollection.sort((a, b) => (b.price * b.quantity) - (a.price * a.quantity));
   updateStats();
   
   if (typeof onCollectionLoaded === 'function') {
@@ -151,14 +150,16 @@ function applyFilters() {
       card.price >= priceMin && card.price <= priceMax;
   });
   
-  filteredCollection.sort((a, b) => {
-    switch(sort) {
-      case 'name': return a.name.localeCompare(b.name);
-      case 'rarity': return b.rarity.localeCompare(a.rarity);
-      case 'set': return a.setName.localeCompare(b.setName);
-      default: return (b.price * b.quantity) - (a.price * a.quantity);
-    }
-  });
+  if (sort !== 'recent') {
+    filteredCollection.sort((a, b) => {
+      switch(sort) {
+        case 'name': return a.name.localeCompare(b.name);
+        case 'rarity': return b.rarity.localeCompare(a.rarity);
+        case 'set': return a.setName.localeCompare(b.setName);
+        default: return (b.price * b.quantity) - (a.price * a.quantity);
+      }
+    });
+  }
   
   updateStats();
   if (typeof onFiltersApplied === 'function') {
