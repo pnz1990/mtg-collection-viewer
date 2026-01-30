@@ -69,7 +69,10 @@ function parseCSVLine(line) {
 function renderManaSymbols(text) {
   if (!text) return '';
   return text.replace(/\{([^}]+)\}/g, (match, symbol) => {
-    return `<i class="ms ms-${symbol.toLowerCase()} ms-cost"></i>`;
+    const sym = symbol.toLowerCase();
+    if (sym === 't') return '<i class="ms ms-tap ms-cost"></i>';
+    if (sym === 'q') return '<i class="ms ms-untap ms-cost"></i>';
+    return `<i class="ms ms-${sym} ms-cost"></i>`;
   });
 }
 
