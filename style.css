@@ -901,6 +901,10 @@ h1 {
   cursor: not-allowed;
 }
 
+.carousel-nav:focus {
+  outline: none;
+}
+
 .carousel-counter {
   position: absolute;
   bottom: 10px;

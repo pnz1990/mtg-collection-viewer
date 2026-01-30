@@ -612,8 +612,18 @@ document.querySelector('.binder-mobile-next').addEventListener('click', () => {
   binderPage++;
   renderBinder('next');
 });
-document.querySelector('.carousel-prev').addEventListener('click', (e) => { e.preventDefault(); carouselIndex--; renderCarousel(); });
-document.querySelector('.carousel-next').addEventListener('click', (e) => { e.preventDefault(); carouselIndex++; renderCarousel(); });
+document.querySelector('.carousel-prev').addEventListener('click', (e) => { 
+  e.preventDefault(); 
+  e.target.blur();
+  carouselIndex--; 
+  renderCarousel(); 
+});
+document.querySelector('.carousel-next').addEventListener('click', (e) => { 
+  e.preventDefault(); 
+  e.target.blur();
+  carouselIndex++; 
+  renderCarousel(); 
+});
 
 setupAutocomplete('search', 'search-autocomplete', () => [...new Set(collection.map(c => c.name))]);
 setupAutocomplete('set-filter', 'set-autocomplete', () => [...new Set(collection.map(c => c.setName))]);
