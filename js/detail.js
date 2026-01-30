@@ -108,7 +108,7 @@ function renderCardDetails(card, collectionCard) {
         <div class="detail-image-wrapper ${foilClass} ${revealClass}">
           <div class="detail-image-inner">
             <img src="${imageUrl}" alt="${card.name}" class="detail-image">
-            <img src="back.png" alt="Card back" class="detail-back">
+            <img src="images/back.png" alt="Card back" class="detail-back">
           </div>
         </div>
       </div>

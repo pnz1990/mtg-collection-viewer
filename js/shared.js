@@ -140,7 +140,7 @@ function renderCardHTML(card, nameCounts = {}) {
       <div class="card-image-wrapper">
         <div class="card-image-inner">
           <img alt="${card.name}" class="card-image">
-          <img src="back.png" alt="Card back" class="card-back">
+          <img src="images/back.png" alt="Card back" class="card-back">
         </div>
       </div>
       <div class="card-header">
