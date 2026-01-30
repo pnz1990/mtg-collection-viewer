@@ -1,7 +1,71 @@
 let collection = [];
 let filteredCollection = [];
-const imageCache = new Map();
 let charts = {};
+let imageObserver;
+let db;
+
+// IndexedDB setup
+const dbPromise = new Promise((resolve, reject) => {
+  const request = indexedDB.open('mtg-images', 1);
+  request.onerror = () => reject(request.error);
+  request.onsuccess = () => { db = request.result; resolve(db); };
+  request.onupgradeneeded = e => {
+    e.target.result.createObjectStore('images', { keyPath: 'id' });
+  };
+});
+
+async function getCachedImage(id) {
+  await dbPromise;
+  return new Promise(resolve => {
+    const tx = db.transaction('images', 'readonly');
+    const req = tx.objectStore('images').get(id);
+    req.onsuccess = () => resolve(req.result?.url);
+    req.onerror = () => resolve(null);
+  });
+}
+
+async function cacheImage(id, url) {
+  await dbPromise;
+  const tx = db.transaction('images', 'readwrite');
+  tx.objectStore('images').put({ id, url, timestamp: Date.now() });
+}
+
+async function fetchCardImage(scryfallId) {
+  // Check cache first
+  const cached = await getCachedImage(scryfallId);
+  if (cached) return cached;
+  
+  // Fetch from API with delay to avoid throttling
+  await new Promise(r => setTimeout(r, 100));
+  try {
+    const response = await fetch(`https://api.scryfall.com/cards/${scryfallId}`);
+    if (!response.ok) return null;
+    const data = await response.json();
+    const imageUrl = data.image_uris?.small || data.card_faces?.[0]?.image_uris?.small;
+    if (imageUrl) {
+      await cacheImage(scryfallId, imageUrl);
+      return imageUrl;
+    }
+  } catch (e) {}
+  return null;
+}
+
+function setupImageObserver() {
+  imageObserver = new IntersectionObserver((entries) => {
+    entries.forEach(async entry => {
+      if (!entry.isIntersecting) return;
+      const wrapper = entry.target;
+      const img = wrapper.querySelector('.card-image');
+      const scryfallId = wrapper.closest('.card').dataset.scryfallId;
+      
+      if (img.src) return; // Already loaded
+      imageObserver.unobserve(wrapper);
+      
+      const url = await fetchCardImage(scryfallId);
+      if (url) img.src = url;
+    });
+  }, { rootMargin: '200px' }); // Load 200px before visible
+}
 
 async function loadCollection() {
   const response = await fetch('Collection.csv');
@@ -34,31 +98,10 @@ async function loadCollection() {
   
   filteredCollection = [...collection];
   filteredCollection.sort((a, b) => a.name.localeCompare(b.name));
+  setupImageObserver();
   updateStats();
   renderCharts();
   renderCollection();
-  loadImages();
-}
-
-async function loadImages() {
-  const batchSize = 10;
-  for (let i = 0; i < filteredCollection.length; i += batchSize) {
-    const batch = filteredCollection.slice(i, i + batchSize);
-    await Promise.all(batch.map(async (card) => {
-      if (imageCache.has(card.scryfallId)) return;
-      try {
-        const response = await fetch(`https://api.scryfall.com/cards/${card.scryfallId}`);
-        const data = await response.json();
-        const imageUrl = data.image_uris?.small || data.card_faces?.[0]?.image_uris?.small;
-        if (imageUrl) {
-          imageCache.set(card.scryfallId, imageUrl);
-          const imgElement = document.querySelector(`[data-scryfall-id="${card.scryfallId}"] .card-image`);
-          if (imgElement) imgElement.src = imageUrl;
-        }
-      } catch (e) {}
-    }));
-    await new Promise(r => setTimeout(r, 100));
-  }
 }
 
 function parseCSVLine(line) {
@@ -132,14 +175,13 @@ function renderCharts() {
 function renderCollection() {
   const container = document.getElementById('collection');
   container.innerHTML = filteredCollection.map(card => {
-    const cachedImage = imageCache.get(card.scryfallId) || '';
     const foilClass = card.foil !== 'normal' ? card.foil : '';
     return `
     <div class="card ${foilClass}" data-scryfall-id="${card.scryfallId}">
       <a href="detail.html?id=${card.scryfallId}" class="card-link">
         <div class="card-image-wrapper">
           <div class="card-image-inner">
-            <img src="${cachedImage}" alt="${card.name}" class="card-image">
+            <img alt="${card.name}" class="card-image">
             <img src="back.png" alt="Card back" class="card-back">
           </div>
         </div>
@@ -157,7 +199,10 @@ function renderCollection() {
     </div>`;
   }).join('');
   
+  // Observe images for lazy loading
   container.querySelectorAll('.card-image-wrapper').forEach(wrapper => {
+    imageObserver.observe(wrapper);
+    
     const inner = wrapper.querySelector('.card-image-inner');
     let isDragging = false, hasMoved = false;
     
@@ -223,7 +268,6 @@ function applyFilters() {
   
   updateStats();
   renderCollection();
-  loadImages();
 }
 
 function setupAutocomplete(inputId, listId, getItems) {
