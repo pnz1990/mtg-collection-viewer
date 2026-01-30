@@ -7,8 +7,10 @@ let priceSlider;
 let maxPriceValue = 200;
 let currentView = 'list';
 let binderPage = 0;
+let binderSide = 'right'; // For mobile: which page is showing
 let carouselIndex = 0;
 const CARDS_PER_BINDER_PAGE = 18;
+const isMobile = () => window.innerWidth <= 768;
 
 // IndexedDB setup
 const dbPromise = new Promise((resolve, reject) => {
@@ -302,9 +304,11 @@ function applyFilters() {
 }
 
 function renderBinder(direction = null) {
+  const binder = document.getElementById('binder');
   const leftPage = document.querySelector('.binder-page-left');
   const rightPage = document.querySelector('.binder-page-right');
   const pagesContainer = document.querySelector('.binder-pages');
+  const mobile = isMobile();
   
   const renderPageCards = (cards) => cards.map(card => {
     const foilClass = card.foil !== 'normal' ? card.foil : '';
@@ -325,22 +329,95 @@ function renderBinder(direction = null) {
   };
   
   const updateNav = () => {
-    const start = binderPage * CARDS_PER_BINDER_PAGE;
-    document.getElementById('binder-page-num').textContent = `${binderPage + 1} / ${Math.ceil(filteredCollection.length / CARDS_PER_BINDER_PAGE) || 1}`;
-    document.querySelector('.binder-prev').disabled = binderPage === 0;
-    document.querySelector('.binder-next').disabled = start + CARDS_PER_BINDER_PAGE >= filteredCollection.length;
+    const totalPages = Math.ceil(filteredCollection.length / 9);
+    const mobilePageNum = binderPage * 2 + (binderSide === 'right' ? 2 : 1);
+    if (mobile) {
+      document.getElementById('binder-page-num').textContent = `${mobilePageNum} / ${totalPages}`;
+      document.querySelector('.binder-prev').disabled = binderPage === 0 && binderSide === 'left';
+      document.querySelector('.binder-next').disabled = mobilePageNum >= totalPages;
+    } else {
+      document.getElementById('binder-page-num').textContent = `${binderPage + 1} / ${Math.ceil(filteredCollection.length / CARDS_PER_BINDER_PAGE) || 1}`;
+      document.querySelector('.binder-prev').disabled = binderPage === 0;
+      document.querySelector('.binder-next').disabled = (binderPage + 1) * CARDS_PER_BINDER_PAGE >= filteredCollection.length;
+    }
   };
   
+  // Mobile single-page logic
+  if (mobile) {
+    binder.classList.toggle('mobile-show-left', binderSide === 'left');
+    const currStart = binderPage * CARDS_PER_BINDER_PAGE;
+    const currCards = filteredCollection.slice(currStart, currStart + CARDS_PER_BINDER_PAGE);
+    
+    if (direction === 'next') {
+      const oldSide = binderSide === 'left' ? 'right' : 'left';
+      const oldCards = oldSide === 'left' ? currCards.slice(0, 9) : 
+        (binderSide === 'left' ? filteredCollection.slice((binderPage - 1) * CARDS_PER_BINDER_PAGE + 9, (binderPage - 1) * CARDS_PER_BINDER_PAGE + 18) : currCards.slice(0, 9));
+      const newCards = binderSide === 'left' ? currCards.slice(0, 9) : currCards.slice(9, 18);
+      
+      // Show new page underneath
+      if (binderSide === 'left') {
+        leftPage.innerHTML = renderPageCards(newCards);
+      } else {
+        rightPage.innerHTML = renderPageCards(newCards);
+      }
+      
+      const flipPage = document.createElement('div');
+      flipPage.className = 'flip-page flip-page-next';
+      flipPage.innerHTML = `<div class="flip-page-inner"><div class="flip-page-front">${renderPageCards(oldCards)}</div></div>`;
+      pagesContainer.appendChild(flipPage);
+      loadImages();
+      
+      requestAnimationFrame(() => {
+        flipPage.classList.add('flipping');
+        flipPage.addEventListener('animationend', () => flipPage.remove(), { once: true });
+      });
+      
+    } else if (direction === 'prev') {
+      const newCards = binderSide === 'left' ? currCards.slice(0, 9) : currCards.slice(9, 18);
+      const nextPageStart = binderSide === 'right' ? currStart : (binderPage + 1) * CARDS_PER_BINDER_PAGE;
+      const oldCards = binderSide === 'right' ? currCards.slice(9, 18) : filteredCollection.slice(nextPageStart, nextPageStart + 9);
+      
+      if (binderSide === 'left') {
+        leftPage.innerHTML = renderPageCards(newCards);
+      } else {
+        rightPage.innerHTML = renderPageCards(newCards);
+      }
+      
+      const flipPage = document.createElement('div');
+      flipPage.className = 'flip-page flip-page-prev';
+      flipPage.innerHTML = `<div class="flip-page-inner"><div class="flip-page-front">${renderPageCards(oldCards)}</div></div>`;
+      pagesContainer.appendChild(flipPage);
+      loadImages();
+      
+      requestAnimationFrame(() => {
+        flipPage.classList.add('flipping');
+        flipPage.addEventListener('animationend', () => flipPage.remove(), { once: true });
+      });
+      
+    } else {
+      const cards = binderSide === 'left' ? currCards.slice(0, 9) : currCards.slice(9, 18);
+      if (binderSide === 'left') {
+        leftPage.innerHTML = renderPageCards(cards);
+      } else {
+        rightPage.innerHTML = renderPageCards(cards);
+      }
+      loadImages();
+    }
+    
+    updateNav();
+    setupBinderHover();
+    return;
+  }
+  
+  // Desktop two-page logic
   if (direction === 'next') {
     const prevStart = (binderPage - 1) * CARDS_PER_BINDER_PAGE;
     const prevCards = filteredCollection.slice(prevStart, prevStart + CARDS_PER_BINDER_PAGE);
     const currStart = binderPage * CARDS_PER_BINDER_PAGE;
     const currCards = filteredCollection.slice(currStart, currStart + CARDS_PER_BINDER_PAGE);
     
-    // Keep old left page, show new right underneath
     rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
     
-    // Create flipping page with front (old right) and back (new left)
     const flipPage = document.createElement('div');
     flipPage.className = 'flip-page flip-page-next';
     flipPage.innerHTML = `
@@ -350,7 +427,6 @@ function renderBinder(direction = null) {
       </div>
     `;
     pagesContainer.appendChild(flipPage);
-    
     loadImages();
     
     requestAnimationFrame(() => {
@@ -368,10 +444,8 @@ function renderBinder(direction = null) {
     const currStart = binderPage * CARDS_PER_BINDER_PAGE;
     const currCards = filteredCollection.slice(currStart, currStart + CARDS_PER_BINDER_PAGE);
     
-    // Keep old right page, show new left underneath
     leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
     
-    // Create flipping page on LEFT side - starts flat showing old left, flips to reveal new right
     const flipPage = document.createElement('div');
     flipPage.className = 'flip-page flip-page-prev';
     flipPage.innerHTML = `
@@ -381,7 +455,6 @@ function renderBinder(direction = null) {
       </div>
     `;
     pagesContainer.appendChild(flipPage);
-    
     loadImages();
     
     requestAnimationFrame(() => {
@@ -531,8 +604,32 @@ document.getElementById('sort').addEventListener('change', applyFilters);
 document.getElementById('list-view').addEventListener('click', () => setView('list'));
 document.getElementById('binder-view').addEventListener('click', () => setView('binder'));
 document.getElementById('carousel-view').addEventListener('click', () => setView('carousel'));
-document.querySelector('.binder-prev').addEventListener('click', () => { binderPage--; renderBinder('prev'); });
-document.querySelector('.binder-next').addEventListener('click', () => { binderPage++; renderBinder('next'); });
+document.querySelector('.binder-prev').addEventListener('click', () => {
+  if (isMobile()) {
+    if (binderSide === 'right') {
+      binderSide = 'left';
+    } else {
+      binderPage--;
+      binderSide = 'right';
+    }
+  } else {
+    binderPage--;
+  }
+  renderBinder('prev');
+});
+document.querySelector('.binder-next').addEventListener('click', () => {
+  if (isMobile()) {
+    if (binderSide === 'left') {
+      binderSide = 'right';
+    } else {
+      binderPage++;
+      binderSide = 'left';
+    }
+  } else {
+    binderPage++;
+  }
+  renderBinder('next');
+});
 document.querySelector('.carousel-prev').addEventListener('click', (e) => { e.preventDefault(); carouselIndex--; renderCarousel(); });
 document.querySelector('.carousel-next').addEventListener('click', (e) => { e.preventDefault(); carouselIndex++; renderCarousel(); });
 

@@ -530,6 +530,69 @@ h1 {
   100% { transform: rotateY(180deg); }
 }
 
+/* Mobile binder - single page */
+@media (max-width: 768px) {
+  .binder-pages {
+    gap: 0;
+  }
+  
+  .binder-page-left {
+    display: none;
+  }
+  
+  .binder.mobile-show-left .binder-page-left {
+    display: grid;
+  }
+  
+  .binder.mobile-show-left .binder-page-right {
+    display: none;
+  }
+  
+  .binder-rings {
+    display: none;
+  }
+  
+  .binder-wrapper {
+    padding: 15px;
+  }
+  
+  .binder-page {
+    min-height: 400px;
+  }
+  
+  .flip-page {
+    width: calc(100% - 30px);
+  }
+  
+  .flip-page-next {
+    right: 15px;
+    left: 15px;
+  }
+  
+  .flip-page-prev {
+    left: 15px;
+    right: 15px;
+  }
+  
+  .flip-page-next.flipping {
+    animation: flipNextMobile 0.8s cubic-bezier(0.3, 0.0, 0.2, 1) forwards;
+  }
+  
+  .flip-page-prev.flipping {
+    animation: flipPrevMobile 0.8s cubic-bezier(0.3, 0.0, 0.2, 1) forwards;
+  }
+  
+  @keyframes flipNextMobile {
+    0% { transform: rotateY(0deg); }
+    100% { transform: rotateY(-90deg); }
+  }
+  
+  @keyframes flipPrevMobile {
+    0% { transform: rotateY(0deg); }
+    100% { transform: rotateY(90deg); }
+  }
+}
+
 .binder-card {
   background: #0a0a0a;
   border-radius: 4px;
