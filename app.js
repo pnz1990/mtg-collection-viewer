@@ -39,7 +39,7 @@ async function cacheImage(id, url) {
   tx.objectStore('images').put({ id, url, timestamp: Date.now() });
 }
 
-async function fetchCardImage(scryfallId, size = 'small') {
+async function fetchCardImage(scryfallId, size = 'normal') {
   const cacheKey = `${scryfallId}_${size}`;
   // Check cache first
   const cached = await getCachedImage(cacheKey);
