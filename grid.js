@@ -141,12 +141,57 @@ function renderCollection() {
 function onCollectionLoaded() {
   setupImageObserver();
   renderCharts();
+  renderAchievements();
   renderCollection();
   
   document.getElementById('random-card')?.addEventListener('click', () => {
     const randomCard = collection[Math.floor(Math.random() * collection.length)];
     window.location.href = `detail.html?id=${randomCard.scryfallId}&reveal=1`;
   });
+}
+
+function renderAchievements() {
+  const container = document.getElementById('achievements');
+  if (!container) return;
+  
+  const totalCards = collection.reduce((sum, c) => sum + c.quantity, 0);
+  const totalValue = collection.reduce((sum, c) => sum + c.price * c.quantity, 0);
+  const uniqueSets = new Set(collection.map(c => c.setCode)).size;
+  const rarities = { mythic: 0, rare: 0, uncommon: 0, common: 0 };
+  const foils = { foil: 0, etched: 0 };
+  let maxPrice = 0, languages = new Set();
+  
+  collection.forEach(c => {
+    rarities[c.rarity] = (rarities[c.rarity] || 0) + c.quantity;
+    if (c.foil !== 'normal') foils[c.foil] = (foils[c.foil] || 0) + c.quantity;
+    if (c.price > maxPrice) maxPrice = c.price;
+    languages.add(c.language);
+  });
+  
+  const badges = [
+    { icon: '🃏', name: 'Collector', desc: '100+ cards', unlocked: totalCards >= 100 },
+    { icon: '📚', name: 'Librarian', desc: '500+ cards', unlocked: totalCards >= 500 },
+    { icon: '🏛️', name: 'Archivist', desc: '1000+ cards', unlocked: totalCards >= 1000 },
+    { icon: '💎', name: 'Mythic Hunter', desc: '10+ mythics', unlocked: rarities.mythic >= 10 },
+    { icon: '👑', name: 'Mythic Hoarder', desc: '50+ mythics', unlocked: rarities.mythic >= 50 },
+    { icon: '⭐', name: 'Rare Collector', desc: '100+ rares', unlocked: rarities.rare >= 100 },
+    { icon: '✨', name: 'Shiny Lover', desc: '25+ foils', unlocked: foils.foil >= 25 },
+    { icon: '🌟', name: 'Bling Master', desc: '100+ foils', unlocked: foils.foil >= 100 },
+    { icon: '🔮', name: 'Etched Elite', desc: '10+ etched', unlocked: foils.etched >= 10 },
+    { icon: '💰', name: 'Big Spender', desc: 'Card over $50', unlocked: maxPrice >= 50 },
+    { icon: '💵', name: 'Whale', desc: 'Card over $100', unlocked: maxPrice >= 100 },
+    { icon: '🏦', name: 'Vault Keeper', desc: '$500+ total value', unlocked: totalValue >= 500 },
+    { icon: '🗺️', name: 'Set Explorer', desc: '10+ different sets', unlocked: uniqueSets >= 10 },
+    { icon: '🌍', name: 'World Traveler', desc: '25+ sets', unlocked: uniqueSets >= 25 },
+    { icon: '🌐', name: 'Polyglot', desc: '3+ languages', unlocked: languages.size >= 3 },
+  ];
+  
+  container.innerHTML = badges.map(b => `
+    <div class="badge ${b.unlocked ? 'unlocked' : 'locked'}" title="${b.desc}">
+      <span class="badge-icon">${b.icon}</span>
+      <span class="badge-name">${b.name}</span>
+    </div>
+  `).join('');
 }
 
 function onFiltersApplied() {

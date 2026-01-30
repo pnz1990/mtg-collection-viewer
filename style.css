@@ -102,6 +102,47 @@ h1 {
   font-size: 0.9rem;
 }
 
+.achievements {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  transition: transform 0.2s;
+}
+
+.badge.unlocked {
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+  border: 1px solid var(--accent);
+}
+
+.badge.locked {
+  background: var(--bg-secondary);
+  opacity: 0.4;
+  filter: grayscale(1);
+}
+
+.badge.unlocked:hover {
+  transform: scale(1.05);
+}
+
+.badge-icon {
+  font-size: 1.1rem;
+}
+
+.badge-name {
+  color: var(--text-primary);
+}
+
 .filters {
   display: flex;
   gap: 15px;
