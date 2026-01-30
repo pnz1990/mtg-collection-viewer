@@ -120,19 +120,41 @@ function renderCollection() {
   `;
   }).join('');
   
-  // Add 3D tilt effect
-  container.querySelectorAll('.card').forEach(card => {
-    card.addEventListener('mousemove', e => {
-      const rect = card.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      card.style.transform = `translateY(-10px) rotateX(${-y * 15}deg) rotateY(${x * 15}deg) scale(1.05)`;
-      card.style.boxShadow = `${-x * 20}px ${20 + y * 10}px 40px rgba(0,0,0,0.8)`;
-    });
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = '';
-      card.style.boxShadow = '';
-    });
+  // Add 3D tilt effect on click+drag (image only)
+  container.querySelectorAll('.card-image-wrapper').forEach(wrapper => {
+    const img = wrapper.querySelector('.card-image');
+    let isDragging = false;
+    
+    const startDrag = e => {
+      isDragging = true;
+      e.preventDefault();
+      wrapper.closest('.card-link').style.pointerEvents = 'none';
+    };
+    
+    const endDrag = () => {
+      if (isDragging) {
+        isDragging = false;
+        img.style.transform = '';
+        wrapper.closest('.card-link').style.pointerEvents = '';
+      }
+    };
+    
+    const onMove = e => {
+      if (!isDragging) return;
+      const rect = wrapper.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const x = (clientX - rect.left) / rect.width - 0.5;
+      const y = (clientY - rect.top) / rect.height - 0.5;
+      img.style.transform = `rotateX(${-y * 25}deg) rotateY(${x * 25}deg)`;
+    };
+    
+    wrapper.addEventListener('mousedown', startDrag);
+    wrapper.addEventListener('touchstart', startDrag, { passive: false });
+    document.addEventListener('mouseup', endDrag);
+    document.addEventListener('touchend', endDrag);
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('touchmove', onMove);
   });
 }
 
