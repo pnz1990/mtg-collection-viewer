@@ -78,9 +78,26 @@ function renderManaSymbols(text) {
 
 function renderCardDetails(card, collectionCard) {
   const imageUrl = card.image_uris?.large || card.card_faces?.[0]?.image_uris?.large;
+  const artCropUrl = card.image_uris?.art_crop || card.card_faces?.[0]?.image_uris?.art_crop;
   const oracleText = card.oracle_text || card.card_faces?.map(f => f.oracle_text).join('\n---\n') || 'N/A';
   const flavorText = card.flavor_text || '';
   const foilClass = collectionCard?.foil && collectionCard.foil !== 'normal' ? collectionCard.foil : '';
+  const colors = card.colors || card.card_faces?.[0]?.colors || ['C'];
+  
+  // Set dynamic background with art crop
+  if (artCropUrl) {
+    document.body.style.setProperty('--art-bg', `url(${artCropUrl})`);
+    document.body.classList.add('has-art-bg');
+  }
+  
+  // Create particle container
+  const particleContainer = document.createElement('div');
+  particleContainer.id = 'particles';
+  particleContainer.className = 'particles';
+  document.body.appendChild(particleContainer);
+  
+  // Start particles with card colors
+  createParticles(colors);
   
   document.getElementById('detail-container').innerHTML = `
     <div class="detail-content">
@@ -216,6 +233,47 @@ function renderCardDetails(card, collectionCard) {
   document.addEventListener('touchend', endDrag);
   document.addEventListener('mousemove', onMove);
   document.addEventListener('touchmove', onMove);
+}
+
+function createParticles(colors) {
+  const colorMap = {
+    W: ['#fffbd5', '#f0e6c0'],
+    U: ['#0e68ab', '#4a90c2'],
+    B: ['#5a5a5a', '#2a2a2a'],
+    R: ['#d32f2f', '#ff6659'],
+    G: ['#388e3c', '#6abf69'],
+    C: ['#9e9e9e', '#bdbdbd']
+  };
+  
+  const particleColors = colors.flatMap(c => colorMap[c] || colorMap.C);
+  const container = document.getElementById('particles');
+  
+  function spawnParticle() {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    const color = particleColors[Math.floor(Math.random() * particleColors.length)];
+    const size = 3 + Math.random() * 5;
+    const x = Math.random() * 100;
+    const duration = 8 + Math.random() * 12;
+    
+    particle.style.cssText = `
+      left: ${x}%;
+      width: ${size}px;
+      height: ${size}px;
+      background: ${color};
+      animation-duration: ${duration}s;
+      opacity: ${0.3 + Math.random() * 0.4};
+    `;
+    
+    container.appendChild(particle);
+    setTimeout(() => particle.remove(), duration * 1000);
+  }
+  
+  // Spawn particles periodically
+  for (let i = 0; i < 15; i++) {
+    setTimeout(() => spawnParticle(), i * 200);
+  }
+  setInterval(spawnParticle, 500);
 }
 
 loadCardDetails();

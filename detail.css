@@ -2,6 +2,70 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Dynamic art background */
+body.has-art-bg::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60vh;
+  background: var(--art-bg) center top / cover no-repeat;
+  z-index: -2;
+  mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 100%);
+}
+
+body.has-art-bg::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60vh;
+  background: linear-gradient(to bottom, rgba(26,26,26,0.3) 0%, rgba(26,26,26,0.7) 50%, #1a1a1a 100%);
+  z-index: -1;
+}
+
+/* Particles */
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.particle {
+  position: absolute;
+  bottom: -10px;
+  border-radius: 50%;
+  animation: float-up linear forwards;
+  filter: blur(1px);
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: var(--opacity, 0.5);
+  }
+  90% {
+    opacity: var(--opacity, 0.5);
+  }
+  100% {
+    transform: translateY(-100vh) translateX(calc(-50px + 100px * var(--drift, 0.5)));
+    opacity: 0;
+  }
 }
 
 .detail-content {
