@@ -329,16 +329,21 @@ function renderBinder(direction = null) {
     leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
     rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
     
-    // Create flipping page (shows old right, reveals new left)
+    // Create flipping page with front (old right) and back (new left)
     const flipPage = document.createElement('div');
-    flipPage.className = 'flip-page flip-page-front';
-    flipPage.innerHTML = renderPageCards(prevCards.slice(9, 18));
+    flipPage.className = 'flip-page flip-page-next';
+    flipPage.innerHTML = `
+      <div class="flip-page-inner">
+        <div class="flip-page-front">${renderPageCards(prevCards.slice(9, 18))}</div>
+        <div class="flip-page-back">${renderPageCards(currCards.slice(0, 9))}</div>
+      </div>
+    `;
     pagesContainer.appendChild(flipPage);
     
     loadImages();
     
     requestAnimationFrame(() => {
-      flipPage.classList.add('flipping-next');
+      flipPage.classList.add('flipping');
       flipPage.addEventListener('animationend', () => flipPage.remove(), { once: true });
     });
     
@@ -352,16 +357,21 @@ function renderBinder(direction = null) {
     leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
     rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
     
-    // Create flipping page (shows old left flipped, reveals new right)
+    // Create flipping page with front (new right) and back (old left)
     const flipPage = document.createElement('div');
-    flipPage.className = 'flip-page flip-page-back';
-    flipPage.innerHTML = renderPageCards(nextCards.slice(0, 9));
+    flipPage.className = 'flip-page flip-page-prev';
+    flipPage.innerHTML = `
+      <div class="flip-page-inner">
+        <div class="flip-page-front">${renderPageCards(currCards.slice(9, 18))}</div>
+        <div class="flip-page-back">${renderPageCards(nextCards.slice(0, 9))}</div>
+      </div>
+    `;
     pagesContainer.appendChild(flipPage);
     
     loadImages();
     
     requestAnimationFrame(() => {
-      flipPage.classList.add('flipping-prev');
+      flipPage.classList.add('flipping');
       flipPage.addEventListener('animationend', () => flipPage.remove(), { once: true });
     });
     
