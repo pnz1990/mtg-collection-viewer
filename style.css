@@ -1595,48 +1595,61 @@ h1 {
 }
 
 .timeline-card {
-  width: 120px;
-  text-decoration: none;
+  width: 130px;
   text-align: center;
-  transition: transform 0.2s;
 }
 
-.timeline-card:hover {
-  transform: scale(1.05);
-}
-
-.timeline-card-img {
+.timeline-card .card-image-wrapper {
   width: 100%;
-  border-radius: 8px;
-  margin-bottom: 6px;
+  aspect-ratio: 488/680;
+  perspective: 1000px;
+  cursor: grab;
 }
 
-.timeline-card.foil .timeline-card-img,
-.timeline-card.etched .timeline-card-img {
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
-}
-
-.timeline-card.foil,
-.timeline-card.etched {
+.timeline-card .card-image-inner {
+  width: 100%;
+  height: 100%;
   position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+  border-radius: 8px;
 }
 
-.timeline-card.foil::after,
-.timeline-card.etched::after {
-  content: '';
+.timeline-card .card-image,
+.timeline-card .card-back {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  height: 170px;
-  background: linear-gradient(135deg, 
-    transparent 20%, 
-    rgba(255,215,0,0.3) 45%, 
-    rgba(255,255,255,0.4) 50%, 
-    rgba(255,215,0,0.3) 55%, 
-    transparent 80%);
+  backface-visibility: hidden;
+}
+
+.timeline-card .card-back {
+  transform: rotateY(180deg);
+}
+
+.timeline-card.foil .card-image-inner::after,
+.timeline-card.etched .card-image-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--shimmer-x, 50%) var(--shimmer-y, 50%),
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 215, 0, 0.3) 20%,
+    rgba(255, 105, 180, 0.2) 40%,
+    transparent 60%
+  );
   border-radius: 8px;
   pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+.timeline-card:hover {
+  transform: none;
 }
 
 .timeline-card-name {
