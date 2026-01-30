@@ -292,28 +292,19 @@ function applyFilters() {
 function renderBinder(direction = null) {
   const leftPage = document.querySelector('.binder-page-left');
   const rightPage = document.querySelector('.binder-page-right');
+  const pagesContainer = document.querySelector('.binder-pages');
   
-  const updateContent = () => {
-    const start = binderPage * CARDS_PER_BINDER_PAGE;
-    const pageCards = filteredCollection.slice(start, start + CARDS_PER_BINDER_PAGE);
-    
-    const renderPageCards = (cards) => cards.map(card => {
-      const foilClass = card.foil !== 'normal' ? card.foil : '';
-      return `
+  const renderPageCards = (cards) => cards.map(card => {
+    const foilClass = card.foil !== 'normal' ? card.foil : '';
+    return `
       <div class="binder-card ${foilClass}" data-scryfall-id="${card.scryfallId}">
         <a href="detail.html?id=${card.scryfallId}">
           <img alt="${card.name}" class="card-image">
         </a>
       </div>
-    `}).join('') + Array(9 - cards.length).fill('<div class="binder-card"></div>').join('');
-    
-    leftPage.innerHTML = renderPageCards(pageCards.slice(0, 9));
-    rightPage.innerHTML = renderPageCards(pageCards.slice(9, 18));
-    
-    document.getElementById('binder-page-num').textContent = `${binderPage + 1} / ${Math.ceil(filteredCollection.length / CARDS_PER_BINDER_PAGE) || 1}`;
-    document.querySelector('.binder-prev').disabled = binderPage === 0;
-    document.querySelector('.binder-next').disabled = start + CARDS_PER_BINDER_PAGE >= filteredCollection.length;
-    
+    `}).join('') + Array(Math.max(0, 9 - cards.length)).fill('<div class="binder-card"></div>').join('');
+  
+  const loadImages = () => {
     document.querySelectorAll('.binder-card[data-scryfall-id]').forEach(card => {
       const img = card.querySelector('img');
       const id = card.dataset.scryfallId;
@@ -321,18 +312,68 @@ function renderBinder(direction = null) {
     });
   };
   
-  if (direction) {
-    const animClass = direction === 'next' ? 'flipping-left' : 'flipping-right';
-    leftPage.classList.add(animClass);
-    rightPage.classList.add(animClass);
-    setTimeout(() => {
-      updateContent();
-      leftPage.classList.remove(animClass);
-      rightPage.classList.remove(animClass);
-    }, 300);
+  const updateNav = () => {
+    const start = binderPage * CARDS_PER_BINDER_PAGE;
+    document.getElementById('binder-page-num').textContent = `${binderPage + 1} / ${Math.ceil(filteredCollection.length / CARDS_PER_BINDER_PAGE) || 1}`;
+    document.querySelector('.binder-prev').disabled = binderPage === 0;
+    document.querySelector('.binder-next').disabled = start + CARDS_PER_BINDER_PAGE >= filteredCollection.length;
+  };
+  
+  if (direction === 'next') {
+    const prevStart = (binderPage - 1) * CARDS_PER_BINDER_PAGE;
+    const prevCards = filteredCollection.slice(prevStart, prevStart + CARDS_PER_BINDER_PAGE);
+    const currStart = binderPage * CARDS_PER_BINDER_PAGE;
+    const currCards = filteredCollection.slice(currStart, currStart + CARDS_PER_BINDER_PAGE);
+    
+    // Show new pages underneath
+    leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
+    rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
+    
+    // Create flipping page (shows old right, reveals new left)
+    const flipPage = document.createElement('div');
+    flipPage.className = 'flip-page flip-page-front';
+    flipPage.innerHTML = renderPageCards(prevCards.slice(9, 18));
+    pagesContainer.appendChild(flipPage);
+    
+    loadImages();
+    
+    requestAnimationFrame(() => {
+      flipPage.classList.add('flipping-next');
+      flipPage.addEventListener('animationend', () => flipPage.remove(), { once: true });
+    });
+    
+  } else if (direction === 'prev') {
+    const nextStart = (binderPage + 1) * CARDS_PER_BINDER_PAGE;
+    const nextCards = filteredCollection.slice(nextStart, nextStart + CARDS_PER_BINDER_PAGE);
+    const currStart = binderPage * CARDS_PER_BINDER_PAGE;
+    const currCards = filteredCollection.slice(currStart, currStart + CARDS_PER_BINDER_PAGE);
+    
+    // Show new pages underneath
+    leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
+    rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
+    
+    // Create flipping page (shows old left flipped, reveals new right)
+    const flipPage = document.createElement('div');
+    flipPage.className = 'flip-page flip-page-back';
+    flipPage.innerHTML = renderPageCards(nextCards.slice(0, 9));
+    pagesContainer.appendChild(flipPage);
+    
+    loadImages();
+    
+    requestAnimationFrame(() => {
+      flipPage.classList.add('flipping-prev');
+      flipPage.addEventListener('animationend', () => flipPage.remove(), { once: true });
+    });
+    
   } else {
-    updateContent();
+    const start = binderPage * CARDS_PER_BINDER_PAGE;
+    const pageCards = filteredCollection.slice(start, start + CARDS_PER_BINDER_PAGE);
+    leftPage.innerHTML = renderPageCards(pageCards.slice(0, 9));
+    rightPage.innerHTML = renderPageCards(pageCards.slice(9, 18));
+    loadImages();
   }
+  
+  updateNav();
 }
 
 function setupBinderDrag() {
