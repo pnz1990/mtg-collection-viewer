@@ -345,10 +345,10 @@ function renderAchievements() {
         if (c.type_line.includes(t)) types[t] += c.quantity;
       }
     }
-    if (c.color_identity) {
-      if (c.color_identity.length === 0) colorless += c.quantity;
-      if (c.color_identity.length === 5) fiveColor = true;
-      c.color_identity.forEach(col => colors[col] = (colors[col] || 0) + c.quantity);
+    if (c.colors) {
+      if (c.colors.length === 0) colorless += c.quantity;
+      if (c.colors.length === 5) fiveColor = true;
+      c.colors.forEach(col => colors[col] = (colors[col] || 0) + c.quantity);
     }
     if (c.cmc !== undefined) {
       if (c.cmc <= 2) lowCmc += c.quantity;
