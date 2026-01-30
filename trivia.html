@@ -105,19 +105,35 @@
       const response = await fetch('data/Collection.csv');
       const text = await response.text();
       const lines = text.split('\n').slice(1);
+      
+      // Proper CSV parsing
+      const parseCSV = (line) => {
+        const result = [];
+        let current = '';
+        let inQuotes = false;
+        for (const char of line) {
+          if (char === '"') inQuotes = !inQuotes;
+          else if (char === ',' && !inQuotes) { result.push(current); current = ''; }
+          else current += char;
+        }
+        result.push(current);
+        return result;
+      };
+      
       collection = lines.filter(l => l.trim()).map(line => {
-        const p = line.split(',');
+        const p = parseCSV(line);
         return {
-          name: p[0]?.replace(/^"|"$/g, ''),
-          setCode: p[1]?.replace(/^"|"$/g, ''),
-          setName: p[2]?.replace(/^"|"$/g, ''),
-          rarity: p[5]?.replace(/^"|"$/g, ''),
+          name: p[0] || '',
+          setCode: p[1] || '',
+          setName: p[2] || '',
+          foil: p[4] || 'normal',
+          rarity: p[5] || '',
           quantity: parseInt(p[6]) || 1,
-          scryfallId: p[8]?.replace(/^"|"$/g, ''),
+          scryfallId: p[8] || '',
           price: parseFloat(p[9]) || 0,
-          currency: p[14]?.replace(/^"|"$/g, '') || 'USD'
+          currency: p[14] || 'USD'
         };
-      });
+      }).filter(c => c.name && c.price >= 0);
       startGame();
     }
 
@@ -136,6 +152,7 @@
     }
 
     function formatPrice(p, c) {
+      if (!isFinite(p) || isNaN(p)) p = 0;
       const sym = c === 'EUR' ? '€' : c === 'GBP' ? '£' : '$';
       return sym + p.toFixed(2);
     }
