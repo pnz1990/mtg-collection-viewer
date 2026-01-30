@@ -363,7 +363,7 @@ function renderBinder(direction = null) {
     // Keep old right page, show new left underneath
     leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
     
-    // Create flipping page starting from left, with front (old left) and back (new right)
+    // Create flipping page on LEFT side - starts flat showing old left, flips to reveal new right
     const flipPage = document.createElement('div');
     flipPage.className = 'flip-page flip-page-prev';
     flipPage.innerHTML = `
@@ -394,6 +394,34 @@ function renderBinder(direction = null) {
   }
   
   updateNav();
+  setupBinderHover();
+}
+
+function setupBinderHover() {
+  const preview = document.getElementById('card-preview');
+  const previewImg = preview.querySelector('img');
+  
+  document.querySelectorAll('.binder-card[data-scryfall-id]').forEach(card => {
+    card.addEventListener('mouseenter', async (e) => {
+      const id = card.dataset.scryfallId;
+      const url = await fetchCardImage(id, 'normal');
+      if (url) {
+        previewImg.src = url;
+        preview.classList.remove('hidden');
+      }
+    });
+    
+    card.addEventListener('mousemove', (e) => {
+      const x = Math.min(e.clientX + 20, window.innerWidth - 320);
+      const y = Math.min(e.clientY - 100, window.innerHeight - 450);
+      preview.style.left = x + 'px';
+      preview.style.top = Math.max(10, y) + 'px';
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      preview.classList.add('hidden');
+    });
+  });
 }
 
 function setView(view) {
