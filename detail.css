@@ -13,11 +13,11 @@ body.has-art-bg::before {
   top: 0;
   left: 0;
   right: 0;
-  height: 60vh;
+  height: 100vh;
   background: var(--art-bg) center top / cover no-repeat;
   z-index: -2;
-  mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
 }
 
 body.has-art-bg::after {
@@ -26,8 +26,8 @@ body.has-art-bg::after {
   top: 0;
   left: 0;
   right: 0;
-  height: 60vh;
-  background: linear-gradient(to bottom, rgba(26,26,26,0.3) 0%, rgba(26,26,26,0.7) 50%, #1a1a1a 100%);
+  height: 100vh;
+  background: linear-gradient(to bottom, rgba(26,26,26,0.2) 0%, rgba(26,26,26,0.5) 60%, #1a1a1a 100%);
   z-index: -1;
 }
 
