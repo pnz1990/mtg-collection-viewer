@@ -289,32 +289,85 @@ function applyFilters() {
   else renderBinder();
 }
 
-function renderBinder() {
+function renderBinder(direction = null) {
   const leftPage = document.querySelector('.binder-page-left');
   const rightPage = document.querySelector('.binder-page-right');
-  const start = binderPage * CARDS_PER_BINDER_PAGE;
-  const pageCards = filteredCollection.slice(start, start + CARDS_PER_BINDER_PAGE);
   
-  const renderPageCards = (cards) => cards.map(card => `
-    <div class="binder-card" data-scryfall-id="${card.scryfallId}">
-      <a href="detail.html?id=${card.scryfallId}">
-        <img alt="${card.name}" class="card-image">
-      </a>
-    </div>
-  `).join('') + Array(9 - cards.length).fill('<div class="binder-card"></div>').join('');
+  const updateContent = () => {
+    const start = binderPage * CARDS_PER_BINDER_PAGE;
+    const pageCards = filteredCollection.slice(start, start + CARDS_PER_BINDER_PAGE);
+    
+    const renderPageCards = (cards) => cards.map(card => `
+      <div class="binder-card" data-scryfall-id="${card.scryfallId}">
+        <a href="detail.html?id=${card.scryfallId}">
+          <img alt="${card.name}" class="card-image">
+        </a>
+      </div>
+    `).join('') + Array(9 - cards.length).fill('<div class="binder-card"></div>').join('');
+    
+    leftPage.innerHTML = renderPageCards(pageCards.slice(0, 9));
+    rightPage.innerHTML = renderPageCards(pageCards.slice(9, 18));
+    
+    document.getElementById('binder-page-num').textContent = `${binderPage + 1} / ${Math.ceil(filteredCollection.length / CARDS_PER_BINDER_PAGE) || 1}`;
+    document.querySelector('.binder-prev').disabled = binderPage === 0;
+    document.querySelector('.binder-next').disabled = start + CARDS_PER_BINDER_PAGE >= filteredCollection.length;
+    
+    document.querySelectorAll('.binder-card[data-scryfall-id]').forEach(card => {
+      const img = card.querySelector('img');
+      const id = card.dataset.scryfallId;
+      fetchCardImage(id).then(url => { if (url) img.src = url; });
+    });
+  };
   
-  leftPage.innerHTML = renderPageCards(pageCards.slice(0, 9));
-  rightPage.innerHTML = renderPageCards(pageCards.slice(9, 18));
+  if (direction) {
+    const animClass = direction === 'next' ? 'flipping-left' : 'flipping-right';
+    leftPage.classList.add(animClass);
+    rightPage.classList.add(animClass);
+    setTimeout(() => {
+      updateContent();
+      leftPage.classList.remove(animClass);
+      rightPage.classList.remove(animClass);
+    }, 300);
+  } else {
+    updateContent();
+  }
+}
+
+function setupBinderDrag() {
+  const wrapper = document.querySelector('.binder-wrapper');
+  let startX = 0, isDragging = false;
   
-  document.getElementById('binder-page-num').textContent = `${binderPage + 1} / ${Math.ceil(filteredCollection.length / CARDS_PER_BINDER_PAGE) || 1}`;
-  document.querySelector('.binder-prev').disabled = binderPage === 0;
-  document.querySelector('.binder-next').disabled = start + CARDS_PER_BINDER_PAGE >= filteredCollection.length;
+  wrapper.addEventListener('mousedown', e => { startX = e.clientX; isDragging = true; });
+  wrapper.addEventListener('touchstart', e => { startX = e.touches[0].clientX; isDragging = true; });
   
-  // Lazy load binder images
-  document.querySelectorAll('.binder-card[data-scryfall-id]').forEach(card => {
-    const img = card.querySelector('img');
-    const id = card.dataset.scryfallId;
-    fetchCardImage(id).then(url => { if (url) img.src = url; });
+  document.addEventListener('mouseup', e => {
+    if (!isDragging) return;
+    isDragging = false;
+    const diff = e.clientX - startX;
+    if (Math.abs(diff) > 100) {
+      if (diff < 0 && binderPage < Math.ceil(filteredCollection.length / CARDS_PER_BINDER_PAGE) - 1) {
+        binderPage++;
+        renderBinder('next');
+      } else if (diff > 0 && binderPage > 0) {
+        binderPage--;
+        renderBinder('prev');
+      }
+    }
+  });
+  
+  document.addEventListener('touchend', e => {
+    if (!isDragging) return;
+    isDragging = false;
+    const diff = e.changedTouches[0].clientX - startX;
+    if (Math.abs(diff) > 50) {
+      if (diff < 0 && binderPage < Math.ceil(filteredCollection.length / CARDS_PER_BINDER_PAGE) - 1) {
+        binderPage++;
+        renderBinder('next');
+      } else if (diff > 0 && binderPage > 0) {
+        binderPage--;
+        renderBinder('prev');
+      }
+    }
   });
 }
 
@@ -325,7 +378,7 @@ function setView(view) {
   document.getElementById('collection').classList.toggle('hidden', view !== 'list');
   document.getElementById('binder').classList.toggle('hidden', view !== 'binder');
   if (view === 'list') renderCollection();
-  else renderBinder();
+  else { renderBinder(); setupBinderDrag(); }
 }
 
 function setupAutocomplete(inputId, listId, getItems) {
@@ -363,8 +416,8 @@ document.getElementById('sort').addEventListener('change', applyFilters);
 
 document.getElementById('list-view').addEventListener('click', () => setView('list'));
 document.getElementById('binder-view').addEventListener('click', () => setView('binder'));
-document.querySelector('.binder-prev').addEventListener('click', () => { binderPage--; renderBinder(); });
-document.querySelector('.binder-next').addEventListener('click', () => { binderPage++; renderBinder(); });
+document.querySelector('.binder-prev').addEventListener('click', () => { binderPage--; renderBinder('prev'); });
+document.querySelector('.binder-next').addEventListener('click', () => { binderPage++; renderBinder('next'); });
 
 setupAutocomplete('search', 'search-autocomplete', () => [...new Set(collection.map(c => c.name))]);
 setupAutocomplete('set-filter', 'set-autocomplete', () => [...new Set(collection.map(c => c.setName))]);
