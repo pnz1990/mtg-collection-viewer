@@ -94,7 +94,8 @@ async function loadCollection() {
         scryfallId: parts[8],
         price: parseFloat(parts[9]) || 0,
         condition: parts[12],
-        language: parts[13]
+        language: parts[13],
+        currency: parts[14] || 'USD'
       };
     });
   
@@ -136,11 +137,18 @@ function parseCSVLine(line) {
   return result;
 }
 
+function formatPrice(price, currency = 'USD') {
+  const symbols = { USD: '$', CAD: 'CA$', EUR: '€', GBP: '£', AUD: 'A$', JPY: '¥' };
+  const symbol = symbols[currency] || currency + ' ';
+  return `${symbol}${price.toFixed(2)}`;
+}
+
 function updateStats() {
   const totalCards = filteredCollection.reduce((sum, c) => sum + c.quantity, 0);
   const totalValue = filteredCollection.reduce((sum, c) => sum + c.price * c.quantity, 0);
+  const currency = collection[0]?.currency || 'USD';
   document.getElementById('total-cards').textContent = totalCards;
-  document.getElementById('total-value').textContent = `$${totalValue.toFixed(2)}`;
+  document.getElementById('total-value').textContent = formatPrice(totalValue, currency);
 }
 
 function countBy(arr, key) {
@@ -207,7 +215,7 @@ function renderCollection() {
         </div>
         <div class="card-header">
           <div class="card-name">${card.name}</div>
-          <div class="card-value">$${(card.price * card.quantity).toFixed(2)}</div>
+          <div class="card-value">${formatPrice(card.price * card.quantity, card.currency)}</div>
         </div>
         <div class="card-set">${card.setName} (${card.setCode})</div>
         <div class="card-details">
@@ -467,7 +475,7 @@ function renderCarousel() {
         </a>
         <div class="carousel-card-info">
           <div class="carousel-card-name">${card.name}</div>
-          <div class="carousel-card-price">$${(card.price * card.quantity).toFixed(2)}</div>
+          <div class="carousel-card-price">${formatPrice(card.price * card.quantity, card.currency)}</div>
         </div>
       </div>
     `;
