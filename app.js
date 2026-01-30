@@ -27,6 +27,7 @@ async function loadCollection() {
     });
   
   filteredCollection = [...collection];
+  filteredCollection.sort((a, b) => a.name.localeCompare(b.name));
   updateStats();
   renderCollection();
   loadImages();
