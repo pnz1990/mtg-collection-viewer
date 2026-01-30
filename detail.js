@@ -82,7 +82,7 @@ function renderCardDetails(card, collectionCard) {
   const oracleText = card.oracle_text || card.card_faces?.map(f => f.oracle_text).join('\n---\n') || 'N/A';
   const flavorText = card.flavor_text || '';
   const foilClass = collectionCard?.foil && collectionCard.foil !== 'normal' ? collectionCard.foil : '';
-  const colors = card.colors || card.card_faces?.[0]?.colors || ['C'];
+  const colorIdentity = card.color_identity || [];
   
   // Set dynamic background with art crop
   if (artCropUrl) {
@@ -96,8 +96,8 @@ function renderCardDetails(card, collectionCard) {
   particleContainer.className = 'particles';
   document.body.appendChild(particleContainer);
   
-  // Start particles with card colors
-  createParticles(colors);
+  // Start particles with color identity (empty = colorless/grey)
+  createParticles(colorIdentity.length > 0 ? colorIdentity : ['C']);
   
   document.getElementById('detail-container').innerHTML = `
     <div class="detail-content">
