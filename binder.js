@@ -96,8 +96,6 @@ function renderBinder(direction = null) {
     const currStart = binderPage * CARDS_PER_BINDER_PAGE;
     const currCards = filteredCollection.slice(currStart, currStart + CARDS_PER_BINDER_PAGE);
     
-    rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
-    
     const flipPage = document.createElement('div');
     flipPage.className = 'flip-page flip-page-next';
     flipPage.innerHTML = `
@@ -113,6 +111,7 @@ function renderBinder(direction = null) {
       flipPage.classList.add('flipping');
       flipPage.addEventListener('animationend', () => {
         leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
+        rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
         loadImages();
         flipPage.remove();
         setupBinderHover();
@@ -124,8 +123,6 @@ function renderBinder(direction = null) {
     const nextCards = filteredCollection.slice(nextStart, nextStart + CARDS_PER_BINDER_PAGE);
     const currStart = binderPage * CARDS_PER_BINDER_PAGE;
     const currCards = filteredCollection.slice(currStart, currStart + CARDS_PER_BINDER_PAGE);
-    
-    leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
     
     const flipPage = document.createElement('div');
     flipPage.className = 'flip-page flip-page-prev';
@@ -141,6 +138,7 @@ function renderBinder(direction = null) {
     requestAnimationFrame(() => {
       flipPage.classList.add('flipping');
       flipPage.addEventListener('animationend', () => {
+        leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
         rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
         loadImages();
         flipPage.remove();
