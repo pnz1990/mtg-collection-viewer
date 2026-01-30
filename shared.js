@@ -240,6 +240,7 @@ function applyFilters() {
   const keywordFilter = document.getElementById('keyword-filter')?.value || '';
   const sort = document.getElementById('sort').value;
   const [priceMin, priceMax] = priceSlider ? priceSlider.get().map(Number) : [0, maxPriceValue];
+  const cmcFilter = window.cmcFilter;
   
   // Get selected color identity
   const colorIdentityChecks = document.querySelectorAll('.color-checkboxes input:checked');
@@ -250,6 +251,7 @@ function applyFilters() {
     const matchesColor = !colorFilter || matchCardColor(card, colorFilter);
     const matchesIdentity = selectedColors.length === 0 || matchColorIdentity(card, selectedColors);
     const matchesKeyword = !keywordFilter || (card.keywords && card.keywords.includes(keywordFilter));
+    const matchesCmc = cmcFilter === undefined || card.cmc === cmcFilter;
     
     return card.name.toLowerCase().includes(search) &&
       (!setFilter || card.setName.toLowerCase().includes(setFilter)) &&
@@ -259,6 +261,7 @@ function applyFilters() {
       matchesColor &&
       matchesIdentity &&
       matchesKeyword &&
+      matchesCmc &&
       card.price >= priceMin && card.price <= priceMax;
   });
   

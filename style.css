@@ -598,6 +598,21 @@ h1 {
   font-size: 0.65rem;
 }
 
+.clickable {
+  cursor: pointer;
+  transition: transform 0.1s, filter 0.1s;
+}
+
+.clickable:hover {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.card-set.clickable:hover {
+  transform: none;
+  color: var(--accent);
+}
+
 .card.duplicate {
   box-shadow: 0 0 0 2px #e65100, 0 4px 15px rgba(230, 81, 0, 0.3);
 }

@@ -193,7 +193,7 @@ function renderCollection() {
     const dupeClass = nameCounts[card.name] >= 2 ? 'duplicate' : '';
     const setIcon = `https://svgs.scryfall.io/sets/${card.setCode.toLowerCase()}.svg`;
     const mainType = getMainType(card.type_line);
-    const keywordTags = (card.keywords || []).slice(0, 3).map(k => `<span class="badge keyword-badge">${k}</span>`).join('');
+    const keywordTags = (card.keywords || []).slice(0, 3).map(k => `<span class="badge keyword-badge clickable" data-filter="keyword" data-value="${k}">${k}</span>`).join('');
     return `
     <div class="card ${foilClass} ${dupeClass}" data-scryfall-id="${card.scryfallId}">
       <a href="detail.html?id=${card.scryfallId}" class="card-link">
@@ -207,12 +207,12 @@ function renderCollection() {
           <div class="card-name">${card.name}</div>
           <div class="card-value">${formatPrice(card.price * card.quantity, card.currency)}</div>
         </div>
-        <div class="card-set"><img src="${setIcon}" class="set-icon" alt="${card.setCode}">${card.setName}</div>
+        <div class="card-set clickable" data-filter="set" data-value="${card.setName}"><img src="${setIcon}" class="set-icon" alt="${card.setCode}">${card.setName}</div>
         <div class="card-details">
-          <span class="badge rarity-${card.rarity}">${card.rarity}</span>
-          ${card.foil !== 'normal' ? `<span class="badge foil-${card.foil}">${card.foil}</span>` : ''}
-          ${mainType ? `<span class="badge type-badge">${mainType}</span>` : ''}
-          ${card.cmc !== undefined && !card.type_line?.includes('Land') ? `<span class="badge cmc-badge">⬡${card.cmc}</span>` : ''}
+          <span class="badge rarity-${card.rarity} clickable" data-filter="rarity" data-value="${card.rarity}">${card.rarity}</span>
+          ${card.foil !== 'normal' ? `<span class="badge foil-${card.foil} clickable" data-filter="foil" data-value="${card.foil}">${card.foil}</span>` : ''}
+          ${mainType ? `<span class="badge type-badge clickable" data-filter="type" data-value="${mainType}">${mainType}</span>` : ''}
+          ${card.cmc !== undefined && !card.type_line?.includes('Land') ? `<span class="badge cmc-badge clickable" data-filter="cmc" data-value="${card.cmc}">⬡${card.cmc}</span>` : ''}
           ${nameCounts[card.name] >= 2 ? `<span class="badge duplicate-badge">x${nameCounts[card.name]}</span>` : ''}
           ${keywordTags}
         </div>
@@ -258,6 +258,23 @@ function renderCollection() {
     document.addEventListener('mousemove', onMove);
     document.addEventListener('touchmove', onMove);
     wrapper.addEventListener('click', e => { if (hasMoved) e.preventDefault(); });
+  });
+  
+  // Clickable badge filters
+  container.querySelectorAll('.clickable').forEach(el => {
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const filter = el.dataset.filter;
+      const value = el.dataset.value;
+      if (filter === 'rarity') document.getElementById('rarity-filter').value = value;
+      else if (filter === 'foil') document.getElementById('foil-filter').value = value;
+      else if (filter === 'type') document.getElementById('type-filter').value = value;
+      else if (filter === 'keyword') document.getElementById('keyword-filter').value = value;
+      else if (filter === 'set') document.getElementById('set-filter').value = value;
+      else if (filter === 'cmc') window.cmcFilter = parseInt(value);
+      applyFilters();
+    });
   });
 }
 
