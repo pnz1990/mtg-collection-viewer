@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collection Trivia - MTG Collection Viewer</title>
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .trivia-container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .trivia-card { background: var(--bg-secondary); border-radius: 12px; padding: 30px; text-align: center; }
+    .trivia-progress { display: flex; justify-content: space-between; margin-bottom: 20px; color: var(--text-secondary); }
+    .trivia-question { font-size: 1.3rem; color: var(--text-primary); margin-bottom: 30px; line-height: 1.5; }
+    .trivia-options { display: flex; flex-direction: column; gap: 12px; }
+    .trivia-option { padding: 15px 20px; background: var(--bg-tertiary); border: 2px solid transparent; border-radius: 8px; cursor: pointer; font-size: 1rem; color: var(--text-primary); transition: all 0.2s; text-align: left; }
+    .trivia-option:hover { border-color: var(--accent); }
+    .trivia-option.correct { background: #2e7d32; border-color: #4caf50; }
+    .trivia-option.wrong { background: #c62828; border-color: #f44336; }
+    .trivia-option.disabled { pointer-events: none; opacity: 0.7; }
+    .trivia-result { text-align: center; }
+    .trivia-score { font-size: 4rem; color: var(--accent); font-weight: bold; }
+    .trivia-message { font-size: 1.5rem; color: var(--text-primary); margin: 20px 0; }
+    .trivia-btn { padding: 15px 30px; background: var(--accent); color: var(--bg-primary); border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer; margin-top: 20px; }
+    .trivia-btn:hover { filter: brightness(1.1); }
+    .trivia-next { margin-top: 20px; }
+    .trivia-card-img { width: 150px; border-radius: 8px; margin-bottom: 15px; }
+  </style>
+</head>
+<body>
+  <div class="nav-menu">
+    <button type="button" class="menu-toggle" id="menu-toggle">☰</button>
+    <div class="menu-overlay" id="menu-overlay"></div>
+    <div class="menu-dropdown" id="menu-dropdown">
+      <div class="menu-header">MTG Collection</div>
+      <div class="menu-section">
+        <div class="menu-section-title">Views</div>
+        <a href="index.html" class="menu-item">⊞ Collection Explorer</a>
+        <a href="binder.html" class="menu-item">📖 Binder View</a>
+        <a href="carousel.html" class="menu-item">🎠 Carousel View</a>
+        <a href="timeline.html" class="menu-item">📅 Timeline View</a>
+      </div>
+      <div class="menu-section">
+        <div class="menu-section-title">Tools</div>
+        <a href="deck-checker.html" class="menu-item">🔍 Deck Checker</a>
+        <a href="trivia.html" class="menu-item active">🎯 Collection Trivia</a>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <h1>MTG Collection Viewer</h1>
+    <div class="stats">
+      <span>Collection Trivia</span>
+      <select id="theme-select" class="theme-select">
+        <option value="">Dark (Default)</option>
+        <option value="azorius">Azorius</option>
+        <option value="dimir">Dimir</option>
+        <option value="rakdos">Rakdos</option>
+        <option value="gruul">Gruul</option>
+        <option value="selesnya">Selesnya</option>
+        <option value="orzhov">Orzhov</option>
+        <option value="izzet">Izzet</option>
+        <option value="golgari">Golgari</option>
+        <option value="boros">Boros</option>
+        <option value="simic">Simic</option>
+      </select>
+    </div>
+  </header>
+
+  <div class="trivia-container">
+    <div id="trivia-card" class="trivia-card">
+      <div class="trivia-progress">
+        <span>Question <span id="q-num">1</span>/10</span>
+        <span>Score: <span id="score">0</span></span>
+      </div>
+      <div id="trivia-content"></div>
+    </div>
+  </div>
+
+  <script>
+    // Menu & Theme
+    document.getElementById('menu-toggle').addEventListener('click', () => {
+      document.getElementById('menu-dropdown').classList.toggle('show');
+      document.getElementById('menu-overlay').classList.toggle('show');
+    });
+    document.getElementById('menu-overlay').addEventListener('click', () => {
+      document.getElementById('menu-dropdown').classList.remove('show');
+      document.getElementById('menu-overlay').classList.remove('show');
+    });
+    const themeSelect = document.getElementById('theme-select');
+    const savedTheme = localStorage.getItem('mtg-theme') || '';
+    document.documentElement.dataset.theme = savedTheme;
+    themeSelect.value = savedTheme;
+    themeSelect.addEventListener('change', () => {
+      document.documentElement.dataset.theme = themeSelect.value;
+      localStorage.setItem('mtg-theme', themeSelect.value);
+    });
+
+    let collection = [];
+    let currentQuestion = 0;
+    let score = 0;
+    let answered = false;
+
+    async function loadCollection() {
+      const response = await fetch('data/Collection.csv');
+      const text = await response.text();
+      const lines = text.split('\n').slice(1);
+      collection = lines.filter(l => l.trim()).map(line => {
+        const p = line.split(',');
+        return {
+          name: p[0]?.replace(/^"|"$/g, ''),
+          setCode: p[1]?.replace(/^"|"$/g, ''),
+          setName: p[2]?.replace(/^"|"$/g, ''),
+          rarity: p[5]?.replace(/^"|"$/g, ''),
+          quantity: parseInt(p[6]) || 1,
+          scryfallId: p[8]?.replace(/^"|"$/g, ''),
+          price: parseFloat(p[9]) || 0,
+          currency: p[14]?.replace(/^"|"$/g, '') || 'USD'
+        };
+      });
+      startGame();
+    }
+
+    function getRandom(arr, n = 1) {
+      const shuffled = [...arr].sort(() => Math.random() - 0.5);
+      return n === 1 ? shuffled[0] : shuffled.slice(0, n);
+    }
+
+    function getWrongAnswers(correct, pool, count = 2) {
+      const wrong = pool.filter(x => x !== correct);
+      return getRandom(wrong, count);
+    }
+
+    function shuffle(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    function formatPrice(p, c) {
+      const sym = c === 'EUR' ? '€' : c === 'GBP' ? '£' : '$';
+      return sym + p.toFixed(2);
+    }
+
+    function generateQuestion() {
+      const questions = [
+        // Price questions
+        () => {
+          const sorted = [...collection].sort((a, b) => b.price - a.price);
+          const card = sorted[0];
+          const wrong = getWrongAnswers(card.name, collection.map(c => c.name));
+          return { q: "Which card is the most expensive in your collection?", correct: card.name, options: shuffle([card.name, ...wrong]) };
+        },
+        () => {
+          const sorted = [...collection].sort((a, b) => a.price - b.price).filter(c => c.price > 0);
+          const card = sorted[0];
+          const wrong = getWrongAnswers(card.name, collection.map(c => c.name));
+          return { q: "Which card is the cheapest in your collection?", correct: card.name, options: shuffle([card.name, ...wrong]) };
+        },
+        () => {
+          const card = getRandom(collection);
+          const wrongPrices = [card.price * 0.5, card.price * 1.8, card.price * 2.5].map(p => formatPrice(p, card.currency));
+          const correct = formatPrice(card.price, card.currency);
+          return { q: `How much is "${card.name}" worth?`, correct, options: shuffle([correct, ...getWrongAnswers(correct, wrongPrices)]) };
+        },
+        // Count questions
+        () => {
+          const total = collection.reduce((s, c) => s + c.quantity, 0);
+          const wrong = [total + Math.floor(total * 0.3), total - Math.floor(total * 0.25), total + Math.floor(total * 0.5)];
+          return { q: "How many total cards are in your collection?", correct: String(total), options: shuffle([String(total), ...getWrongAnswers(String(total), wrong.map(String))]) };
+        },
+        () => {
+          const mythics = collection.filter(c => c.rarity === 'mythic').reduce((s, c) => s + c.quantity, 0);
+          const wrong = [mythics + 5, Math.max(0, mythics - 3), mythics + 10];
+          return { q: "How many mythic rare cards do you own?", correct: String(mythics), options: shuffle([String(mythics), ...getWrongAnswers(String(mythics), wrong.map(String))]) };
+        },
+        () => {
+          const rares = collection.filter(c => c.rarity === 'rare').reduce((s, c) => s + c.quantity, 0);
+          const wrong = [rares + 15, Math.max(0, rares - 10), rares + 25];
+          return { q: "How many rare cards do you own?", correct: String(rares), options: shuffle([String(rares), ...getWrongAnswers(String(rares), wrong.map(String))]) };
+        },
+        // Set questions
+        () => {
+          const sets = {};
+          collection.forEach(c => sets[c.setName] = (sets[c.setName] || 0) + c.quantity);
+          const top = Object.entries(sets).sort((a, b) => b[1] - a[1])[0];
+          const wrong = getWrongAnswers(top[0], Object.keys(sets));
+          return { q: "Which set has the most cards in your collection?", correct: top[0], options: shuffle([top[0], ...wrong]) };
+        },
+        () => {
+          const sets = new Set(collection.map(c => c.setName));
+          const count = sets.size;
+          const wrong = [count + 5, Math.max(1, count - 3), count + 8];
+          return { q: "How many different sets are in your collection?", correct: String(count), options: shuffle([String(count), ...getWrongAnswers(String(count), wrong.map(String))]) };
+        },
+        // Value questions
+        () => {
+          const total = collection.reduce((s, c) => s + c.price * c.quantity, 0);
+          const cur = collection[0]?.currency || 'USD';
+          const correct = formatPrice(total, cur);
+          const wrong = [formatPrice(total * 0.6, cur), formatPrice(total * 1.4, cur), formatPrice(total * 0.8, cur)];
+          return { q: "What is the total value of your collection?", correct, options: shuffle([correct, ...getWrongAnswers(correct, wrong)]) };
+        },
+        () => {
+          const setValues = {};
+          collection.forEach(c => setValues[c.setName] = (setValues[c.setName] || 0) + c.price * c.quantity);
+          const top = Object.entries(setValues).sort((a, b) => b[1] - a[1])[0];
+          const wrong = getWrongAnswers(top[0], Object.keys(setValues));
+          return { q: "Which set has the highest total value?", correct: top[0], options: shuffle([top[0], ...wrong]) };
+        },
+        // Rarity questions
+        () => {
+          const card = getRandom(collection);
+          const wrong = getWrongAnswers(card.rarity, ['common', 'uncommon', 'rare', 'mythic']);
+          return { q: `What is the rarity of "${card.name}"?`, correct: card.rarity, options: shuffle([card.rarity, ...wrong]) };
+        },
+        () => {
+          const rarityCounts = {};
+          collection.forEach(c => rarityCounts[c.rarity] = (rarityCounts[c.rarity] || 0) + c.quantity);
+          const top = Object.entries(rarityCounts).sort((a, b) => b[1] - a[1])[0];
+          const wrong = getWrongAnswers(top[0], ['common', 'uncommon', 'rare', 'mythic']);
+          return { q: "Which rarity do you have the most of?", correct: top[0], options: shuffle([top[0], ...wrong]) };
+        },
+        // Card-specific
+        () => {
+          const card = getRandom(collection);
+          const wrong = getWrongAnswers(card.setName, [...new Set(collection.map(c => c.setName))]);
+          return { q: `Which set is "${card.name}" from?`, correct: card.setName, options: shuffle([card.setName, ...wrong]) };
+        },
+        () => {
+          const foils = collection.filter(c => c.foil === 'foil' || c.foil === 'etched');
+          const count = foils.reduce((s, c) => s + c.quantity, 0);
+          const wrong = [count + 8, Math.max(0, count - 5), count + 15];
+          return { q: "How many foil/etched cards do you own?", correct: String(count), options: shuffle([String(count), ...getWrongAnswers(String(count), wrong.map(String))]) };
+        },
+        () => {
+          const avg = collection.reduce((s, c) => s + c.price, 0) / collection.length;
+          const cur = collection[0]?.currency || 'USD';
+          const correct = formatPrice(avg, cur);
+          const wrong = [formatPrice(avg * 0.5, cur), formatPrice(avg * 2, cur), formatPrice(avg * 1.5, cur)];
+          return { q: "What is the average card price in your collection?", correct, options: shuffle([correct, ...getWrongAnswers(correct, wrong)]) };
+        },
+      ];
+      
+      return getRandom(questions)();
+    }
+
+    function showQuestion() {
+      if (currentQuestion >= 10) {
+        showResult();
+        return;
+      }
+      
+      answered = false;
+      document.getElementById('q-num').textContent = currentQuestion + 1;
+      document.getElementById('score').textContent = score;
+      
+      const q = generateQuestion();
+      const content = document.getElementById('trivia-content');
+      content.innerHTML = `
+        <div class="trivia-question">${q.q}</div>
+        <div class="trivia-options">
+          ${q.options.map(opt => `<button class="trivia-option" data-answer="${opt}" data-correct="${q.correct}">${opt}</button>`).join('')}
+        </div>
+      `;
+      
+      content.querySelectorAll('.trivia-option').forEach(btn => {
+        btn.addEventListener('click', () => handleAnswer(btn));
+      });
+    }
+
+    function handleAnswer(btn) {
+      if (answered) return;
+      answered = true;
+      
+      const selected = btn.dataset.answer;
+      const correct = btn.dataset.correct;
+      const isCorrect = selected === correct;
+      
+      if (isCorrect) score++;
+      document.getElementById('score').textContent = score;
+      
+      document.querySelectorAll('.trivia-option').forEach(b => {
+        b.classList.add('disabled');
+        if (b.dataset.answer === correct) b.classList.add('correct');
+        else if (b === btn && !isCorrect) b.classList.add('wrong');
+      });
+      
+      setTimeout(() => {
+        currentQuestion++;
+        showQuestion();
+      }, 1500);
+    }
+
+    function showResult() {
+      const messages = [
+        [0, 3, "Keep studying your collection! 📚"],
+        [4, 6, "Not bad! You know your cards! 👍"],
+        [7, 8, "Great job! You're a collector! 🎉"],
+        [9, 10, "Perfect! You're a true MTG master! 🏆"]
+      ];
+      const msg = messages.find(m => score >= m[0] && score <= m[1])[2];
+      
+      document.getElementById('trivia-content').innerHTML = `
+        <div class="trivia-result">
+          <div class="trivia-score">${score}/10</div>
+          <div class="trivia-message">${msg}</div>
+          <button class="trivia-btn" onclick="startGame()">Play Again</button>
+        </div>
+      `;
+    }
+
+    function startGame() {
+      currentQuestion = 0;
+      score = 0;
+      showQuestion();
+    }
+
+    loadCollection();
+  </script>
+</body>
+</html>
