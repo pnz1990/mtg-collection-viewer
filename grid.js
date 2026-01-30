@@ -220,8 +220,6 @@ async function onCollectionLoaded() {
   // Load full data button
   const loadBtn = document.getElementById('load-full-data');
   if (loadBtn) {
-    // Check if already loaded from cache
-    await checkCachedCardData();
     updateLoadButton();
     
     loadBtn.addEventListener('click', async () => {
@@ -239,13 +237,6 @@ async function onCollectionLoaded() {
       renderCharts();
       applyFilters();
     });
-  }
-}
-
-async function checkCachedCardData() {
-  for (const card of collection) {
-    const cached = await getCardData(card.scryfallId);
-    if (cached) Object.assign(card, cached);
   }
 }
 

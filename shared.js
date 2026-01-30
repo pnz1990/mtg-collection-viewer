@@ -198,6 +198,12 @@ async function loadCollection() {
   filteredCollection.sort((a, b) => (b.price * b.quantity) - (a.price * a.quantity));
   updateStats();
   
+  // Load cached full data if available
+  for (const card of collection) {
+    const cached = await getCardData(card.scryfallId);
+    if (cached) Object.assign(card, cached);
+  }
+  
   if (typeof onCollectionLoaded === 'function') {
     onCollectionLoaded();
   }
