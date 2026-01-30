@@ -386,44 +386,6 @@ function renderBinder(direction = null) {
   updateNav();
 }
 
-function setupBinderDrag() {
-  const wrapper = document.querySelector('.binder-wrapper');
-  let startX = 0, isDragging = false;
-  
-  wrapper.addEventListener('mousedown', e => { startX = e.clientX; isDragging = true; });
-  wrapper.addEventListener('touchstart', e => { startX = e.touches[0].clientX; isDragging = true; });
-  
-  document.addEventListener('mouseup', e => {
-    if (!isDragging) return;
-    isDragging = false;
-    const diff = e.clientX - startX;
-    if (Math.abs(diff) > 100) {
-      if (diff < 0 && binderPage < Math.ceil(filteredCollection.length / CARDS_PER_BINDER_PAGE) - 1) {
-        binderPage++;
-        renderBinder('next');
-      } else if (diff > 0 && binderPage > 0) {
-        binderPage--;
-        renderBinder('prev');
-      }
-    }
-  });
-  
-  document.addEventListener('touchend', e => {
-    if (!isDragging) return;
-    isDragging = false;
-    const diff = e.changedTouches[0].clientX - startX;
-    if (Math.abs(diff) > 50) {
-      if (diff < 0 && binderPage < Math.ceil(filteredCollection.length / CARDS_PER_BINDER_PAGE) - 1) {
-        binderPage++;
-        renderBinder('next');
-      } else if (diff > 0 && binderPage > 0) {
-        binderPage--;
-        renderBinder('prev');
-      }
-    }
-  });
-}
-
 function setView(view) {
   currentView = view;
   document.getElementById('list-view').classList.toggle('active', view === 'list');
@@ -431,7 +393,7 @@ function setView(view) {
   document.getElementById('collection').classList.toggle('hidden', view !== 'list');
   document.getElementById('binder').classList.toggle('hidden', view !== 'binder');
   if (view === 'list') renderCollection();
-  else { renderBinder(); setupBinderDrag(); }
+  else renderBinder();
 }
 
 function setupAutocomplete(inputId, listId, getItems) {
