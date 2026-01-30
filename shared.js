@@ -253,7 +253,7 @@ function applyFilters() {
     const matchesColor = !colorFilter || matchCardColor(card, colorFilter);
     const matchesIdentity = selectedColors.length === 0 || matchColorIdentity(card, selectedColors);
     const matchesKeyword = !keywordFilter || (card.keywords && card.keywords.includes(keywordFilter));
-    const matchesCmc = cmcFilter === undefined || card.cmc === cmcFilter;
+    const matchesCmc = cmcFilter === undefined || (cmcFilter === 6 ? card.cmc >= 6 : card.cmc === cmcFilter);
     
     return card.name.toLowerCase().includes(search) &&
       (!setFilter || card.setName.toLowerCase().includes(setFilter)) &&

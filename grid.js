@@ -38,7 +38,7 @@ function getPriceRange(price) {
 function renderCharts() {
   const colors = ['#4CAF50', '#2196F3', '#FF9800', '#E91E63', '#9C27B0', '#00BCD4', '#FFEB3B', '#795548'];
   
-  const createChart = (id, data, type = 'doughnut') => {
+  const createChart = (id, data, type = 'doughnut', onClick) => {
     const canvas = document.getElementById(id);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -59,7 +59,8 @@ function renderCharts() {
         scales: {
           x: { ticks: { color: '#e0e0e0' }, grid: { color: '#333' } },
           y: { ticks: { color: '#e0e0e0' }, grid: { display: false } }
-        }
+        },
+        onClick: (e, els) => { if (els.length && onClick) onClick(labels[els[0].index]); }
       }
     } : {
       type: 'doughnut',
@@ -70,20 +71,34 @@ function renderCharts() {
       options: {
         responsive: true,
         plugins: { legend: { position: 'bottom', labels: { color: '#e0e0e0', boxWidth: 12, padding: 8 } } },
-        animation: { animateRotate: true, duration: 800 }
+        animation: { animateRotate: true, duration: 800 },
+        onClick: (e, els) => { if (els.length && onClick) onClick(labels[els[0].index]); }
       }
     };
     charts[id] = new Chart(ctx, config);
   };
   
-  createChart('rarity-chart', countBy(collection, 'rarity'));
+  createChart('rarity-chart', countBy(collection, 'rarity'), 'doughnut', v => {
+    document.getElementById('rarity-filter').value = v;
+    applyFilters();
+  });
   
   const setCounts = countBy(collection, 'setName');
   const topSets = Object.entries(setCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
-  createChart('set-chart', Object.fromEntries(topSets));
+  createChart('set-chart', Object.fromEntries(topSets), 'doughnut', v => {
+    document.getElementById('set-filter').value = v;
+    applyFilters();
+  });
   
-  createChart('finish-chart', countBy(collection, 'foil'));
-  createChart('price-chart', countBy(collection, c => getPriceRange(c.price)));
+  createChart('finish-chart', countBy(collection, 'foil'), 'doughnut', v => {
+    document.getElementById('foil-filter').value = v;
+    applyFilters();
+  });
+  
+  createChart('price-chart', countBy(collection, c => getPriceRange(c.price)), 'doughnut', v => {
+    const ranges = { '$0-1': [0,1], '$1-5': [1,5], '$5-10': [5,10], '$10-25': [10,25], '$25-50': [25,50], '$50+': [50, maxPriceValue] };
+    if (ranges[v] && priceSlider) { priceSlider.set(ranges[v]); applyFilters(); }
+  });
   
   // Value by set (bar chart)
   const setValues = {};
@@ -91,7 +106,10 @@ function renderCharts() {
     setValues[c.setName] = (setValues[c.setName] || 0) + c.price * c.quantity;
   });
   const topSetValues = Object.entries(setValues).sort((a, b) => b[1] - a[1]).slice(0, 6);
-  createChart('set-value-chart', Object.fromEntries(topSetValues.map(([k, v]) => [k, Math.round(v)])), 'bar');
+  createChart('set-value-chart', Object.fromEntries(topSetValues.map(([k, v]) => [k, Math.round(v)])), 'bar', v => {
+    document.getElementById('set-filter').value = v;
+    applyFilters();
+  });
   
   // Price stats
   const prices = collection.map(c => c.price).sort((a, b) => a - b);
@@ -116,7 +134,10 @@ function renderCharts() {
   const sortedRarityValues = Object.fromEntries(
     rarityOrder.filter(r => rarityValues[r]).map(r => [r, Math.round(rarityValues[r])])
   );
-  createChart('rarity-value-chart', sortedRarityValues, 'bar');
+  createChart('rarity-value-chart', sortedRarityValues, 'bar', v => {
+    document.getElementById('rarity-filter').value = v;
+    applyFilters();
+  });
   
   // Full data charts (only if loaded)
   if (isFullDataLoaded()) {
@@ -132,10 +153,14 @@ function renderCharts() {
         .find(t => c.type_line.includes(t)) || 'Other';
       types[mainType] = (types[mainType] || 0) + c.quantity;
     });
-    createChart('type-chart', types);
+    createChart('type-chart', types, 'doughnut', v => {
+      document.getElementById('type-filter').value = v;
+      applyFilters();
+    });
     
     // By Color
     const colorNames = { W: 'White', U: 'Blue', B: 'Black', R: 'Red', G: 'Green' };
+    const colorMap = { White: 'W', Blue: 'U', Black: 'B', Red: 'R', Green: 'G', Colorless: 'C', Multi: 'M' };
     const colorCounts = { White: 0, Blue: 0, Black: 0, Red: 0, Green: 0, Colorless: 0, Multi: 0 };
     collection.forEach(c => {
       if (!c.colors) return;
@@ -143,7 +168,10 @@ function renderCharts() {
       else if (c.colors.length > 1) colorCounts.Multi += c.quantity;
       else colorCounts[colorNames[c.colors[0]]] += c.quantity;
     });
-    createChart('color-chart', Object.fromEntries(Object.entries(colorCounts).filter(([,v]) => v > 0)));
+    createChart('color-chart', Object.fromEntries(Object.entries(colorCounts).filter(([,v]) => v > 0)), 'doughnut', v => {
+      document.getElementById('color-filter').value = colorMap[v] || '';
+      applyFilters();
+    });
     
     // Mana Curve
     const cmcCounts = { '0': 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6+': 0 };
@@ -152,7 +180,10 @@ function renderCharts() {
       const bucket = c.cmc >= 6 ? '6+' : String(Math.floor(c.cmc));
       cmcCounts[bucket] += c.quantity;
     });
-    createChart('cmc-chart', cmcCounts, 'bar');
+    createChart('cmc-chart', cmcCounts, 'bar', v => {
+      window.cmcFilter = v === '6+' ? 6 : parseInt(v);
+      applyFilters();
+    });
     
     // Avg CMC by Type
     document.getElementById('avg-cmc-chart-box').style.display = '';
