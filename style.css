@@ -530,6 +530,28 @@ h1 {
   height: 100%;
 }
 
+/* Binder foil shimmer */
+.binder-card.foil::before,
+.binder-card.etched::before {
+  background: linear-gradient(
+    125deg,
+    transparent 0%,
+    rgba(255,255,255,0.1) 25%,
+    rgba(255,200,100,0.25) 35%,
+    rgba(100,200,255,0.25) 45%,
+    rgba(200,100,255,0.25) 55%,
+    rgba(255,255,255,0.1) 75%,
+    transparent 100%
+  );
+  background-size: 200% 200%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { background-position: 200% 200%; }
+  50% { background-position: 0% 0%; }
+}
+
 .binder-nav {
   width: 50px;
   height: 80px;

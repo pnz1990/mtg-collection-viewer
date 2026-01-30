@@ -297,13 +297,15 @@ function renderBinder(direction = null) {
     const start = binderPage * CARDS_PER_BINDER_PAGE;
     const pageCards = filteredCollection.slice(start, start + CARDS_PER_BINDER_PAGE);
     
-    const renderPageCards = (cards) => cards.map(card => `
-      <div class="binder-card" data-scryfall-id="${card.scryfallId}">
+    const renderPageCards = (cards) => cards.map(card => {
+      const foilClass = card.foil !== 'normal' ? card.foil : '';
+      return `
+      <div class="binder-card ${foilClass}" data-scryfall-id="${card.scryfallId}">
         <a href="detail.html?id=${card.scryfallId}">
           <img alt="${card.name}" class="card-image">
         </a>
       </div>
-    `).join('') + Array(9 - cards.length).fill('<div class="binder-card"></div>').join('');
+    `}).join('') + Array(9 - cards.length).fill('<div class="binder-card"></div>').join('');
     
     leftPage.innerHTML = renderPageCards(pageCards.slice(0, 9));
     rightPage.innerHTML = renderPageCards(pageCards.slice(9, 18));
