@@ -509,7 +509,6 @@ function setView(view) {
 
 function renderCarousel() {
   const container = document.querySelector('.carousel-cards');
-  const scrollY = window.scrollY;
   const visibleCount = 5;
   
   // Calculate visible range, ensuring active card is centered
@@ -543,8 +542,6 @@ function renderCarousel() {
       </div>
     `;
   }).join('');
-  
-  window.scrollTo(0, scrollY);
   
   document.getElementById('carousel-current').textContent = carouselIndex + 1;
   document.getElementById('carousel-total').textContent = filteredCollection.length;
@@ -614,15 +611,19 @@ document.querySelector('.binder-mobile-next').addEventListener('click', () => {
 });
 document.querySelector('.carousel-prev').addEventListener('click', (e) => { 
   e.preventDefault(); 
-  e.target.blur();
+  e.stopPropagation();
+  const scrollY = window.scrollY;
   carouselIndex--; 
   renderCarousel(); 
+  requestAnimationFrame(() => window.scrollTo(0, scrollY));
 });
 document.querySelector('.carousel-next').addEventListener('click', (e) => { 
   e.preventDefault(); 
-  e.target.blur();
+  e.stopPropagation();
+  const scrollY = window.scrollY;
   carouselIndex++; 
   renderCarousel(); 
+  requestAnimationFrame(() => window.scrollTo(0, scrollY));
 });
 
 setupAutocomplete('search', 'search-autocomplete', () => [...new Set(collection.map(c => c.name))]);
