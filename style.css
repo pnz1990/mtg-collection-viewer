@@ -297,7 +297,8 @@ h1 {
 
 /* Price Slider */
 .price-slider {
-  min-width: 200px;
+  width: 180px;
+  flex-shrink: 0;
 }
 
 .price-slider label {

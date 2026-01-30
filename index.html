@@ -45,6 +45,13 @@
       <input type="text" id="set-filter" placeholder="Filter by set..." autocomplete="off">
       <div id="set-autocomplete" class="autocomplete-list"></div>
     </div>
+    <div class="filter-group price-slider">
+      <label>Price: $<span id="price-min-val">0</span> - $<span id="price-max-val">∞</span></label>
+      <div class="range-slider">
+        <input type="range" id="price-min" min="0" max="200" value="0">
+        <input type="range" id="price-max" min="0" max="200" value="200">
+      </div>
+    </div>
     <select id="rarity-filter">
       <option value="">All Rarities</option>
       <option value="common">Common</option>
@@ -64,13 +71,6 @@
       <option value="rarity">Rarity</option>
       <option value="set">Set</option>
     </select>
-    <div class="filter-group price-slider">
-      <label>Price: $<span id="price-min-val">0</span> - $<span id="price-max-val">∞</span></label>
-      <div class="range-slider">
-        <input type="range" id="price-min" min="0" max="200" value="0">
-        <input type="range" id="price-max" min="0" max="200" value="200">
-      </div>
-    </div>
   </div>
 
   <div id="collection" class="collection"></div>
