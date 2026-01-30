@@ -173,6 +173,12 @@ function renderCharts() {
   }
 }
 
+function getMainType(typeLine) {
+  if (!typeLine) return null;
+  return ['Creature', 'Instant', 'Sorcery', 'Artifact', 'Enchantment', 'Land', 'Planeswalker']
+    .find(t => typeLine.includes(t));
+}
+
 function renderCollection() {
   const container = document.getElementById('collection');
   
@@ -186,6 +192,7 @@ function renderCollection() {
     const foilClass = card.foil !== 'normal' ? card.foil : '';
     const dupeClass = nameCounts[card.name] >= 2 ? 'duplicate' : '';
     const setIcon = `https://svgs.scryfall.io/sets/${card.setCode.toLowerCase()}.svg`;
+    const mainType = getMainType(card.type_line);
     return `
     <div class="card ${foilClass} ${dupeClass}" data-scryfall-id="${card.scryfallId}">
       <a href="detail.html?id=${card.scryfallId}" class="card-link">
@@ -203,6 +210,8 @@ function renderCollection() {
         <div class="card-details">
           <span class="badge rarity-${card.rarity}">${card.rarity}</span>
           ${card.foil !== 'normal' ? `<span class="badge foil-${card.foil}">${card.foil}</span>` : ''}
+          ${mainType ? `<span class="badge type-badge">${mainType}</span>` : ''}
+          ${card.cmc !== undefined && !card.type_line?.includes('Land') ? `<span class="badge cmc-badge">⬡${card.cmc}</span>` : ''}
           ${nameCounts[card.name] >= 2 ? `<span class="badge duplicate-badge">x${nameCounts[card.name]}</span>` : ''}
         </div>
       </a>

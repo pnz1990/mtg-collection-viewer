@@ -388,6 +388,14 @@ h1 {
   background: #e65100;
 }
 
+.type-badge {
+  background: #5c6bc0;
+}
+
+.cmc-badge {
+  background: #7b1fa2;
+}
+
 .card.duplicate {
   box-shadow: 0 0 0 2px #e65100, 0 4px 15px rgba(230, 81, 0, 0.3);
 }
@@ -423,13 +431,15 @@ h1 {
 
 .chart-box.stats-box {
   text-align: left;
+  min-width: 180px;
 }
 
 .stat-item {
   display: flex;
   justify-content: space-between;
-  padding: 8px 0;
+  padding: 6px 0;
   border-bottom: 1px solid var(--bg-tertiary);
+  gap: 10px;
 }
 
 .stat-item:last-child {
@@ -438,10 +448,13 @@ h1 {
 
 .stat-item span {
   color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 .stat-item strong {
   color: var(--accent);
+  white-space: nowrap;
+  font-size: 0.95rem;
 }
 
 /* Autocomplete */
