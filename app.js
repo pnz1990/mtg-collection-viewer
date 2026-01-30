@@ -329,8 +329,7 @@ function renderBinder(direction = null) {
     const currStart = binderPage * CARDS_PER_BINDER_PAGE;
     const currCards = filteredCollection.slice(currStart, currStart + CARDS_PER_BINDER_PAGE);
     
-    // Show new pages underneath
-    leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
+    // Keep old left page, show new right underneath
     rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
     
     // Create flipping page with front (old right) and back (new left)
@@ -348,7 +347,11 @@ function renderBinder(direction = null) {
     
     requestAnimationFrame(() => {
       flipPage.classList.add('flipping');
-      flipPage.addEventListener('animationend', () => flipPage.remove(), { once: true });
+      flipPage.addEventListener('animationend', () => {
+        leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
+        loadImages();
+        flipPage.remove();
+      }, { once: true });
     });
     
   } else if (direction === 'prev') {
@@ -357,17 +360,16 @@ function renderBinder(direction = null) {
     const currStart = binderPage * CARDS_PER_BINDER_PAGE;
     const currCards = filteredCollection.slice(currStart, currStart + CARDS_PER_BINDER_PAGE);
     
-    // Show new pages underneath
+    // Keep old right page, show new left underneath
     leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
-    rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
     
-    // Create flipping page with front (new right) and back (old left)
+    // Create flipping page starting from left, with front (old left) and back (new right)
     const flipPage = document.createElement('div');
     flipPage.className = 'flip-page flip-page-prev';
     flipPage.innerHTML = `
       <div class="flip-page-inner">
-        <div class="flip-page-front">${renderPageCards(currCards.slice(9, 18))}</div>
-        <div class="flip-page-back">${renderPageCards(nextCards.slice(0, 9))}</div>
+        <div class="flip-page-front">${renderPageCards(nextCards.slice(0, 9))}</div>
+        <div class="flip-page-back">${renderPageCards(currCards.slice(9, 18))}</div>
       </div>
     `;
     pagesContainer.appendChild(flipPage);
@@ -376,7 +378,11 @@ function renderBinder(direction = null) {
     
     requestAnimationFrame(() => {
       flipPage.classList.add('flipping');
-      flipPage.addEventListener('animationend', () => flipPage.remove(), { once: true });
+      flipPage.addEventListener('animationend', () => {
+        rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
+        loadImages();
+        flipPage.remove();
+      }, { once: true });
     });
     
   } else {
