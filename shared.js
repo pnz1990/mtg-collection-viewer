@@ -116,6 +116,8 @@ async function loadCollection() {
   if (typeof onCollectionLoaded === 'function') {
     onCollectionLoaded();
   }
+  
+  return collection;
 }
 
 function setupPriceSlider() {
@@ -197,11 +199,13 @@ document.getElementById('rarity-filter').addEventListener('change', applyFilters
 document.getElementById('foil-filter').addEventListener('change', applyFilters);
 document.getElementById('sort').addEventListener('change', applyFilters);
 
-setupAutocomplete('search', 'search-autocomplete', () => [...new Set(collection.map(c => c.name))]);
-setupAutocomplete('set-filter', 'set-autocomplete', () => [...new Set(collection.map(c => c.setName))]);
-
 // Load noUiSlider then collection
 const nouislider = document.createElement('script');
 nouislider.src = 'https://cdn.jsdelivr.net/npm/nouislider@15/dist/nouislider.min.js';
-nouislider.onload = loadCollection;
+nouislider.onload = () => {
+  loadCollection().then(() => {
+    setupAutocomplete('search', 'search-autocomplete', () => [...new Set(collection.map(c => c.name))]);
+    setupAutocomplete('set-filter', 'set-autocomplete', () => [...new Set(collection.map(c => c.setName))]);
+  });
+};
 document.head.appendChild(nouislider);
