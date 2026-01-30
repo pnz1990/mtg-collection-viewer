@@ -37,22 +37,18 @@
   </div>
 
   <div class="filters">
-    <div class="filter-group autocomplete-wrapper search-wrapper">
+    <div class="filter-group autocomplete-wrapper">
       <input type="text" id="search" placeholder="Search by name..." autocomplete="off">
       <div id="search-autocomplete" class="autocomplete-list"></div>
     </div>
-  </div>
-  <div class="filters">
     <div class="filter-group autocomplete-wrapper">
       <input type="text" id="set-filter" placeholder="Filter by set..." autocomplete="off">
       <div id="set-autocomplete" class="autocomplete-list"></div>
     </div>
     <div class="filter-group price-slider">
       <label>Price: $<span id="price-min-val">0</span> - $<span id="price-max-val">∞</span></label>
-      <div class="range-slider">
-        <input type="range" id="price-min" min="0" max="200" value="0">
-        <input type="range" id="price-max" min="0" max="200" value="200">
-      </div>
+      <input type="range" id="price-min" min="0" max="200" value="0">
+      <input type="range" id="price-max" min="0" max="200" value="200">
     </div>
     <select id="rarity-filter">
       <option value="">All Rarities</option>
