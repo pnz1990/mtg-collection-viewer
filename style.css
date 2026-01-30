@@ -264,17 +264,18 @@ h1 {
 .color-identity-filter {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
-.color-identity-filter label:first-child {
+.color-identity-filter > label:first-child {
   color: var(--text-secondary);
   font-size: 0.85rem;
+  white-space: nowrap;
 }
 
 .color-checkboxes {
   display: flex;
-  gap: 4px;
+  gap: 6px;
 }
 
 .color-check {
@@ -376,44 +377,60 @@ h1 {
 }
 
 .filters {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  max-width: 1200px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 25px;
+  max-width: 1000px;
   margin-left: auto;
   margin-right: auto;
+  padding: 0 20px;
 }
 
 .filters-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+  display: contents;
 }
 
 .filters input,
 .filters select {
-  padding: 8px 12px;
-  border: 1px solid #444;
+  padding: 10px 14px;
+  border: 1px solid var(--bg-tertiary);
   background: var(--bg-secondary);
-  color: #e0e0e0;
-  border-radius: 5px;
-  font-size: 0.85rem;
+  color: var(--text-primary);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  width: 100%;
+  transition: border-color 0.2s;
 }
 
-.filters input {
-  flex: 1;
-  min-width: 150px;
-  max-width: 200px;
+.filters input:focus,
+.filters select:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
-.filters select {
-  min-width: 100px;
+.filters input::placeholder {
+  color: var(--text-secondary);
+}
+
+.filter-group {
+  position: relative;
+}
+
+.filter-group.autocomplete-wrapper,
+.filter-group.price-slider {
+  grid-column: span 2;
+}
+
+.filter-group.color-identity-filter {
+  grid-column: span 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-secondary);
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--bg-tertiary);
 }
 
 .collection {
