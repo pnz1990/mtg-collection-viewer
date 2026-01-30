@@ -1154,3 +1154,135 @@ h1 {
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.8);
 }
+
+
+/* Timeline View */
+.timeline {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.timeline-year {
+  margin-bottom: 30px;
+}
+
+.year-header {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.timeline-set {
+  margin-bottom: 15px;
+  background: var(--bg-secondary);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.set-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.set-header:hover {
+  background: var(--bg-tertiary);
+}
+
+.set-header .set-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.set-header .set-name {
+  flex: 1;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.set-header .set-date {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.set-header .set-count {
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.set-header .set-toggle {
+  transition: transform 0.2s;
+}
+
+.timeline-set.collapsed .set-toggle {
+  transform: rotate(-90deg);
+}
+
+.timeline-set.collapsed .set-cards {
+  display: none;
+}
+
+.set-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px;
+  background: var(--bg-primary);
+}
+
+.timeline-card {
+  width: 120px;
+  text-decoration: none;
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.timeline-card:hover {
+  transform: scale(1.05);
+}
+
+.timeline-card-img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+.timeline-card.foil .timeline-card-img,
+.timeline-card.etched .timeline-card-img {
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.timeline-card-name {
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timeline-card-price {
+  font-size: 0.75rem;
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .set-header {
+    flex-wrap: wrap;
+  }
+  
+  .set-header .set-date {
+    order: 5;
+    width: 100%;
+    margin-top: 4px;
+  }
+  
+  .timeline-card {
+    width: 80px;
+  }
+}
