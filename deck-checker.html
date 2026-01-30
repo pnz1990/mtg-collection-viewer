@@ -30,12 +30,9 @@
   <div class="deck-checker">
     <div class="deck-input">
       <h2>Check Deck Against Your Collection</h2>
-      <p>Paste a Moxfield deck URL or deck list below</p>
-      <input type="text" id="deck-url" placeholder="https://www.moxfield.com/decks/..." class="deck-url-input">
-      <button type="button" id="check-url" class="check-btn">Check Moxfield Deck</button>
-      <div class="divider">— or paste deck list —</div>
-      <textarea id="deck-list" placeholder="1 Sol Ring&#10;1 Command Tower&#10;1 Lightning Bolt&#10;..." class="deck-list-input"></textarea>
-      <button type="button" id="check-list" class="check-btn">Check Deck List</button>
+      <p>Paste your deck list below (format: 1 Card Name)</p>
+      <textarea id="deck-list" placeholder="1 Sol Ring&#10;1 Command Tower&#10;1 Lightning Bolt&#10;4 Counterspell&#10;..." class="deck-list-input"></textarea>
+      <button type="button" id="check-list" class="check-btn">Check Deck</button>
     </div>
     
     <div id="deck-results" class="deck-results hidden">
@@ -57,11 +54,11 @@
       <div class="results-columns">
         <div class="results-column owned">
           <h3>✓ Cards You Own</h3>
-          <div id="owned-list" class="card-list"></div>
+          <div id="owned-list" class="card-grid"></div>
         </div>
         <div class="results-column missing">
           <h3>✗ Cards Missing</h3>
-          <div id="missing-list" class="card-list"></div>
+          <div id="missing-list" class="card-grid"></div>
         </div>
       </div>
     </div>
@@ -80,9 +77,8 @@
       localStorage.setItem('mtg-theme', themeSelect.value);
     });
 
-    let collectionNames = new Set();
+    let collectionNames = new Map(); // name -> scryfallId
 
-    // Load collection and extract card names
     async function loadCollection() {
       const response = await fetch('Collection.csv');
       const text = await response.text();
@@ -90,8 +86,12 @@
       
       lines.forEach(line => {
         if (!line.trim()) return;
-        const name = line.split(',')[0].replace(/^"|"$/g, '').toLowerCase();
-        collectionNames.add(name);
+        const parts = line.split(',');
+        const name = parts[0].replace(/^"|"$/g, '').toLowerCase();
+        const scryfallId = parts[8]?.replace(/^"|"$/g, '');
+        if (!collectionNames.has(name) && scryfallId) {
+          collectionNames.set(name, scryfallId);
+        }
       });
     }
 
@@ -103,7 +103,6 @@
         const trimmed = line.trim();
         if (!trimmed || trimmed.startsWith('//') || trimmed.startsWith('#')) continue;
         
-        // Match patterns like "1 Card Name" or "1x Card Name"
         const match = trimmed.match(/^(\d+)x?\s+(.+?)(?:\s+\([^)]+\))?(?:\s+\d+)?$/i);
         if (match) {
           cards.push({ quantity: parseInt(match[1]), name: match[2].trim() });
@@ -118,9 +117,8 @@
       
       for (const card of deckCards) {
         const nameLower = card.name.toLowerCase();
-        // Check if we own this card (any version)
         if (collectionNames.has(nameLower)) {
-          owned.push(card);
+          owned.push({ ...card, scryfallId: collectionNames.get(nameLower) });
         } else {
           missing.push(card);
         }
@@ -129,69 +127,56 @@
       return { owned, missing };
     }
 
-    function displayResults(owned, missing) {
+    async function fetchCardImage(name) {
+      try {
+        const response = await fetch(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(name)}`);
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data.image_uris?.small || data.card_faces?.[0]?.image_uris?.small;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    async function displayResults(owned, missing) {
       const results = document.getElementById('deck-results');
       results.classList.remove('hidden');
       
       const totalCards = owned.length + missing.length;
-      const ownedCount = owned.reduce((s, c) => s + c.quantity, 0);
-      const missingCount = missing.reduce((s, c) => s + c.quantity, 0);
       const percent = totalCards > 0 ? Math.round((owned.length / totalCards) * 100) : 0;
       
       document.getElementById('owned-count').textContent = owned.length;
       document.getElementById('missing-count').textContent = missing.length;
       document.getElementById('owned-percent').textContent = percent + '%';
       
-      document.getElementById('owned-list').innerHTML = owned
-        .map(c => `<div class="deck-card owned">${c.quantity}x ${c.name}</div>`)
-        .join('') || '<div class="empty">No cards owned</div>';
+      const ownedList = document.getElementById('owned-list');
+      const missingList = document.getElementById('missing-list');
       
-      document.getElementById('missing-list').innerHTML = missing
-        .map(c => `<div class="deck-card missing">${c.quantity}x ${c.name}</div>`)
-        .join('') || '<div class="empty">You own all cards!</div>';
-    }
-
-    async function checkMoxfieldDeck(url) {
-      // Extract deck ID from URL
-      const match = url.match(/moxfield\.com\/decks\/([a-zA-Z0-9_-]+)/);
-      if (!match) {
-        alert('Invalid Moxfield URL');
-        return;
-      }
+      ownedList.innerHTML = owned.map(c => `
+        <div class="deck-card-tile owned">
+          <img src="https://cards.scryfall.io/small/front/${c.scryfallId[0]}/${c.scryfallId[1]}/${c.scryfallId}.jpg" 
+               alt="${c.name}" onerror="this.src='back.png'">
+          <div class="tile-qty">${c.quantity}x</div>
+        </div>
+      `).join('') || '<div class="empty">No cards owned</div>';
       
-      const deckId = match[1];
+      missingList.innerHTML = missing.map(c => `
+        <div class="deck-card-tile missing" data-name="${c.name}">
+          <img src="back.png" alt="${c.name}">
+          <div class="tile-name">${c.name}</div>
+          <div class="tile-qty">${c.quantity}x</div>
+        </div>
+      `).join('') || '<div class="empty">You own all cards! 🎉</div>';
       
-      try {
-        const response = await fetch(`https://api2.moxfield.com/v2/decks/all/${deckId}`);
-        if (!response.ok) throw new Error('Failed to fetch deck');
-        
-        const data = await response.json();
-        const deckCards = [];
-        
-        // Extract cards from mainboard, sideboard, commanders, etc.
-        const boards = ['mainboard', 'sideboard', 'commanders', 'companions'];
-        for (const board of boards) {
-          if (data[board]) {
-            for (const [name, cardData] of Object.entries(data[board])) {
-              deckCards.push({ quantity: cardData.quantity, name: cardData.card.name });
-            }
-          }
+      // Load missing card images from Scryfall
+      for (const card of missing) {
+        const tile = missingList.querySelector(`[data-name="${card.name}"]`);
+        if (tile) {
+          const url = await fetchCardImage(card.name);
+          if (url) tile.querySelector('img').src = url;
         }
-        
-        const { owned, missing } = checkDeck(deckCards);
-        displayResults(owned, missing);
-        
-      } catch (e) {
-        alert('Could not fetch Moxfield deck. CORS may be blocking the request.\n\nTry copying the deck list from Moxfield and pasting it in the text area instead.');
-        console.error(e);
       }
     }
-
-    // Event listeners
-    document.getElementById('check-url').addEventListener('click', () => {
-      const url = document.getElementById('deck-url').value.trim();
-      if (url) checkMoxfieldDeck(url);
-    });
 
     document.getElementById('check-list').addEventListener('click', () => {
       const text = document.getElementById('deck-list').value.trim();
@@ -202,7 +187,6 @@
       displayResults(owned, missing);
     });
 
-    // Initialize
     loadCollection();
   </script>
 </body>
