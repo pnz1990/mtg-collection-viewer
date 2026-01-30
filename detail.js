@@ -1,5 +1,6 @@
 const params = new URLSearchParams(window.location.search);
 const scryfallId = params.get('id');
+const isReveal = params.get('reveal') === '1';
 
 async function loadCardDetails() {
   if (!scryfallId) {
@@ -99,10 +100,12 @@ function renderCardDetails(card, collectionCard) {
   // Start particles with color identity (empty = colorless/grey)
   createParticles(colorIdentity.length > 0 ? colorIdentity : ['C']);
   
+  const revealClass = isReveal ? 'reveal' : '';
+  
   document.getElementById('detail-container').innerHTML = `
     <div class="detail-content">
       <div class="detail-left">
-        <div class="detail-image-wrapper ${foilClass}">
+        <div class="detail-image-wrapper ${foilClass} ${revealClass}">
           <div class="detail-image-inner">
             <img src="${imageUrl}" alt="${card.name}" class="detail-image">
             <img src="back.png" alt="Card back" class="detail-back">
@@ -110,7 +113,7 @@ function renderCardDetails(card, collectionCard) {
         </div>
       </div>
       
-      <div class="detail-info">
+      <div class="detail-info ${revealClass}">
         <div class="card-title">
           <h2>${card.name}</h2>
           <div class="mana-cost">${renderManaSymbols(card.mana_cost)}</div>

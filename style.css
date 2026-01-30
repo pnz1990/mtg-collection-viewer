@@ -46,11 +46,28 @@ h1 {
   display: flex;
   gap: 30px;
   justify-content: center;
+  align-items: center;
   font-size: 1.1rem;
 }
 
 .stats strong {
   color: #4CAF50;
+}
+
+.random-btn {
+  background: linear-gradient(135deg, #9C27B0, #673AB7);
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.random-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(156, 39, 176, 0.4);
 }
 
 .filters {

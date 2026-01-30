@@ -360,3 +360,48 @@ body.has-art-bg::after {
     position: static;
   }
 }
+
+/* Reveal animation */
+.detail-image-wrapper.reveal {
+  animation: card-reveal 1.5s ease-out forwards;
+}
+
+.detail-image-wrapper.reveal .detail-image-inner {
+  animation: card-flip-reveal 1.5s ease-out forwards;
+}
+
+.detail-info.reveal {
+  opacity: 0;
+  animation: fade-in 0.5s ease-out 1.3s forwards;
+}
+
+@keyframes card-reveal {
+  0% {
+    transform: scale(0.3) translateY(100px);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1) translateY(-20px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes card-flip-reveal {
+  0% {
+    transform: rotateY(180deg);
+  }
+  60% {
+    transform: rotateY(180deg);
+  }
+  100% {
+    transform: rotateY(0deg);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

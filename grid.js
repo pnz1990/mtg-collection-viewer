@@ -142,6 +142,11 @@ function onCollectionLoaded() {
   setupImageObserver();
   renderCharts();
   renderCollection();
+  
+  document.getElementById('random-card')?.addEventListener('click', () => {
+    const randomCard = collection[Math.floor(Math.random() * collection.length)];
+    window.location.href = `detail.html?id=${randomCard.scryfallId}&reveal=1`;
+  });
 }
 
 function onFiltersApplied() {
