@@ -100,13 +100,14 @@
       const lines = text.trim().split('\n');
       
       for (const line of lines) {
-        const trimmed = line.trim();
+        let trimmed = line.trim();
         if (!trimmed || trimmed.startsWith('//') || trimmed.startsWith('#')) continue;
         
-        // Remove quantity prefix and anything after "("
-        const withoutQty = trimmed.replace(/^\d+x?\s+/, '');
-        const name = withoutQty.split('(')[0].trim();
-        if (name) cards.add(name);
+        // Remove quantity prefix (e.g., "1 " or "4x ")
+        trimmed = trimmed.replace(/^\d+x?\s+/, '');
+        // Remove set info (anything after "(")
+        const name = trimmed.split('(')[0].trim();
+        if (name) cards.add(name.toLowerCase());
       }
       return [...cards].map(name => ({ name }));
     }
@@ -116,9 +117,8 @@
       const missing = [];
       
       for (const card of deckCards) {
-        const nameLower = card.name.toLowerCase();
-        if (collectionNames.has(nameLower)) {
-          owned.push({ ...card, scryfallId: collectionNames.get(nameLower) });
+        if (collectionNames.has(card.name)) {
+          owned.push({ ...card, scryfallId: collectionNames.get(card.name) });
         } else {
           missing.push(card);
         }
@@ -168,7 +168,7 @@
       
       // Load missing card images from Scryfall
       for (const card of missing) {
-        const tile = missingList.querySelector(`[data-name="${card.name}"]`);
+        const tile = missingList.querySelector(`[data-name="${CSS.escape(card.name)}"]`);
         if (tile) {
           const url = await fetchCardImage(card.name);
           if (url) tile.querySelector('img').src = url;
