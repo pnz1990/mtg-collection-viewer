@@ -69,6 +69,18 @@
         <h3>Value by Rarity</h3>
         <canvas id="rarity-value-chart"></canvas>
       </div>
+      <div class="chart-box" id="type-chart-box" style="display:none">
+        <h3>By Type</h3>
+        <canvas id="type-chart"></canvas>
+      </div>
+      <div class="chart-box" id="color-chart-box" style="display:none">
+        <h3>By Color</h3>
+        <canvas id="color-chart"></canvas>
+      </div>
+      <div class="chart-box" id="cmc-chart-box" style="display:none">
+        <h3>Mana Curve</h3>
+        <canvas id="cmc-chart"></canvas>
+      </div>
     </div>
   </div>
 
@@ -97,6 +109,26 @@
       <option value="normal">Normal</option>
       <option value="foil">Foil</option>
       <option value="etched">Etched</option>
+    </select>
+    <select id="type-filter">
+      <option value="">All Types</option>
+      <option value="Creature">Creature</option>
+      <option value="Instant">Instant</option>
+      <option value="Sorcery">Sorcery</option>
+      <option value="Artifact">Artifact</option>
+      <option value="Enchantment">Enchantment</option>
+      <option value="Land">Land</option>
+      <option value="Planeswalker">Planeswalker</option>
+    </select>
+    <select id="color-filter">
+      <option value="">All Colors</option>
+      <option value="W">White</option>
+      <option value="U">Blue</option>
+      <option value="B">Black</option>
+      <option value="R">Red</option>
+      <option value="G">Green</option>
+      <option value="C">Colorless</option>
+      <option value="M">Multicolor</option>
     </select>
     <select id="sort">
       <option value="price">Price</option>

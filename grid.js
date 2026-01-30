@@ -117,6 +117,43 @@ function renderCharts() {
     rarityOrder.filter(r => rarityValues[r]).map(r => [r, Math.round(rarityValues[r])])
   );
   createChart('rarity-value-chart', sortedRarityValues, 'bar');
+  
+  // Full data charts (only if loaded)
+  if (isFullDataLoaded()) {
+    document.getElementById('type-chart-box').style.display = '';
+    document.getElementById('color-chart-box').style.display = '';
+    document.getElementById('cmc-chart-box').style.display = '';
+    
+    // By Type
+    const types = {};
+    collection.forEach(c => {
+      if (!c.type_line) return;
+      const mainType = ['Creature', 'Instant', 'Sorcery', 'Artifact', 'Enchantment', 'Land', 'Planeswalker', 'Battle']
+        .find(t => c.type_line.includes(t)) || 'Other';
+      types[mainType] = (types[mainType] || 0) + c.quantity;
+    });
+    createChart('type-chart', types);
+    
+    // By Color
+    const colorNames = { W: 'White', U: 'Blue', B: 'Black', R: 'Red', G: 'Green' };
+    const colorCounts = { White: 0, Blue: 0, Black: 0, Red: 0, Green: 0, Colorless: 0, Multi: 0 };
+    collection.forEach(c => {
+      if (!c.colors) return;
+      if (c.colors.length === 0) colorCounts.Colorless += c.quantity;
+      else if (c.colors.length > 1) colorCounts.Multi += c.quantity;
+      else colorCounts[colorNames[c.colors[0]]] += c.quantity;
+    });
+    createChart('color-chart', Object.fromEntries(Object.entries(colorCounts).filter(([,v]) => v > 0)));
+    
+    // Mana Curve
+    const cmcCounts = { '0': 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6+': 0 };
+    collection.forEach(c => {
+      if (c.cmc === undefined || (c.type_line && c.type_line.includes('Land'))) return;
+      const bucket = c.cmc >= 6 ? '6+' : String(Math.floor(c.cmc));
+      cmcCounts[bucket] += c.quantity;
+    });
+    createChart('cmc-chart', cmcCounts, 'bar');
+  }
 }
 
 function renderCollection() {

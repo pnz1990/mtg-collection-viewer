@@ -231,14 +231,21 @@ function applyFilters() {
   const setFilter = document.getElementById('set-filter').value.toLowerCase();
   const rarity = document.getElementById('rarity-filter').value;
   const foil = document.getElementById('foil-filter').value;
+  const typeFilter = document.getElementById('type-filter')?.value || '';
+  const colorFilter = document.getElementById('color-filter')?.value || '';
   const sort = document.getElementById('sort').value;
   const [priceMin, priceMax] = priceSlider ? priceSlider.get().map(Number) : [0, maxPriceValue];
   
   filteredCollection = collection.filter(card => {
+    const matchesType = !typeFilter || (card.type_line && card.type_line.includes(typeFilter));
+    const matchesColor = !colorFilter || matchCardColor(card, colorFilter);
+    
     return card.name.toLowerCase().includes(search) &&
       (!setFilter || card.setName.toLowerCase().includes(setFilter)) &&
       (!rarity || card.rarity === rarity) &&
       (!foil || card.foil === foil) &&
+      matchesType &&
+      matchesColor &&
       card.price >= priceMin && card.price <= priceMax;
   });
   
@@ -257,6 +264,13 @@ function applyFilters() {
   if (typeof onFiltersApplied === 'function') {
     onFiltersApplied();
   }
+}
+
+function matchCardColor(card, filter) {
+  if (!card.colors) return false;
+  if (filter === 'C') return card.colors.length === 0;
+  if (filter === 'M') return card.colors.length > 1;
+  return card.colors.includes(filter);
 }
 
 function setupAutocomplete(inputId, listId, getItems) {
@@ -291,6 +305,8 @@ document.getElementById('set-filter').addEventListener('input', applyFilters);
 document.getElementById('rarity-filter').addEventListener('change', applyFilters);
 document.getElementById('foil-filter').addEventListener('change', applyFilters);
 document.getElementById('sort').addEventListener('change', applyFilters);
+document.getElementById('type-filter')?.addEventListener('change', applyFilters);
+document.getElementById('color-filter')?.addEventListener('change', applyFilters);
 
 // Theme switcher
 const themeSelect = document.getElementById('theme-select');
