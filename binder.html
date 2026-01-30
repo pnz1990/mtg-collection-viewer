@@ -28,3 +28,116 @@
       </div>
     </div>
   </div>
+
+  <header>
+    <h1>MTG Collection Viewer</h1>
+    <div class="stats">
+      <span>Total Cards: <strong id="total-cards">0</strong></span>
+      <span>Total Value: <strong id="total-value">$0.00</strong></span>
+      <select id="theme-select" class="theme-select">
+        <option value="">Dark (Default)</option>
+        <option value="azorius">Azorius</option>
+        <option value="dimir">Dimir</option>
+        <option value="rakdos">Rakdos</option>
+        <option value="gruul">Gruul</option>
+        <option value="selesnya">Selesnya</option>
+        <option value="orzhov">Orzhov</option>
+        <option value="izzet">Izzet</option>
+        <option value="golgari">Golgari</option>
+        <option value="boros">Boros</option>
+        <option value="simic">Simic</option>
+      </select>
+    </div>
+  </header>
+
+  <div class="filters">
+    <div class="filter-group autocomplete-wrapper">
+      <input type="text" id="search" placeholder="Search by name..." autocomplete="off">
+      <div id="search-autocomplete" class="autocomplete-list"></div>
+    </div>
+    <div class="filter-group autocomplete-wrapper">
+      <input type="text" id="set-filter" placeholder="Filter by set..." autocomplete="off">
+      <div id="set-autocomplete" class="autocomplete-list"></div>
+    </div>
+    <div class="filter-group price-slider">
+      <label>Price: $<span id="price-min-val">0</span> - $<span id="price-max-val">∞</span></label>
+      <div id="price-range"></div>
+    </div>
+    <select id="rarity-filter">
+      <option value="">All Rarities</option>
+      <option value="common">Common</option>
+      <option value="uncommon">Uncommon</option>
+      <option value="rare">Rare</option>
+      <option value="mythic">Mythic</option>
+    </select>
+    <select id="foil-filter">
+      <option value="">All Finishes</option>
+      <option value="normal">Normal</option>
+      <option value="foil">Foil</option>
+      <option value="etched">Etched</option>
+    </select>
+    <select id="type-filter">
+      <option value="">All Types</option>
+      <option value="Creature">Creature</option>
+      <option value="Instant">Instant</option>
+      <option value="Sorcery">Sorcery</option>
+      <option value="Artifact">Artifact</option>
+      <option value="Enchantment">Enchantment</option>
+      <option value="Land">Land</option>
+      <option value="Planeswalker">Planeswalker</option>
+    </select>
+    <select id="color-filter">
+      <option value="">All Colors</option>
+      <option value="W">White</option>
+      <option value="U">Blue</option>
+      <option value="B">Black</option>
+      <option value="R">Red</option>
+      <option value="G">Green</option>
+      <option value="C">Colorless</option>
+      <option value="M">Multicolor</option>
+    </select>
+    <select id="sort">
+      <option value="price">Price</option>
+      <option value="recent">Most Recent</option>
+      <option value="name">Name</option>
+      <option value="rarity">Rarity</option>
+      <option value="set">Set</option>
+    </select>
+    <div class="filter-group color-identity-filter">
+      <label>Color Identity:</label>
+      <div class="color-checkboxes">
+        <label class="color-check W"><input type="checkbox" value="W"><span>W</span></label>
+        <label class="color-check U"><input type="checkbox" value="U"><span>U</span></label>
+        <label class="color-check B"><input type="checkbox" value="B"><span>B</span></label>
+        <label class="color-check R"><input type="checkbox" value="R"><span>R</span></label>
+        <label class="color-check G"><input type="checkbox" value="G"><span>G</span></label>
+        <label class="color-check C"><input type="checkbox" value="C"><span>C</span></label>
+      </div>
+    </div>
+  </div>
+
+  <div id="binder" class="binder">
+    <div class="binder-pages">
+      <div class="binder-page binder-page-left"></div>
+      <div class="binder-page binder-page-right"></div>
+    </div>
+    <div class="binder-nav">
+      <button type="button" class="binder-prev">◀ Previous</button>
+      <span id="binder-page-num">1 / 1</span>
+      <button type="button" class="binder-next">Next ▶</button>
+    </div>
+    <div class="binder-mobile-nav">
+      <button type="button" class="binder-mobile-prev">◀ Prev</button>
+      <span id="binder-page-num">1 / 1</span>
+      <button type="button" class="binder-mobile-next">Next ▶</button>
+    </div>
+  </div>
+
+  <div id="card-preview" class="card-preview hidden">
+    <img src="" alt="Card preview">
+  </div>
+
+  <script src="shared.js"></script>
+  <script src="binder.js"></script>
+</body>
+</html>
