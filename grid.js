@@ -140,7 +140,17 @@ function renderCollection() {
 
 function onCollectionLoaded() {
   setupImageObserver();
-  renderCharts();
+  
+  // Wait for Chart.js if not ready
+  const initCharts = () => {
+    if (typeof Chart !== 'undefined') {
+      renderCharts();
+    } else {
+      setTimeout(initCharts, 50);
+    }
+  };
+  initCharts();
+  
   renderAchievements();
   renderCollection();
   
@@ -204,7 +214,8 @@ function onFiltersApplied() {
   renderCollection();
 }
 
-// Load Chart.js
+// Load Chart.js before collection loads
 const chartjs = document.createElement('script');
 chartjs.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+chartjs.onload = () => window.chartReady = true;
 document.head.appendChild(chartjs);
