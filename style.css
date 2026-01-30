@@ -104,6 +104,12 @@ h1 {
 }
 
 /* Foil shimmer effect */
+.card.foil .card-image-wrapper,
+.card.etched .card-image-wrapper {
+  --shimmer-x: 50%;
+  --shimmer-y: 50%;
+}
+
 .card.foil .card-image-wrapper::after,
 .card.etched .card-image-wrapper::after {
   content: '';
@@ -121,9 +127,10 @@ h1 {
     transparent 100%
   );
   background-size: 200% 200%;
-  animation: shimmer 3s ease-in-out infinite;
+  background-position: var(--shimmer-x) var(--shimmer-y);
   pointer-events: none;
   z-index: 1;
+  transition: background-position 0.1s ease-out;
 }
 
 @keyframes shimmer {

@@ -135,6 +135,8 @@ function renderCollection() {
       if (isDragging) {
         isDragging = false;
         img.style.transform = '';
+        wrapper.style.setProperty('--shimmer-x', '50%');
+        wrapper.style.setProperty('--shimmer-y', '50%');
         wrapper.closest('.card-link').style.pointerEvents = '';
       }
     };
@@ -147,6 +149,8 @@ function renderCollection() {
       const x = (clientX - rect.left) / rect.width - 0.5;
       const y = (clientY - rect.top) / rect.height - 0.5;
       img.style.transform = `rotateX(${-y * 25}deg) rotateY(${x * 25}deg)`;
+      wrapper.style.setProperty('--shimmer-x', `${50 + x * 100}%`);
+      wrapper.style.setProperty('--shimmer-y', `${50 + y * 100}%`);
     };
     
     wrapper.addEventListener('mousedown', startDrag);
