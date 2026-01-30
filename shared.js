@@ -37,7 +37,11 @@ async function fetchCardImage(scryfallId, size = 'normal') {
   const cached = await getCachedImage(cacheKey);
   if (cached) return cached;
   
-  await new Promise(r => setTimeout(r, 100));
+  // Also check old cache key format (without size)
+  const oldCached = await getCachedImage(scryfallId);
+  if (oldCached) return oldCached;
+  
+  await new Promise(r => setTimeout(r, 50));
   try {
     const response = await fetch(`https://api.scryfall.com/cards/${scryfallId}`);
     if (!response.ok) return null;
