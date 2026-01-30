@@ -100,7 +100,7 @@ async function loadCollection() {
   setupPriceSlider();
   
   filteredCollection = [...collection];
-  filteredCollection.sort((a, b) => a.name.localeCompare(b.name));
+  filteredCollection.sort((a, b) => (b.price * b.quantity) - (a.price * a.quantity));
   setupImageObserver();
   updateStats();
   renderCharts();
@@ -276,10 +276,10 @@ function applyFilters() {
   
   filteredCollection.sort((a, b) => {
     switch(sort) {
-      case 'value': return (b.price * b.quantity) - (a.price * a.quantity);
+      case 'name': return a.name.localeCompare(b.name);
       case 'rarity': return b.rarity.localeCompare(a.rarity);
       case 'set': return a.setName.localeCompare(b.setName);
-      default: return a.name.localeCompare(b.name);
+      default: return (b.price * b.quantity) - (a.price * a.quantity);
     }
   });
   
