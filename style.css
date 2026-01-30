@@ -1156,24 +1156,33 @@ h1 {
 }
 
 .binder-nav {
-  width: 50px;
-  height: 80px;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.binder-nav button,
+.binder-mobile-nav button {
+  padding: 10px 20px;
   background: var(--bg-secondary);
   border: 1px solid #444;
   border-radius: 8px;
   color: #e0e0e0;
-  font-size: 2rem;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s;
-  flex-shrink: 0;
 }
 
-.binder-nav:hover:not(:disabled) {
+.binder-nav button:hover:not(:disabled),
+.binder-mobile-nav button:hover:not(:disabled) {
   background: var(--accent);
   color: #000;
 }
 
-.binder-nav:disabled {
+.binder-nav button:disabled,
+.binder-mobile-nav button:disabled {
   opacity: 0.3;
   cursor: not-allowed;
 }
@@ -1321,29 +1330,39 @@ h1 {
 }
 
 .carousel-nav {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.carousel-nav button,
+.carousel-mobile-nav button {
   width: 50px;
-  height: 80px;
+  height: 50px;
   background: var(--bg-secondary);
   border: 1px solid #444;
   border-radius: 8px;
   color: #e0e0e0;
-  font-size: 2rem;
+  font-size: 1.5rem;
   cursor: pointer;
   transition: all 0.2s;
-  flex-shrink: 0;
 }
 
-.carousel-nav:hover:not(:disabled) {
+.carousel-nav button:hover:not(:disabled),
+.carousel-mobile-nav button:hover:not(:disabled) {
   background: var(--accent);
   color: #000;
 }
 
-.carousel-nav:disabled {
+.carousel-nav button:disabled,
+.carousel-mobile-nav button:disabled {
   opacity: 0.3;
   cursor: not-allowed;
 }
 
-.carousel-nav:focus {
+.carousel-nav button:focus,
+.carousel-mobile-nav button:focus {
   outline: none;
 }
 
