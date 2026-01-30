@@ -74,6 +74,7 @@ function renderCollection() {
   const container = document.getElementById('collection');
   container.innerHTML = filteredCollection.map(card => {
     const foilClass = card.foil !== 'normal' ? card.foil : '';
+    const setIcon = `https://svgs.scryfall.io/sets/${card.setCode.toLowerCase()}.svg`;
     return `
     <div class="card ${foilClass}" data-scryfall-id="${card.scryfallId}">
       <a href="detail.html?id=${card.scryfallId}" class="card-link">
@@ -87,7 +88,7 @@ function renderCollection() {
           <div class="card-name">${card.name}</div>
           <div class="card-value">${formatPrice(card.price * card.quantity, card.currency)}</div>
         </div>
-        <div class="card-set">${card.setName} (${card.setCode})</div>
+        <div class="card-set"><img src="${setIcon}" class="set-icon" alt="${card.setCode}">${card.setName}</div>
         <div class="card-details">
           <span class="badge rarity-${card.rarity}">${card.rarity}</span>
           ${card.foil !== 'normal' ? `<span class="badge foil-${card.foil}">${card.foil}</span>` : ''}
