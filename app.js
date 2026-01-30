@@ -547,6 +547,8 @@ function renderCarousel() {
   document.getElementById('carousel-total').textContent = filteredCollection.length;
   document.querySelector('.carousel-prev').disabled = carouselIndex === 0;
   document.querySelector('.carousel-next').disabled = carouselIndex >= filteredCollection.length - 1;
+  document.querySelector('.carousel-mobile-prev').disabled = carouselIndex === 0;
+  document.querySelector('.carousel-mobile-next').disabled = carouselIndex >= filteredCollection.length - 1;
   
   // Load images (use normal size for center card)
   container.querySelectorAll('.carousel-card[data-scryfall-id]').forEach(card => {
@@ -620,6 +622,20 @@ document.querySelector('.carousel-prev').addEventListener('click', (e) => {
 document.querySelector('.carousel-next').addEventListener('click', (e) => { 
   e.preventDefault(); 
   e.stopPropagation();
+  const scrollY = window.scrollY;
+  carouselIndex++; 
+  renderCarousel(); 
+  requestAnimationFrame(() => window.scrollTo(0, scrollY));
+});
+document.querySelector('.carousel-mobile-prev').addEventListener('click', (e) => { 
+  e.preventDefault(); 
+  const scrollY = window.scrollY;
+  carouselIndex--; 
+  renderCarousel(); 
+  requestAnimationFrame(() => window.scrollTo(0, scrollY));
+});
+document.querySelector('.carousel-mobile-next').addEventListener('click', (e) => { 
+  e.preventDefault(); 
   const scrollY = window.scrollY;
   carouselIndex++; 
   renderCarousel(); 

@@ -916,6 +916,80 @@ h1 {
   font-size: 0.9rem;
 }
 
+.carousel-mobile-nav {
+  display: none;
+}
+
+/* Mobile carousel */
+@media (max-width: 768px) {
+  .carousel {
+    flex-direction: column;
+    padding: 10px;
+    gap: 15px;
+  }
+  
+  .carousel-nav {
+    display: none;
+  }
+  
+  .carousel-mobile-nav {
+    display: flex !important;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .carousel-mobile-nav button {
+    width: 60px;
+    height: 50px;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    color: #e0e0e0;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  
+  .carousel-mobile-nav button:hover:not(:disabled) {
+    background: #4CAF50;
+    color: #000;
+  }
+  
+  .carousel-mobile-nav button:disabled {
+    opacity: 0.3;
+  }
+  
+  .carousel-track {
+    width: 100%;
+    min-height: 300px;
+    padding: 10px 0;
+  }
+  
+  .carousel-cards {
+    min-height: 280px;
+  }
+  
+  .carousel-card {
+    width: 150px;
+  }
+  
+  .carousel-card.active {
+    width: 220px;
+  }
+  
+  .carousel-card.adjacent {
+    display: none;
+  }
+  
+  .carousel-card.placeholder {
+    display: none;
+  }
+  
+  .carousel-counter {
+    position: static;
+    transform: none;
+  }
+}
+
 /* Carousel foil shimmer */
 .carousel-card.foil img,
 .carousel-card.etched img {
