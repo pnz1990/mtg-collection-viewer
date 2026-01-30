@@ -147,7 +147,7 @@
           const cached = await getCardData(scryfallId);
           collectionNames.set(name, { scryfallId, type_line: cached?.type_line || '' });
         }
-      });
+      }
     }
 
     function parseDeckList(text) {

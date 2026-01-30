@@ -1507,6 +1507,12 @@ h1 {
   box-shadow: 0 20px 60px rgba(0,0,0,0.8);
 }
 
+@media (max-width: 768px) {
+  .card-preview {
+    display: none !important;
+  }
+}
+
 
 /* Timeline View */
 .timeline {
@@ -1607,7 +1613,7 @@ h1 {
 
 .timeline-card.foil .timeline-card-img,
 .timeline-card.etched .timeline-card-img {
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
 }
 
 .timeline-card.foil,
@@ -1623,7 +1629,12 @@ h1 {
   left: 0;
   right: 0;
   height: 170px;
-  background: linear-gradient(135deg, transparent 30%, rgba(255,215,0,0.15) 50%, transparent 70%);
+  background: linear-gradient(135deg, 
+    transparent 20%, 
+    rgba(255,215,0,0.3) 45%, 
+    rgba(255,255,255,0.4) 50%, 
+    rgba(255,215,0,0.3) 55%, 
+    transparent 80%);
   border-radius: 8px;
   pointer-events: none;
 }
