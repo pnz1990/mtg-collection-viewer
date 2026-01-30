@@ -1,6 +1,7 @@
 let collection = [];
 let filteredCollection = [];
 const imageCache = new Map();
+let charts = {};
 
 async function loadCollection() {
   const response = await fetch('Collection.csv');
@@ -26,72 +27,106 @@ async function loadCollection() {
       };
     });
   
+  const maxPrice = Math.max(...collection.map(c => c.price));
+  document.getElementById('price-max').max = Math.ceil(maxPrice);
+  document.getElementById('price-min').max = Math.ceil(maxPrice);
+  document.getElementById('price-max').value = Math.ceil(maxPrice);
+  
   filteredCollection = [...collection];
   filteredCollection.sort((a, b) => a.name.localeCompare(b.name));
   updateStats();
+  renderCharts();
   renderCollection();
   loadImages();
 }
 
 async function loadImages() {
   const batchSize = 10;
-  
   for (let i = 0; i < filteredCollection.length; i += batchSize) {
     const batch = filteredCollection.slice(i, i + batchSize);
-    
     await Promise.all(batch.map(async (card) => {
       if (imageCache.has(card.scryfallId)) return;
-      
       try {
-        const response = await fetch(`https://api.scryfall.com/cards/${card.scryfallId}`, {
-          headers: {
-            'User-Agent': 'MTGCollectionViewer/1.0',
-            'Accept': 'application/json'
-          }
-        });
+        const response = await fetch(`https://api.scryfall.com/cards/${card.scryfallId}`);
         const data = await response.json();
         const imageUrl = data.image_uris?.small || data.card_faces?.[0]?.image_uris?.small;
-        
         if (imageUrl) {
           imageCache.set(card.scryfallId, imageUrl);
-          const imgElement = document.querySelector(`[data-scryfall-id="${card.scryfallId}"] img`);
+          const imgElement = document.querySelector(`[data-scryfall-id="${card.scryfallId}"] .card-image`);
           if (imgElement) imgElement.src = imageUrl;
         }
-      } catch (error) {
-        console.error(`Failed to load image for ${card.name}:`, error);
-      }
+      } catch (e) {}
     }));
-    
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(r => setTimeout(r, 100));
   }
 }
 
 function parseCSVLine(line) {
   const result = [];
-  let current = '';
-  let inQuotes = false;
-  
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
-    if (char === '"') {
-      inQuotes = !inQuotes;
-    } else if (char === ',' && !inQuotes) {
-      result.push(current);
-      current = '';
-    } else {
-      current += char;
-    }
+  let current = '', inQuotes = false;
+  for (const char of line) {
+    if (char === '"') inQuotes = !inQuotes;
+    else if (char === ',' && !inQuotes) { result.push(current); current = ''; }
+    else current += char;
   }
   result.push(current);
   return result;
 }
 
 function updateStats() {
-  const totalCards = filteredCollection.reduce((sum, card) => sum + card.quantity, 0);
-  const totalValue = filteredCollection.reduce((sum, card) => sum + (card.price * card.quantity), 0);
-  
+  const totalCards = filteredCollection.reduce((sum, c) => sum + c.quantity, 0);
+  const totalValue = filteredCollection.reduce((sum, c) => sum + c.price * c.quantity, 0);
   document.getElementById('total-cards').textContent = totalCards;
   document.getElementById('total-value').textContent = `$${totalValue.toFixed(2)}`;
+}
+
+function countBy(arr, key) {
+  return arr.reduce((acc, item) => {
+    const k = typeof key === 'function' ? key(item) : item[key];
+    acc[k] = (acc[k] || 0) + item.quantity;
+    return acc;
+  }, {});
+}
+
+function getPriceRange(price) {
+  if (price < 5) return '<$5';
+  if (price < 20) return '$5-20';
+  if (price < 50) return '$20-50';
+  if (price < 100) return '$50-100';
+  return '$100+';
+}
+
+function renderCharts() {
+  const colors = ['#4CAF50', '#2196F3', '#FF9800', '#E91E63', '#9C27B0', '#00BCD4', '#FFEB3B', '#795548'];
+  
+  const createChart = (id, data, label) => {
+    const ctx = document.getElementById(id).getContext('2d');
+    if (charts[id]) charts[id].destroy();
+    const labels = Object.keys(data);
+    const values = Object.values(data);
+    charts[id] = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels,
+        datasets: [{ data: values, backgroundColor: colors.slice(0, labels.length), borderWidth: 0 }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom', labels: { color: '#e0e0e0', boxWidth: 12, padding: 8 } } },
+        animation: { animateRotate: true, duration: 800 }
+      }
+    });
+  };
+  
+  createChart('rarity-chart', countBy(collection, 'rarity'));
+  const setCounts = countBy(collection, 'setName');
+  const topSets = Object.entries(setCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  const otherCount = Object.entries(setCounts).slice(6).reduce((s, [, v]) => s + v, 0);
+  const setData = Object.fromEntries(topSets);
+  if (otherCount > 0) setData['Other'] = otherCount;
+  createChart('set-chart', setData);
+  createChart('finish-chart', countBy(collection, 'foil'));
+  createChart('price-chart', countBy(collection, c => getPriceRange(c.price)));
 }
 
 function renderCollection() {
@@ -119,22 +154,14 @@ function renderCollection() {
           ${card.quantity > 1 ? `<span class="badge quantity">x${card.quantity}</span>` : ''}
         </div>
       </a>
-    </div>
-  `;
+    </div>`;
   }).join('');
   
-  // Add 3D tilt effect on click+drag (image only)
   container.querySelectorAll('.card-image-wrapper').forEach(wrapper => {
     const inner = wrapper.querySelector('.card-image-inner');
-    let isDragging = false;
-    let hasMoved = false;
+    let isDragging = false, hasMoved = false;
     
-    const startDrag = e => {
-      isDragging = true;
-      hasMoved = false;
-      e.preventDefault();
-    };
-    
+    const startDrag = e => { isDragging = true; hasMoved = false; e.preventDefault(); };
     const endDrag = () => {
       if (isDragging) {
         isDragging = false;
@@ -144,7 +171,6 @@ function renderCollection() {
         inner.style.setProperty('--shimmer-y', '50%');
       }
     };
-    
     const onMove = e => {
       if (!isDragging) return;
       hasMoved = true;
@@ -165,24 +191,25 @@ function renderCollection() {
     document.addEventListener('touchend', endDrag);
     document.addEventListener('mousemove', onMove);
     document.addEventListener('touchmove', onMove);
-    
-    wrapper.addEventListener('click', e => {
-      if (hasMoved) e.preventDefault();
-    });
+    wrapper.addEventListener('click', e => { if (hasMoved) e.preventDefault(); });
   });
 }
 
 function applyFilters() {
   const search = document.getElementById('search').value.toLowerCase();
+  const setFilter = document.getElementById('set-filter').value.toLowerCase();
   const rarity = document.getElementById('rarity-filter').value;
   const foil = document.getElementById('foil-filter').value;
   const sort = document.getElementById('sort').value;
+  const priceMin = parseFloat(document.getElementById('price-min').value);
+  const priceMax = parseFloat(document.getElementById('price-max').value);
   
   filteredCollection = collection.filter(card => {
-    const matchesSearch = card.name.toLowerCase().includes(search);
-    const matchesRarity = !rarity || card.rarity === rarity;
-    const matchesFoil = !foil || card.foil === foil;
-    return matchesSearch && matchesRarity && matchesFoil;
+    return card.name.toLowerCase().includes(search) &&
+      (!setFilter || card.setName.toLowerCase().includes(setFilter)) &&
+      (!rarity || card.rarity === rarity) &&
+      (!foil || card.foil === foil) &&
+      card.price >= priceMin && card.price <= priceMax;
   });
   
   filteredCollection.sort((a, b) => {
@@ -199,9 +226,53 @@ function applyFilters() {
   loadImages();
 }
 
+function setupAutocomplete(inputId, listId, getItems) {
+  const input = document.getElementById(inputId);
+  const list = document.getElementById(listId);
+  
+  input.addEventListener('input', () => {
+    const val = input.value.toLowerCase();
+    if (!val) { list.classList.remove('show'); return; }
+    const items = getItems().filter(i => i.toLowerCase().includes(val)).slice(0, 8);
+    if (!items.length) { list.classList.remove('show'); return; }
+    list.innerHTML = items.map(i => `<div class="autocomplete-item">${i}</div>`).join('');
+    list.classList.add('show');
+  });
+  
+  list.addEventListener('click', e => {
+    if (e.target.classList.contains('autocomplete-item')) {
+      input.value = e.target.textContent;
+      list.classList.remove('show');
+      applyFilters();
+    }
+  });
+  
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.autocomplete-wrapper')) list.classList.remove('show');
+  });
+}
+
+function updatePriceLabel() {
+  const min = document.getElementById('price-min').value;
+  const max = document.getElementById('price-max').value;
+  document.getElementById('price-min-val').textContent = min;
+  document.getElementById('price-max-val').textContent = max == document.getElementById('price-max').max ? '∞' : max;
+}
+
+// Event listeners
 document.getElementById('search').addEventListener('input', applyFilters);
+document.getElementById('set-filter').addEventListener('input', applyFilters);
 document.getElementById('rarity-filter').addEventListener('change', applyFilters);
 document.getElementById('foil-filter').addEventListener('change', applyFilters);
 document.getElementById('sort').addEventListener('change', applyFilters);
+document.getElementById('price-min').addEventListener('input', () => { updatePriceLabel(); applyFilters(); });
+document.getElementById('price-max').addEventListener('input', () => { updatePriceLabel(); applyFilters(); });
 
-loadCollection();
+setupAutocomplete('search', 'search-autocomplete', () => [...new Set(collection.map(c => c.name))]);
+setupAutocomplete('set-filter', 'set-autocomplete', () => [...new Set(collection.map(c => c.setName))]);
+
+// Load Chart.js then collection
+const script = document.createElement('script');
+script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+script.onload = loadCollection;
+document.head.appendChild(script);
