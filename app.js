@@ -98,8 +98,8 @@ function renderCollection() {
   container.innerHTML = filteredCollection.map(card => {
     const cachedImage = imageCache.get(card.scryfallId) || '';
     return `
-    <a href="detail.html?id=${card.scryfallId}" class="card-link">
-      <div class="card" data-scryfall-id="${card.scryfallId}">
+    <div class="card" data-scryfall-id="${card.scryfallId}">
+      <a href="detail.html?id=${card.scryfallId}" class="card-link">
         <img src="${cachedImage}" alt="${card.name}" class="card-image">
         <div class="card-header">
           <div class="card-name">${card.name}</div>
@@ -111,8 +111,8 @@ function renderCollection() {
           ${card.foil !== 'normal' ? `<span class="badge foil-${card.foil}">${card.foil}</span>` : ''}
           ${card.quantity > 1 ? `<span class="badge quantity">x${card.quantity}</span>` : ''}
         </div>
-      </div>
-    </a>
+      </a>
+    </div>
   `;
   }).join('');
 }
