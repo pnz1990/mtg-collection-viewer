@@ -1593,6 +1593,17 @@ h1 {
   white-space: nowrap;
 }
 
+.tile-type {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: rgba(0,0,0,0.8);
+  color: #aaa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.6rem;
+}
+
 .empty {
   color: var(--text-secondary);
   font-style: italic;
