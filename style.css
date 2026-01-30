@@ -1201,6 +1201,18 @@ h1 {
   display: none;
 }
 
+@media (max-width: 768px) {
+  .binder-nav {
+    display: none !important;
+  }
+  
+  .binder-mobile-nav {
+    display: flex !important;
+    gap: 15px;
+    justify-content: center;
+  }
+}
+
 /* Mobile layout fixes */
 @media (max-width: 768px) {
   .filters {
@@ -1598,30 +1610,20 @@ h1 {
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
-.timeline-card.foil .timeline-card-img::after,
-.timeline-card.etched .timeline-card-img::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
-  border-radius: 8px;
-  pointer-events: none;
-}
-
 .timeline-card.foil,
 .timeline-card.etched {
   position: relative;
 }
 
-.timeline-card.foil::before,
-.timeline-card.etched::before {
+.timeline-card.foil::after,
+.timeline-card.etched::after {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 120px;
-  background: linear-gradient(135deg, transparent 30%, rgba(255,215,0,0.2) 50%, transparent 70%);
+  height: 170px;
+  background: linear-gradient(135deg, transparent 30%, rgba(255,215,0,0.15) 50%, transparent 70%);
   border-radius: 8px;
   pointer-events: none;
 }
