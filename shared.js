@@ -32,6 +32,91 @@ async function cacheImage(id, url) {
   tx.objectStore('images').put({ id, url, timestamp: Date.now() });
 }
 
+async function getCardData(scryfallId) {
+  await dbPromise;
+  return new Promise(resolve => {
+    const tx = db.transaction('images', 'readonly');
+    const req = tx.objectStore('images').get(`card_${scryfallId}`);
+    req.onsuccess = () => resolve(req.result?.data);
+    req.onerror = () => resolve(null);
+  });
+}
+
+async function cacheCardData(scryfallId, data) {
+  await dbPromise;
+  const tx = db.transaction('images', 'readwrite');
+  tx.objectStore('images').put({ id: `card_${scryfallId}`, data, timestamp: Date.now() });
+}
+
+async function loadFullCardData(onProgress) {
+  const uncachedIds = [];
+  
+  // Check which cards need fetching
+  for (const card of collection) {
+    const cached = await getCardData(card.scryfallId);
+    if (!cached) {
+      uncachedIds.push(card.scryfallId);
+    } else {
+      // Apply cached data to collection
+      Object.assign(card, cached);
+    }
+  }
+  
+  if (uncachedIds.length === 0) {
+    return true; // All cached
+  }
+  
+  // Batch fetch in groups of 75
+  const batches = [];
+  for (let i = 0; i < uncachedIds.length; i += 75) {
+    batches.push(uncachedIds.slice(i, i + 75));
+  }
+  
+  let fetched = 0;
+  for (const batch of batches) {
+    try {
+      const response = await fetch('https://api.scryfall.com/cards/collection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifiers: batch.map(id => ({ id })) })
+      });
+      
+      if (!response.ok) continue;
+      const data = await response.json();
+      
+      for (const cardData of data.data) {
+        const extracted = {
+          type_line: cardData.type_line,
+          mana_cost: cardData.mana_cost,
+          cmc: cardData.cmc,
+          colors: cardData.colors || cardData.card_faces?.[0]?.colors || [],
+          color_identity: cardData.color_identity || []
+        };
+        
+        await cacheCardData(cardData.id, extracted);
+        
+        // Apply to collection
+        const card = collection.find(c => c.scryfallId === cardData.id);
+        if (card) Object.assign(card, extracted);
+      }
+      
+      fetched += batch.length;
+      if (onProgress) onProgress(fetched, uncachedIds.length);
+      
+      // Rate limit
+      await new Promise(r => setTimeout(r, 100));
+    } catch (e) {
+      console.error('Batch fetch error:', e);
+    }
+  }
+  
+  return true;
+}
+
+function isFullDataLoaded() {
+  return collection.length > 0 && collection[0].type_line !== undefined;
+}
+
 async function fetchCardImage(scryfallId, size = 'normal') {
   const cacheKey = `${scryfallId}_${size}`;
   const cached = await getCachedImage(cacheKey);

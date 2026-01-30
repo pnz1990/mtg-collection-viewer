@@ -107,6 +107,31 @@ h1 {
   box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
 }
 
+.load-data-btn {
+  background: linear-gradient(135deg, #4CAF50, #388E3C);
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.load-data-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.load-data-btn.loading {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.load-data-btn.loaded {
+  background: linear-gradient(135deg, #666, #555);
+}
+
 .theme-select {
   background: var(--bg-secondary);
   color: var(--text-primary);

@@ -196,7 +196,7 @@ function renderCollection() {
   });
 }
 
-function onCollectionLoaded() {
+async function onCollectionLoaded() {
   setupImageObserver();
   
   // Wait for Chart.js if not ready
@@ -216,6 +216,51 @@ function onCollectionLoaded() {
     const randomCard = collection[Math.floor(Math.random() * collection.length)];
     window.location.href = `detail.html?id=${randomCard.scryfallId}&reveal=1`;
   });
+  
+  // Load full data button
+  const loadBtn = document.getElementById('load-full-data');
+  if (loadBtn) {
+    // Check if already loaded from cache
+    await checkCachedCardData();
+    updateLoadButton();
+    
+    loadBtn.addEventListener('click', async () => {
+      if (isFullDataLoaded()) return;
+      
+      loadBtn.classList.add('loading');
+      loadBtn.textContent = '📥 Loading... 0%';
+      
+      await loadFullCardData((done, total) => {
+        const pct = Math.round((done / total) * 100);
+        loadBtn.textContent = `📥 Loading... ${pct}%`;
+      });
+      
+      updateLoadButton();
+      renderCharts();
+      applyFilters();
+    });
+  }
+}
+
+async function checkCachedCardData() {
+  for (const card of collection) {
+    const cached = await getCardData(card.scryfallId);
+    if (cached) Object.assign(card, cached);
+  }
+}
+
+function updateLoadButton() {
+  const loadBtn = document.getElementById('load-full-data');
+  if (!loadBtn) return;
+  
+  if (isFullDataLoaded()) {
+    loadBtn.classList.remove('loading');
+    loadBtn.classList.add('loaded');
+    loadBtn.textContent = '✓ Full Data Loaded';
+  } else {
+    loadBtn.classList.remove('loading', 'loaded');
+    loadBtn.textContent = '📥 Load Full Data';
+  }
 }
 
 function renderAchievements() {
