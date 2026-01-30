@@ -153,6 +153,23 @@ function renderCharts() {
       cmcCounts[bucket] += c.quantity;
     });
     createChart('cmc-chart', cmcCounts, 'bar');
+    
+    // Avg CMC by Type
+    document.getElementById('avg-cmc-chart-box').style.display = '';
+    const typeCmc = {};
+    const typeCount = {};
+    collection.forEach(c => {
+      if (c.cmc === undefined || !c.type_line || c.type_line.includes('Land')) return;
+      const mainType = ['Creature', 'Instant', 'Sorcery', 'Artifact', 'Enchantment', 'Planeswalker']
+        .find(t => c.type_line.includes(t)) || 'Other';
+      typeCmc[mainType] = (typeCmc[mainType] || 0) + c.cmc * c.quantity;
+      typeCount[mainType] = (typeCount[mainType] || 0) + c.quantity;
+    });
+    const avgCmc = {};
+    for (const type of Object.keys(typeCmc)) {
+      avgCmc[type] = Math.round((typeCmc[type] / typeCount[type]) * 10) / 10;
+    }
+    createChart('avg-cmc-chart', avgCmc, 'bar');
   }
 }
 
