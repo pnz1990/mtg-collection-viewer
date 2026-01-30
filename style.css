@@ -142,6 +142,54 @@ h1 {
   font-size: 0.9rem;
 }
 
+.color-identity-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-identity-filter label:first-child {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.color-checkboxes {
+  display: flex;
+  gap: 4px;
+}
+
+.color-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.color-check input {
+  display: none;
+}
+
+.color-check span {
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+
+.color-check.W { background: #f9faf4; color: #333; }
+.color-check.U { background: #0e68ab; color: white; }
+.color-check.B { background: #2a2a2a; color: #aaa; border: 1px solid #555; }
+.color-check.R { background: #d32f2f; color: white; }
+.color-check.G { background: #388e3c; color: white; }
+.color-check.C { background: #9e9e9e; color: #333; }
+
+.color-check:has(input:checked) {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
 .achievements {
   display: flex;
   flex-wrap: wrap;

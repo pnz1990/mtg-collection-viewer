@@ -239,9 +239,14 @@ function applyFilters() {
   const sort = document.getElementById('sort').value;
   const [priceMin, priceMax] = priceSlider ? priceSlider.get().map(Number) : [0, maxPriceValue];
   
+  // Get selected color identity
+  const colorIdentityChecks = document.querySelectorAll('.color-checkboxes input:checked');
+  const selectedColors = [...colorIdentityChecks].map(c => c.value);
+  
   filteredCollection = collection.filter(card => {
     const matchesType = !typeFilter || (card.type_line && card.type_line.includes(typeFilter));
     const matchesColor = !colorFilter || matchCardColor(card, colorFilter);
+    const matchesIdentity = selectedColors.length === 0 || matchColorIdentity(card, selectedColors);
     
     return card.name.toLowerCase().includes(search) &&
       (!setFilter || card.setName.toLowerCase().includes(setFilter)) &&
@@ -249,6 +254,7 @@ function applyFilters() {
       (!foil || card.foil === foil) &&
       matchesType &&
       matchesColor &&
+      matchesIdentity &&
       card.price >= priceMin && card.price <= priceMax;
   });
   
@@ -274,6 +280,16 @@ function matchCardColor(card, filter) {
   if (filter === 'C') return card.colors.length === 0;
   if (filter === 'M') return card.colors.length > 1;
   return card.colors.includes(filter);
+}
+
+function matchColorIdentity(card, selectedColors) {
+  if (!card.color_identity) return false;
+  // C = colorless, card must have empty color_identity
+  if (selectedColors.includes('C') && card.color_identity.length === 0) return true;
+  // Check if card's color identity is subset of selected colors (EDH legal)
+  const colorsOnly = selectedColors.filter(c => c !== 'C');
+  if (colorsOnly.length === 0) return false;
+  return card.color_identity.every(c => colorsOnly.includes(c));
 }
 
 function setupAutocomplete(inputId, listId, getItems) {
@@ -310,6 +326,7 @@ document.getElementById('foil-filter').addEventListener('change', applyFilters);
 document.getElementById('sort').addEventListener('change', applyFilters);
 document.getElementById('type-filter')?.addEventListener('change', applyFilters);
 document.getElementById('color-filter')?.addEventListener('change', applyFilters);
+document.querySelectorAll('.color-checkboxes input').forEach(cb => cb.addEventListener('change', applyFilters));
 
 // Theme switcher
 const themeSelect = document.getElementById('theme-select');
