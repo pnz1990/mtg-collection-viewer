@@ -7,7 +7,8 @@ let priceSlider;
 let maxPriceValue = 200;
 let currentView = 'list';
 let binderPage = 0;
-const CARDS_PER_BINDER_PAGE = 18; // 9 per page, 2 pages visible
+let carouselIndex = 0;
+const CARDS_PER_BINDER_PAGE = 18;
 
 // IndexedDB setup
 const dbPromise = new Promise((resolve, reject) => {
@@ -35,9 +36,10 @@ async function cacheImage(id, url) {
   tx.objectStore('images').put({ id, url, timestamp: Date.now() });
 }
 
-async function fetchCardImage(scryfallId) {
+async function fetchCardImage(scryfallId, size = 'small') {
+  const cacheKey = `${scryfallId}_${size}`;
   // Check cache first
-  const cached = await getCachedImage(scryfallId);
+  const cached = await getCachedImage(cacheKey);
   if (cached) return cached;
   
   // Fetch from API with delay to avoid throttling
@@ -46,9 +48,9 @@ async function fetchCardImage(scryfallId) {
     const response = await fetch(`https://api.scryfall.com/cards/${scryfallId}`);
     if (!response.ok) return null;
     const data = await response.json();
-    const imageUrl = data.image_uris?.small || data.card_faces?.[0]?.image_uris?.small;
+    const imageUrl = data.image_uris?.[size] || data.card_faces?.[0]?.image_uris?.[size];
     if (imageUrl) {
-      await cacheImage(scryfallId, imageUrl);
+      await cacheImage(cacheKey, imageUrl);
       return imageUrl;
     }
   } catch (e) {}
@@ -285,8 +287,10 @@ function applyFilters() {
   
   updateStats();
   binderPage = 0;
+  carouselIndex = 0;
   if (currentView === 'list') renderCollection();
-  else renderBinder();
+  else if (currentView === 'binder') renderBinder();
+  else renderCarousel();
 }
 
 function renderBinder(direction = null) {
@@ -390,10 +394,52 @@ function setView(view) {
   currentView = view;
   document.getElementById('list-view').classList.toggle('active', view === 'list');
   document.getElementById('binder-view').classList.toggle('active', view === 'binder');
+  document.getElementById('carousel-view').classList.toggle('active', view === 'carousel');
   document.getElementById('collection').classList.toggle('hidden', view !== 'list');
   document.getElementById('binder').classList.toggle('hidden', view !== 'binder');
+  document.getElementById('carousel').classList.toggle('hidden', view !== 'carousel');
   if (view === 'list') renderCollection();
-  else renderBinder();
+  else if (view === 'binder') renderBinder();
+  else renderCarousel();
+}
+
+function renderCarousel() {
+  const container = document.querySelector('.carousel-cards');
+  const visibleCount = 5;
+  const start = Math.max(0, carouselIndex - 2);
+  const end = Math.min(filteredCollection.length, start + visibleCount);
+  const visibleCards = filteredCollection.slice(start, end);
+  
+  container.innerHTML = visibleCards.map((card, i) => {
+    const actualIndex = start + i;
+    const isActive = actualIndex === carouselIndex;
+    const isAdjacent = Math.abs(actualIndex - carouselIndex) === 1;
+    const foilClass = card.foil !== 'normal' ? card.foil : '';
+    return `
+      <div class="carousel-card ${isActive ? 'active' : ''} ${isAdjacent ? 'adjacent' : ''} ${foilClass}" data-index="${actualIndex}" data-scryfall-id="${card.scryfallId}">
+        <a href="detail.html?id=${card.scryfallId}">
+          <img alt="${card.name}" class="card-image">
+        </a>
+        <div class="carousel-card-info">
+          <div class="carousel-card-name">${card.name}</div>
+          <div class="carousel-card-price">$${(card.price * card.quantity).toFixed(2)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  document.getElementById('carousel-current').textContent = carouselIndex + 1;
+  document.getElementById('carousel-total').textContent = filteredCollection.length;
+  document.querySelector('.carousel-prev').disabled = carouselIndex === 0;
+  document.querySelector('.carousel-next').disabled = carouselIndex >= filteredCollection.length - 1;
+  
+  // Load images (use normal size for center card)
+  container.querySelectorAll('.carousel-card').forEach(card => {
+    const img = card.querySelector('img');
+    const id = card.dataset.scryfallId;
+    const isActive = card.classList.contains('active');
+    fetchCardImage(id, isActive ? 'normal' : 'small').then(url => { if (url) img.src = url; });
+  });
 }
 
 function setupAutocomplete(inputId, listId, getItems) {
@@ -431,8 +477,11 @@ document.getElementById('sort').addEventListener('change', applyFilters);
 
 document.getElementById('list-view').addEventListener('click', () => setView('list'));
 document.getElementById('binder-view').addEventListener('click', () => setView('binder'));
+document.getElementById('carousel-view').addEventListener('click', () => setView('carousel'));
 document.querySelector('.binder-prev').addEventListener('click', () => { binderPage--; renderBinder('prev'); });
 document.querySelector('.binder-next').addEventListener('click', () => { binderPage++; renderBinder('next'); });
+document.querySelector('.carousel-prev').addEventListener('click', () => { carouselIndex--; renderCarousel(); });
+document.querySelector('.carousel-next').addEventListener('click', () => { carouselIndex++; renderCarousel(); });
 
 setupAutocomplete('search', 'search-autocomplete', () => [...new Set(collection.map(c => c.name))]);
 setupAutocomplete('set-filter', 'set-autocomplete', () => [...new Set(collection.map(c => c.setName))]);
