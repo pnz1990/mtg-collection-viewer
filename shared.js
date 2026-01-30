@@ -199,6 +199,18 @@ document.getElementById('rarity-filter').addEventListener('change', applyFilters
 document.getElementById('foil-filter').addEventListener('change', applyFilters);
 document.getElementById('sort').addEventListener('change', applyFilters);
 
+// Theme switcher
+const themeSelect = document.getElementById('theme-select');
+if (themeSelect) {
+  const savedTheme = localStorage.getItem('mtg-theme') || '';
+  document.documentElement.dataset.theme = savedTheme;
+  themeSelect.value = savedTheme;
+  themeSelect.addEventListener('change', () => {
+    document.documentElement.dataset.theme = themeSelect.value;
+    localStorage.setItem('mtg-theme', themeSelect.value);
+  });
+}
+
 // Load noUiSlider then collection
 const nouislider = document.createElement('script');
 nouislider.src = 'https://cdn.jsdelivr.net/npm/nouislider@15/dist/nouislider.min.js';
