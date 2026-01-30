@@ -103,6 +103,20 @@ function renderCharts() {
   document.getElementById('stat-median').textContent = formatPrice(median, currency);
   document.getElementById('stat-max').textContent = formatPrice(prices[prices.length - 1], currency);
   document.getElementById('stat-min').textContent = formatPrice(prices[0], currency);
+  
+  // By condition
+  createChart('condition-chart', countBy(collection, 'condition'));
+  
+  // Value by rarity (bar chart)
+  const rarityValues = {};
+  collection.forEach(c => {
+    rarityValues[c.rarity] = (rarityValues[c.rarity] || 0) + c.price * c.quantity;
+  });
+  const rarityOrder = ['mythic', 'rare', 'uncommon', 'common'];
+  const sortedRarityValues = Object.fromEntries(
+    rarityOrder.filter(r => rarityValues[r]).map(r => [r, Math.round(rarityValues[r])])
+  );
+  createChart('rarity-value-chart', sortedRarityValues, 'bar');
 }
 
 function renderCollection() {
