@@ -546,6 +546,7 @@ h1 {
     display: flex;
     gap: 20px;
     order: 2;
+    justify-content: center;
   }
   
   .binder-mobile-nav button {
@@ -557,6 +558,11 @@ h1 {
     color: #e0e0e0;
     font-size: 1.5rem;
     cursor: pointer;
+  }
+  
+  .binder-mobile-nav button:hover:not(:disabled) {
+    background: #4CAF50;
+    color: #000;
   }
   
   .binder-mobile-nav button:disabled {
@@ -743,6 +749,41 @@ h1 {
 
 .binder-mobile-nav {
   display: none;
+}
+
+/* Mobile layout fixes */
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .filter-group.autocomplete-wrapper {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .price-slider {
+    width: 100%;
+  }
+  
+  .filters select {
+    width: 100%;
+  }
+  
+  .dashboard {
+    display: none;
+  }
+  
+  header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .stats {
+    flex-direction: column;
+    gap: 5px;
+    font-size: 0.9rem;
+  }
 }
 
 /* Carousel View */
