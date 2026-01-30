@@ -234,7 +234,7 @@ h1 {
 /* Dashboard */
 .dashboard {
   max-width: 1200px;
-  margin: 0 auto 30px;
+  margin: 0 auto 20px;
 }
 
 .chart-container {
@@ -641,7 +641,7 @@ h1 {
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 40px 20px;
+  padding: 20px;
   position: relative;
 }
 
@@ -652,7 +652,7 @@ h1 {
 .carousel-track {
   flex: 1;
   overflow: hidden;
-  padding: 40px 0;
+  padding: 20px 0;
 }
 
 .carousel-cards {
