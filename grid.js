@@ -260,15 +260,14 @@ async function onCollectionLoaded() {
     updateLoadButton();
     
     loadBtn.addEventListener('click', async () => {
-      if (isFullDataLoaded()) return;
-      
       loadBtn.classList.add('loading');
+      loadBtn.classList.remove('loaded');
       loadBtn.textContent = '📥 Loading... 0%';
       
       await loadFullCardData((done, total) => {
         const pct = Math.round((done / total) * 100);
         loadBtn.textContent = `📥 Loading... ${pct}%`;
-      });
+      }, true); // force refresh
       
       updateLoadButton();
       renderCharts();
@@ -284,7 +283,7 @@ function updateLoadButton() {
   if (isFullDataLoaded()) {
     loadBtn.classList.remove('loading');
     loadBtn.classList.add('loaded');
-    loadBtn.textContent = '✓ Full Data Loaded';
+    loadBtn.textContent = '🔄 Refresh Data';
   } else {
     loadBtn.classList.remove('loading', 'loaded');
     loadBtn.textContent = '📥 Load Full Data';

@@ -48,22 +48,25 @@ async function cacheCardData(scryfallId, data) {
   tx.objectStore('images').put({ id: `card_${scryfallId}`, data, timestamp: Date.now() });
 }
 
-async function loadFullCardData(onProgress) {
+async function loadFullCardData(onProgress, forceRefresh = false) {
   const uncachedIds = [];
   
   // Check which cards need fetching
   for (const card of collection) {
-    const cached = await getCardData(card.scryfallId);
-    if (!cached) {
+    if (forceRefresh) {
       uncachedIds.push(card.scryfallId);
     } else {
-      // Apply cached data to collection
-      Object.assign(card, cached);
+      const cached = await getCardData(card.scryfallId);
+      if (!cached) {
+        uncachedIds.push(card.scryfallId);
+      } else {
+        Object.assign(card, cached);
+      }
     }
   }
   
   if (uncachedIds.length === 0) {
-    return true; // All cached
+    return true;
   }
   
   // Batch fetch in groups of 75
