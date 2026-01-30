@@ -168,7 +168,7 @@ function renderCardDetails(card, collectionCard) {
         <div class="meta-info">
           <div class="meta-row">
             <span class="meta-label">Set:</span>
-            <span class="meta-value">${card.set_name} (${card.set.toUpperCase()} #${card.collector_number})</span>
+            <span class="meta-value"><img src="https://svgs.scryfall.io/sets/${card.set}.svg" class="set-icon"> ${card.set_name} (${card.set.toUpperCase()} #${card.collector_number})</span>
           </div>
           <div class="meta-row">
             <span class="meta-label">Rarity:</span>

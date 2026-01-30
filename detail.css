@@ -440,3 +440,12 @@ body.has-art-bg::after {
 .ext-btn.goldfish { background: #1a73e8; color: white; }
 .ext-btn.reddit { background: #ff4500; color: white; }
 .ext-btn.twitter { background: #1da1f2; color: white; }
+
+
+.set-icon {
+  width: 16px;
+  height: 16px;
+  filter: invert(0.7);
+  vertical-align: middle;
+  margin-right: 4px;
+}
