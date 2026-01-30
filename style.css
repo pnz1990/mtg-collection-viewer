@@ -532,6 +532,43 @@ h1 {
 
 /* Mobile binder - single page */
 @media (max-width: 768px) {
+  .binder {
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px;
+  }
+  
+  .binder-nav {
+    display: none;
+  }
+  
+  .binder-mobile-nav {
+    display: flex;
+    gap: 20px;
+    order: 2;
+  }
+  
+  .binder-mobile-nav button {
+    width: 60px;
+    height: 50px;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    color: #e0e0e0;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  
+  .binder-mobile-nav button:disabled {
+    opacity: 0.3;
+  }
+  
+  .binder-wrapper {
+    width: 100%;
+    padding: 10px;
+    order: 1;
+  }
+  
   .binder-pages {
     gap: 0;
   }
@@ -540,53 +577,41 @@ h1 {
     display: none;
   }
   
-  .binder.mobile-show-left .binder-page-left {
-    display: grid;
-  }
-  
-  .binder.mobile-show-left .binder-page-right {
-    display: none;
-  }
-  
   .binder-rings {
     display: none;
-  }
-  
-  .binder-wrapper {
-    padding: 15px;
   }
   
   .binder-page {
     min-height: auto;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 12px;
-    padding: 15px;
+    gap: 8px;
+    padding: 8px;
   }
   
   .binder-card:nth-child(n+5) {
     display: none;
   }
   
+  .binder-page-num {
+    position: static;
+    transform: none;
+    order: 3;
+    margin-top: 5px;
+  }
+  
   .flip-page {
-    width: calc(100% - 30px);
-  }
-  
-  .flip-page-next {
-    right: 15px;
-    left: 15px;
-  }
-  
-  .flip-page-prev {
-    left: 15px;
-    right: 15px;
+    width: calc(100% - 20px);
+    left: 10px !important;
+    right: 10px !important;
   }
   
   .flip-page-front,
   .flip-page-back {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 12px;
+    gap: 8px;
+    padding: 8px;
   }
   
   .flip-page .binder-card:nth-child(n+5) {
@@ -714,6 +739,10 @@ h1 {
   transform: translateX(-50%);
   color: #999;
   font-size: 0.9rem;
+}
+
+.binder-mobile-nav {
+  display: none;
 }
 
 /* Carousel View */

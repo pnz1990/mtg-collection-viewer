@@ -322,10 +322,11 @@ function renderBinder(direction = null) {
     `}).join('') + Array(Math.max(0, 9 - cards.length)).fill('<div class="binder-card"></div>').join('');
   
   const loadImages = () => {
+    const size = mobile ? 'normal' : 'small';
     document.querySelectorAll('.binder-card[data-scryfall-id]').forEach(card => {
       const img = card.querySelector('img');
       const id = card.dataset.scryfallId;
-      fetchCardImage(id).then(url => { if (url) img.src = url; });
+      fetchCardImage(id, size).then(url => { if (url) img.src = url; });
     });
   };
   
@@ -351,8 +352,8 @@ function renderBinder(direction = null) {
     const totalMobilePages = Math.ceil(filteredCollection.length / CARDS_PER_MOBILE_PAGE);
     
     document.getElementById('binder-page-num').textContent = `${binderPage + 1} / ${totalMobilePages}`;
-    document.querySelector('.binder-prev').disabled = binderPage === 0;
-    document.querySelector('.binder-next').disabled = binderPage >= totalMobilePages - 1;
+    document.querySelector('.binder-mobile-prev').disabled = binderPage === 0;
+    document.querySelector('.binder-mobile-next').disabled = binderPage >= totalMobilePages - 1;
     
     if (direction === 'next') {
       const prevStart = (binderPage - 1) * CARDS_PER_MOBILE_PAGE;
@@ -597,6 +598,14 @@ document.querySelector('.binder-prev').addEventListener('click', () => {
   renderBinder('prev');
 });
 document.querySelector('.binder-next').addEventListener('click', () => {
+  binderPage++;
+  renderBinder('next');
+});
+document.querySelector('.binder-mobile-prev').addEventListener('click', () => {
+  binderPage--;
+  renderBinder('prev');
+});
+document.querySelector('.binder-mobile-next').addEventListener('click', () => {
   binderPage++;
   renderBinder('next');
 });
