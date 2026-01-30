@@ -249,12 +249,6 @@ function renderCharts() {
   }
 }
 
-function getMainType(typeLine) {
-  if (!typeLine) return null;
-  return ['Creature', 'Instant', 'Sorcery', 'Artifact', 'Enchantment', 'Land', 'Planeswalker']
-    .find(t => typeLine.includes(t));
-}
-
 function renderCollection() {
   const container = document.getElementById('collection');
   
@@ -264,96 +258,15 @@ function renderCollection() {
     nameCounts[c.name] = (nameCounts[c.name] || 0) + c.quantity;
   });
   
-  container.innerHTML = filteredCollection.map(card => {
-    const foilClass = card.foil !== 'normal' ? card.foil : '';
-    const dupeClass = nameCounts[card.name] >= 2 ? 'duplicate' : '';
-    const setIcon = `https://svgs.scryfall.io/sets/${card.setCode.toLowerCase()}.svg`;
-    const mainType = getMainType(card.type_line);
-    const keywordTags = (card.keywords || []).slice(0, 3).map(k => `<span class="badge keyword-badge clickable" data-filter="keyword" data-value="${k}">${k}</span>`).join('');
-    return `
-    <div class="card ${foilClass} ${dupeClass}" data-scryfall-id="${card.scryfallId}">
-      <a href="detail.html?id=${card.scryfallId}" class="card-link">
-        <div class="card-image-wrapper">
-          <div class="card-image-inner">
-            <img alt="${card.name}" class="card-image">
-            <img src="back.png" alt="Card back" class="card-back">
-          </div>
-        </div>
-        <div class="card-header">
-          <div class="card-name">${card.name}</div>
-          <div class="card-value">${formatPrice(card.price * card.quantity, card.currency)}</div>
-        </div>
-        <div class="card-set clickable" data-filter="set" data-value="${card.setName}"><img src="${setIcon}" class="set-icon" alt="${card.setCode}">${card.setName}</div>
-        <div class="card-details">
-          <span class="badge rarity-${card.rarity} clickable" data-filter="rarity" data-value="${card.rarity}">${card.rarity}</span>
-          ${card.foil !== 'normal' ? `<span class="badge foil-${card.foil} clickable" data-filter="foil" data-value="${card.foil}">${card.foil}</span>` : ''}
-          ${card.reserved ? `<span class="badge reserved-badge clickable" data-filter="reserved" data-value="yes">RL</span>` : ''}
-          ${mainType ? `<span class="badge type-badge clickable" data-filter="type" data-value="${mainType}">${mainType}</span>` : ''}
-          ${card.cmc !== undefined && !card.type_line?.includes('Land') ? `<span class="badge cmc-badge clickable" data-filter="cmc" data-value="${card.cmc}">⬡${card.cmc}</span>` : ''}
-          ${nameCounts[card.name] >= 2 ? `<span class="badge duplicate-badge">x${nameCounts[card.name]}</span>` : ''}
-          ${keywordTags}
-        </div>
-      </a>
-    </div>`;
-  }).join('');
+  container.innerHTML = filteredCollection.map(card => renderCardHTML(card, nameCounts)).join('');
   
   // Observe images for lazy loading
   container.querySelectorAll('.card-image-wrapper').forEach(wrapper => {
     imageObserver.observe(wrapper);
-    
-    const inner = wrapper.querySelector('.card-image-inner');
-    let isDragging = false, hasMoved = false;
-    
-    const startDrag = e => { isDragging = true; hasMoved = false; e.preventDefault(); };
-    const endDrag = () => {
-      if (isDragging) {
-        isDragging = false;
-        inner.style.transform = '';
-        inner.style.boxShadow = '';
-        inner.style.setProperty('--shimmer-x', '50%');
-        inner.style.setProperty('--shimmer-y', '50%');
-      }
-    };
-    const onMove = e => {
-      if (!isDragging) return;
-      hasMoved = true;
-      const rect = wrapper.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      const x = (clientX - rect.left) / rect.width - 0.5;
-      const y = (clientY - rect.top) / rect.height - 0.5;
-      inner.style.transform = `rotateX(${-y * 25}deg) rotateY(${x * 25}deg)`;
-      inner.style.boxShadow = `${x * -20}px ${10 + y * -10}px 20px rgba(0,0,0,0.5)`;
-      inner.style.setProperty('--shimmer-x', `${50 + x * 100}%`);
-      inner.style.setProperty('--shimmer-y', `${50 + y * 100}%`);
-    };
-    
-    wrapper.addEventListener('mousedown', startDrag);
-    wrapper.addEventListener('touchstart', startDrag, { passive: false });
-    document.addEventListener('mouseup', endDrag);
-    document.addEventListener('touchend', endDrag);
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('touchmove', onMove);
-    wrapper.addEventListener('click', e => { if (hasMoved) e.preventDefault(); });
   });
   
-  // Clickable badge filters
-  container.querySelectorAll('.clickable').forEach(el => {
-    el.addEventListener('click', e => {
-      e.preventDefault();
-      e.stopPropagation();
-      const filter = el.dataset.filter;
-      const value = el.dataset.value;
-      if (filter === 'rarity') document.getElementById('rarity-filter').value = value;
-      else if (filter === 'foil') document.getElementById('foil-filter').value = value;
-      else if (filter === 'type') document.getElementById('type-filter').value = value;
-      else if (filter === 'keyword') document.getElementById('keyword-filter').value = value;
-      else if (filter === 'set') document.getElementById('set-filter').value = value;
-      else if (filter === 'cmc') window.cmcFilter = parseInt(value);
-      else if (filter === 'reserved') document.getElementById('reserved-filter').value = value;
-      applyFilters();
-    });
-  });
+  // Setup interactions
+  setupCardInteractions(container);
 }
 
 async function onCollectionLoaded() {

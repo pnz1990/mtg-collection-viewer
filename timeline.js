@@ -68,23 +68,7 @@ function renderTimeline() {
             <span class="set-toggle">▼</span>
           </div>
           <div class="set-cards">
-            ${set.cards.map(card => {
-              const foilClass = card.foil !== 'normal' ? card.foil : '';
-              return `
-                <div class="timeline-card ${foilClass}" data-scryfall-id="${card.scryfallId}">
-                  <a href="detail.html?id=${card.scryfallId}" class="card-link">
-                    <div class="card-image-wrapper">
-                      <div class="card-image-inner">
-                        <img alt="${card.name}" class="card-image">
-                        <img src="back.png" alt="Card back" class="card-back">
-                      </div>
-                    </div>
-                  </a>
-                  <div class="timeline-card-name">${card.name}</div>
-                  <div class="timeline-card-price">${formatPrice(card.price, card.currency)}</div>
-                </div>
-              `;
-            }).join('')}
+            ${set.cards.map(card => renderCardHTML(card)).join('')}
           </div>
         </div>
       `).join('')}
@@ -101,50 +85,17 @@ function formatDate(dateStr) {
 }
 
 function setupTimelineCards() {
-  document.querySelectorAll('.timeline-card').forEach(card => {
-    const wrapper = card.querySelector('.card-image-wrapper');
-    const inner = wrapper.querySelector('.card-image-inner');
+  const container = document.getElementById('timeline');
+  
+  // Load images
+  container.querySelectorAll('.card[data-scryfall-id]').forEach(card => {
     const img = card.querySelector('.card-image');
     const id = card.dataset.scryfallId;
-    
-    // Load image
     fetchCardImage(id, 'small').then(url => { if (url) img.src = url; });
-    
-    // Drag interaction
-    let isDragging = false, hasMoved = false;
-    
-    const startDrag = e => { isDragging = true; hasMoved = false; e.preventDefault(); };
-    const endDrag = () => {
-      if (isDragging) {
-        isDragging = false;
-        inner.style.transform = '';
-        inner.style.boxShadow = '';
-        inner.style.setProperty('--shimmer-x', '50%');
-        inner.style.setProperty('--shimmer-y', '50%');
-      }
-    };
-    const onMove = e => {
-      if (!isDragging) return;
-      hasMoved = true;
-      const rect = wrapper.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      const x = (clientX - rect.left) / rect.width - 0.5;
-      const y = (clientY - rect.top) / rect.height - 0.5;
-      inner.style.transform = `rotateX(${-y * 25}deg) rotateY(${x * 25}deg)`;
-      inner.style.boxShadow = `${x * -20}px ${10 + y * -10}px 20px rgba(0,0,0,0.5)`;
-      inner.style.setProperty('--shimmer-x', `${50 + x * 100}%`);
-      inner.style.setProperty('--shimmer-y', `${50 + y * 100}%`);
-    };
-    
-    wrapper.addEventListener('mousedown', startDrag);
-    wrapper.addEventListener('touchstart', startDrag);
-    document.addEventListener('mouseup', endDrag);
-    document.addEventListener('touchend', endDrag);
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('touchmove', onMove);
-    wrapper.addEventListener('click', e => { if (hasMoved) e.preventDefault(); });
   });
+  
+  // Setup interactions (drag, click filters)
+  setupCardInteractions(container);
 }
 
 async function onCollectionLoaded() {
