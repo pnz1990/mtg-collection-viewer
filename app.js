@@ -98,10 +98,13 @@ function renderCollection() {
   const container = document.getElementById('collection');
   container.innerHTML = filteredCollection.map(card => {
     const cachedImage = imageCache.get(card.scryfallId) || '';
+    const foilClass = card.foil !== 'normal' ? card.foil : '';
     return `
-    <div class="card" data-scryfall-id="${card.scryfallId}">
+    <div class="card ${foilClass}" data-scryfall-id="${card.scryfallId}">
       <a href="detail.html?id=${card.scryfallId}" class="card-link">
-        <img src="${cachedImage}" alt="${card.name}" class="card-image">
+        <div class="card-image-wrapper">
+          <img src="${cachedImage}" alt="${card.name}" class="card-image">
+        </div>
         <div class="card-header">
           <div class="card-name">${card.name}</div>
           <div class="card-value">$${(card.price * card.quantity).toFixed(2)}</div>
@@ -116,6 +119,21 @@ function renderCollection() {
     </div>
   `;
   }).join('');
+  
+  // Add 3D tilt effect
+  container.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      card.style.transform = `translateY(-10px) rotateX(${-y * 15}deg) rotateY(${x * 15}deg) scale(1.05)`;
+      card.style.boxShadow = `${-x * 20}px ${20 + y * 10}px 40px rgba(0,0,0,0.8)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+      card.style.boxShadow = '';
+    });
+  });
 }
 
 function applyFilters() {
