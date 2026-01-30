@@ -16,11 +16,44 @@
   top: 20px;
 }
 
+.detail-image-wrapper {
+  position: relative;
+  perspective: 800px;
+}
+
 .detail-image {
   width: 100%;
   border-radius: 16px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
   margin-bottom: 20px;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+}
+
+/* Foil shimmer for detail page */
+.detail-image-wrapper.foil::after,
+.detail-image-wrapper.etched::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 20px;
+  border-radius: 16px;
+  background: linear-gradient(
+    125deg,
+    transparent 0%,
+    rgba(255,255,255,0.15) 25%,
+    rgba(255,200,100,0.3) 35%,
+    rgba(100,200,255,0.3) 45%,
+    rgba(200,100,255,0.3) 55%,
+    rgba(255,255,255,0.15) 75%,
+    transparent 100%
+  );
+  background-size: 200% 200%;
+  background-position: var(--shimmer-x, 50%) var(--shimmer-y, 50%);
+  pointer-events: none;
+  z-index: 1;
+  transition: background-position 0.1s ease-out;
 }
 
 .collection-info {

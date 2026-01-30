@@ -80,11 +80,14 @@ function renderCardDetails(card, collectionCard) {
   const imageUrl = card.image_uris?.large || card.card_faces?.[0]?.image_uris?.large;
   const oracleText = card.oracle_text || card.card_faces?.map(f => f.oracle_text).join('\n---\n') || 'N/A';
   const flavorText = card.flavor_text || '';
+  const foilClass = collectionCard?.foil && collectionCard.foil !== 'normal' ? collectionCard.foil : '';
   
   document.getElementById('detail-container').innerHTML = `
     <div class="detail-content">
       <div class="detail-left">
-        <img src="${imageUrl}" alt="${card.name}" class="detail-image">
+        <div class="detail-image-wrapper ${foilClass}">
+          <img src="${imageUrl}" alt="${card.name}" class="detail-image">
+        </div>
       </div>
       
       <div class="detail-info">
@@ -170,6 +173,46 @@ function renderCardDetails(card, collectionCard) {
       </div>
     </div>
   `;
+  
+  // Add 3D tilt effect on click+drag
+  const wrapper = document.querySelector('.detail-image-wrapper');
+  const img = wrapper.querySelector('.detail-image');
+  let isDragging = false;
+  
+  const startDrag = e => {
+    isDragging = true;
+    e.preventDefault();
+  };
+  
+  const endDrag = () => {
+    if (isDragging) {
+      isDragging = false;
+      img.style.transform = '';
+      img.style.boxShadow = '';
+      wrapper.style.setProperty('--shimmer-x', '50%');
+      wrapper.style.setProperty('--shimmer-y', '50%');
+    }
+  };
+  
+  const onMove = e => {
+    if (!isDragging) return;
+    const rect = wrapper.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const x = (clientX - rect.left) / rect.width - 0.5;
+    const y = (clientY - rect.top) / rect.height - 0.5;
+    img.style.transform = `rotateX(${-y * 20}deg) rotateY(${x * 20}deg)`;
+    img.style.boxShadow = `${x * -30}px ${15 + y * -15}px 40px rgba(0,0,0,0.5)`;
+    wrapper.style.setProperty('--shimmer-x', `${50 + x * 100}%`);
+    wrapper.style.setProperty('--shimmer-y', `${50 + y * 100}%`);
+  };
+  
+  wrapper.addEventListener('mousedown', startDrag);
+  wrapper.addEventListener('touchstart', startDrag, { passive: false });
+  document.addEventListener('mouseup', endDrag);
+  document.addEventListener('touchend', endDrag);
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('touchmove', onMove);
 }
 
 loadCardDetails();
