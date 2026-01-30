@@ -205,7 +205,10 @@ function renderCharts() {
     // Reserved List charts
     const reservedCards = collection.filter(c => c.reserved);
     if (reservedCards.length > 0) {
-      document.getElementById('reserved-charts').style.display = '';
+      document.getElementById('reserved-count-box').style.display = '';
+      document.getElementById('reserved-value-box').style.display = '';
+      document.getElementById('reserved-type-box').style.display = '';
+      document.getElementById('reserved-top-box').style.display = '';
       
       // Reserved count vs non-reserved
       createChart('reserved-count-chart', {
