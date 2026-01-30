@@ -412,17 +412,28 @@ function setView(view) {
 function renderCarousel() {
   const container = document.querySelector('.carousel-cards');
   const visibleCount = 5;
-  const start = Math.max(0, carouselIndex - 2);
-  const end = Math.min(filteredCollection.length, start + visibleCount);
-  const visibleCards = filteredCollection.slice(start, end);
   
-  container.innerHTML = visibleCards.map((card, i) => {
-    const actualIndex = start + i;
-    const isActive = actualIndex === carouselIndex;
-    const isAdjacent = Math.abs(actualIndex - carouselIndex) === 1;
+  // Calculate visible range, ensuring active card is centered
+  let start = carouselIndex - 2;
+  let end = carouselIndex + 3;
+  
+  // Build cards array with placeholders for edges
+  let cards = [];
+  for (let i = start; i < end; i++) {
+    if (i < 0 || i >= filteredCollection.length) {
+      cards.push(null); // placeholder
+    } else {
+      cards.push({ ...filteredCollection[i], index: i });
+    }
+  }
+  
+  container.innerHTML = cards.map((card, i) => {
+    if (!card) return '<div class="carousel-card placeholder"></div>';
+    const isActive = card.index === carouselIndex;
+    const isAdjacent = Math.abs(card.index - carouselIndex) === 1;
     const foilClass = card.foil !== 'normal' ? card.foil : '';
     return `
-      <div class="carousel-card ${isActive ? 'active' : ''} ${isAdjacent ? 'adjacent' : ''} ${foilClass}" data-index="${actualIndex}" data-scryfall-id="${card.scryfallId}">
+      <div class="carousel-card ${isActive ? 'active' : ''} ${isAdjacent ? 'adjacent' : ''} ${foilClass}" data-index="${card.index}" data-scryfall-id="${card.scryfallId}">
         <a href="detail.html?id=${card.scryfallId}">
           <img alt="${card.name}" class="card-image">
         </a>
@@ -440,7 +451,7 @@ function renderCarousel() {
   document.querySelector('.carousel-next').disabled = carouselIndex >= filteredCollection.length - 1;
   
   // Load images (use normal size for center card)
-  container.querySelectorAll('.carousel-card').forEach(card => {
+  container.querySelectorAll('.carousel-card[data-scryfall-id]').forEach(card => {
     const img = card.querySelector('img');
     const id = card.dataset.scryfallId;
     const isActive = card.classList.contains('active');
@@ -486,8 +497,8 @@ document.getElementById('binder-view').addEventListener('click', () => setView('
 document.getElementById('carousel-view').addEventListener('click', () => setView('carousel'));
 document.querySelector('.binder-prev').addEventListener('click', () => { binderPage--; renderBinder('prev'); });
 document.querySelector('.binder-next').addEventListener('click', () => { binderPage++; renderBinder('next'); });
-document.querySelector('.carousel-prev').addEventListener('click', () => { carouselIndex--; renderCarousel(); });
-document.querySelector('.carousel-next').addEventListener('click', () => { carouselIndex++; renderCarousel(); });
+document.querySelector('.carousel-prev').addEventListener('click', (e) => { e.preventDefault(); carouselIndex--; renderCarousel(); });
+document.querySelector('.carousel-next').addEventListener('click', (e) => { e.preventDefault(); carouselIndex++; renderCarousel(); });
 
 setupAutocomplete('search', 'search-autocomplete', () => [...new Set(collection.map(c => c.name))]);
 setupAutocomplete('set-filter', 'set-autocomplete', () => [...new Set(collection.map(c => c.setName))]);
