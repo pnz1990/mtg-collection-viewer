@@ -193,6 +193,16 @@ function renderCardDetails(card, collectionCard) {
               `).join('')}
           </div>
         </div>
+        
+        <div class="external-links">
+          <h3>Explore</h3>
+          <div class="link-buttons">
+            <a href="https://edhrec.com/cards/${card.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}" target="_blank" class="ext-btn edhrec">EDHRec</a>
+            <a href="https://www.mtggoldfish.com/price/${card.set}/${encodeURIComponent(card.name)}" target="_blank" class="ext-btn goldfish">MTGGoldfish</a>
+            <a href="https://www.reddit.com/r/magicTCG/search?q=${encodeURIComponent(card.name)}&restrict_sr=1" target="_blank" class="ext-btn reddit">Reddit</a>
+            <a href="https://twitter.com/search?q=mtg+${encodeURIComponent('"' + card.name + '"')}" target="_blank" class="ext-btn twitter">Twitter</a>
+          </div>
+        </div>
       </div>
     </div>
   `;
