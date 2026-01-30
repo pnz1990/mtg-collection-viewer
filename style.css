@@ -970,18 +970,12 @@ h1 {
   
   .carousel-card {
     width: 150px;
+    display: none;
   }
   
   .carousel-card.active {
     width: 220px;
-  }
-  
-  .carousel-card.adjacent {
-    display: none;
-  }
-  
-  .carousel-card.placeholder {
-    display: none;
+    display: block;
   }
   
   .carousel-counter {
