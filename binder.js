@@ -115,6 +115,7 @@ function renderBinder(direction = null) {
         leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
         loadImages();
         flipPage.remove();
+        setupBinderHover();
       }, { once: true });
     });
     
@@ -143,6 +144,7 @@ function renderBinder(direction = null) {
         rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
         loadImages();
         flipPage.remove();
+        setupBinderHover();
       }, { once: true });
     });
     
