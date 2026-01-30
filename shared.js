@@ -208,6 +208,8 @@ async function loadCollection() {
     if (cached) Object.assign(card, cached);
   }
   
+  populateKeywordFilter();
+  
   if (typeof onCollectionLoaded === 'function') {
     onCollectionLoaded();
   }
@@ -412,7 +414,6 @@ function initApp() {
     loadCollection().then(() => {
       setupAutocomplete('search', 'search-autocomplete', () => [...new Set(collection.map(c => c.name))]);
       setupAutocomplete('set-filter', 'set-autocomplete', () => [...new Set(collection.map(c => c.setName))]);
-      populateKeywordFilter();
     });
   };
   document.head.appendChild(nouislider);
