@@ -213,13 +213,21 @@ if (themeSelect) {
   });
 }
 
-// Load noUiSlider then collection
-const nouislider = document.createElement('script');
-nouislider.src = 'https://cdn.jsdelivr.net/npm/nouislider@15/dist/nouislider.min.js';
-nouislider.onload = () => {
-  loadCollection().then(() => {
-    setupAutocomplete('search', 'search-autocomplete', () => [...new Set(collection.map(c => c.name))]);
-    setupAutocomplete('set-filter', 'set-autocomplete', () => [...new Set(collection.map(c => c.setName))]);
-  });
-};
-document.head.appendChild(nouislider);
+// Load noUiSlider then collection after DOM ready
+function initApp() {
+  const nouislider = document.createElement('script');
+  nouislider.src = 'https://cdn.jsdelivr.net/npm/nouislider@15/dist/nouislider.min.js';
+  nouislider.onload = () => {
+    loadCollection().then(() => {
+      setupAutocomplete('search', 'search-autocomplete', () => [...new Set(collection.map(c => c.name))]);
+      setupAutocomplete('set-filter', 'set-autocomplete', () => [...new Set(collection.map(c => c.setName))]);
+    });
+  };
+  document.head.appendChild(nouislider);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
