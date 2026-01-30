@@ -127,11 +127,12 @@ function renderCollection() {
   container.querySelectorAll('.card-image-wrapper').forEach(wrapper => {
     const inner = wrapper.querySelector('.card-image-inner');
     let isDragging = false;
+    let hasMoved = false;
     
     const startDrag = e => {
       isDragging = true;
+      hasMoved = false;
       e.preventDefault();
-      wrapper.closest('.card-link').style.pointerEvents = 'none';
     };
     
     const endDrag = () => {
@@ -141,12 +142,12 @@ function renderCollection() {
         inner.style.boxShadow = '';
         inner.style.setProperty('--shimmer-x', '50%');
         inner.style.setProperty('--shimmer-y', '50%');
-        wrapper.closest('.card-link').style.pointerEvents = '';
       }
     };
     
     const onMove = e => {
       if (!isDragging) return;
+      hasMoved = true;
       const rect = wrapper.getBoundingClientRect();
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       const clientY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -164,6 +165,10 @@ function renderCollection() {
     document.addEventListener('touchend', endDrag);
     document.addEventListener('mousemove', onMove);
     document.addEventListener('touchmove', onMove);
+    
+    wrapper.addEventListener('click', e => {
+      if (hasMoved) e.preventDefault();
+    });
   });
 }
 
