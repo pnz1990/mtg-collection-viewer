@@ -193,6 +193,7 @@ function renderCollection() {
     const dupeClass = nameCounts[card.name] >= 2 ? 'duplicate' : '';
     const setIcon = `https://svgs.scryfall.io/sets/${card.setCode.toLowerCase()}.svg`;
     const mainType = getMainType(card.type_line);
+    const keywordTags = (card.keywords || []).slice(0, 3).map(k => `<span class="badge keyword-badge">${k}</span>`).join('');
     return `
     <div class="card ${foilClass} ${dupeClass}" data-scryfall-id="${card.scryfallId}">
       <a href="detail.html?id=${card.scryfallId}" class="card-link">
@@ -213,6 +214,7 @@ function renderCollection() {
           ${mainType ? `<span class="badge type-badge">${mainType}</span>` : ''}
           ${card.cmc !== undefined && !card.type_line?.includes('Land') ? `<span class="badge cmc-badge">⬡${card.cmc}</span>` : ''}
           ${nameCounts[card.name] >= 2 ? `<span class="badge duplicate-badge">x${nameCounts[card.name]}</span>` : ''}
+          ${keywordTags}
         </div>
       </a>
     </div>`;

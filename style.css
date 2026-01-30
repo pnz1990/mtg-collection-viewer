@@ -593,6 +593,11 @@ h1 {
   background: #7b1fa2;
 }
 
+.keyword-badge {
+  background: #00695c;
+  font-size: 0.65rem;
+}
+
 .card.duplicate {
   box-shadow: 0 0 0 2px #e65100, 0 4px 15px rgba(230, 81, 0, 0.3);
 }

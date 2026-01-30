@@ -93,7 +93,8 @@ async function loadFullCardData(onProgress, forceRefresh = false) {
           mana_cost: cardData.mana_cost,
           cmc: cardData.cmc,
           colors: cardData.colors || cardData.card_faces?.[0]?.colors || [],
-          color_identity: cardData.color_identity || []
+          color_identity: cardData.color_identity || [],
+          keywords: cardData.keywords || []
         };
         
         await cacheCardData(cardData.id, extracted);
@@ -236,6 +237,7 @@ function applyFilters() {
   const foil = document.getElementById('foil-filter').value;
   const typeFilter = document.getElementById('type-filter')?.value || '';
   const colorFilter = document.getElementById('color-filter')?.value || '';
+  const keywordFilter = document.getElementById('keyword-filter')?.value || '';
   const sort = document.getElementById('sort').value;
   const [priceMin, priceMax] = priceSlider ? priceSlider.get().map(Number) : [0, maxPriceValue];
   
@@ -247,6 +249,7 @@ function applyFilters() {
     const matchesType = !typeFilter || (card.type_line && card.type_line.includes(typeFilter));
     const matchesColor = !colorFilter || matchCardColor(card, colorFilter);
     const matchesIdentity = selectedColors.length === 0 || matchColorIdentity(card, selectedColors);
+    const matchesKeyword = !keywordFilter || (card.keywords && card.keywords.includes(keywordFilter));
     
     return card.name.toLowerCase().includes(search) &&
       (!setFilter || card.setName.toLowerCase().includes(setFilter)) &&
@@ -255,6 +258,7 @@ function applyFilters() {
       matchesType &&
       matchesColor &&
       matchesIdentity &&
+      matchesKeyword &&
       card.price >= priceMin && card.price <= priceMax;
   });
   
@@ -326,6 +330,7 @@ document.getElementById('foil-filter').addEventListener('change', applyFilters);
 document.getElementById('sort').addEventListener('change', applyFilters);
 document.getElementById('type-filter')?.addEventListener('change', applyFilters);
 document.getElementById('color-filter')?.addEventListener('change', applyFilters);
+document.getElementById('keyword-filter')?.addEventListener('change', applyFilters);
 document.querySelectorAll('.color-checkboxes input').forEach(cb => cb.addEventListener('change', applyFilters));
 
 // Theme switcher
@@ -381,9 +386,19 @@ if (menuLoadBtn) {
     menuLoadBtn.textContent = '📥 Loading...';
     await loadFullCardData(null, true);
     updateMenuLoadBtn();
+    populateKeywordFilter();
     closeMenu();
     if (typeof onFiltersApplied === 'function') applyFilters();
   });
+}
+
+function populateKeywordFilter() {
+  const select = document.getElementById('keyword-filter');
+  if (!select) return;
+  const keywords = new Set();
+  collection.forEach(c => (c.keywords || []).forEach(k => keywords.add(k)));
+  const sorted = [...keywords].sort();
+  select.innerHTML = '<option value="">All Keywords</option>' + sorted.map(k => `<option value="${k}">${k}</option>`).join('');
 }
 
 // Load noUiSlider then collection after DOM ready
@@ -394,6 +409,7 @@ function initApp() {
     loadCollection().then(() => {
       setupAutocomplete('search', 'search-autocomplete', () => [...new Set(collection.map(c => c.name))]);
       setupAutocomplete('set-filter', 'set-autocomplete', () => [...new Set(collection.map(c => c.setName))]);
+      populateKeywordFilter();
     });
   };
   document.head.appendChild(nouislider);
