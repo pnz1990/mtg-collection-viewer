@@ -69,9 +69,23 @@
       <option value="rarity">Rarity</option>
       <option value="set">Set</option>
     </select>
+    <div class="view-toggle">
+      <button id="list-view" class="view-btn active" title="List View">▤</button>
+      <button id="binder-view" class="view-btn" title="Binder View">▦</button>
+    </div>
   </div>
 
   <div id="collection" class="collection"></div>
+  
+  <div id="binder" class="binder hidden">
+    <button class="binder-nav binder-prev">‹</button>
+    <div class="binder-pages">
+      <div class="binder-page binder-page-left"></div>
+      <div class="binder-page binder-page-right"></div>
+    </div>
+    <button class="binder-nav binder-next">›</button>
+    <div class="binder-page-num">Page <span id="binder-page-num">1</span></div>
+  </div>
 
   <script src="app.js"></script>
 </body>

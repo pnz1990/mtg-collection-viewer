@@ -82,6 +82,10 @@ h1 {
   gap: 15px;
 }
 
+.collection.hidden {
+  display: none;
+}
+
 .card-link {
   text-decoration: none;
   color: inherit;
@@ -351,4 +355,134 @@ h1 {
   .chart-container {
     grid-template-columns: 1fr;
   }
+}
+
+/* View Toggle */
+.view-toggle {
+  display: flex;
+  gap: 5px;
+}
+
+.view-btn {
+  width: 36px;
+  height: 36px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 5px;
+  color: #e0e0e0;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-btn:hover {
+  background: #3a3a3a;
+}
+
+.view-btn.active {
+  background: #4CAF50;
+  border-color: #4CAF50;
+  color: #000;
+}
+
+/* Binder View */
+.binder {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.binder.hidden {
+  display: none;
+}
+
+.binder-pages {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  perspective: 1500px;
+}
+
+.binder-page {
+  flex: 1;
+  background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
+  border-radius: 8px;
+  padding: 15px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 10px;
+  min-height: 500px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+.binder-page-left {
+  border-right: 3px solid #222;
+  border-radius: 8px 0 0 8px;
+}
+
+.binder-page-right {
+  border-left: 3px solid #222;
+  border-radius: 0 8px 8px 0;
+}
+
+.binder-card {
+  background: #1a1a1a;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 488/680;
+}
+
+.binder-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.binder-card a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.binder-nav {
+  width: 50px;
+  height: 80px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.binder-nav:hover:not(:disabled) {
+  background: #4CAF50;
+  color: #000;
+}
+
+.binder-nav:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.binder-page-num {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.binder {
+  position: relative;
 }

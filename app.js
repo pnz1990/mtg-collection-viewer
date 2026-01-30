@@ -5,6 +5,9 @@ let imageObserver;
 let db;
 let priceSlider;
 let maxPriceValue = 200;
+let currentView = 'list';
+let binderPage = 0;
+const CARDS_PER_BINDER_PAGE = 18; // 9 per page, 2 pages visible
 
 // IndexedDB setup
 const dbPromise = new Promise((resolve, reject) => {
@@ -281,7 +284,48 @@ function applyFilters() {
   });
   
   updateStats();
-  renderCollection();
+  binderPage = 0;
+  if (currentView === 'list') renderCollection();
+  else renderBinder();
+}
+
+function renderBinder() {
+  const leftPage = document.querySelector('.binder-page-left');
+  const rightPage = document.querySelector('.binder-page-right');
+  const start = binderPage * CARDS_PER_BINDER_PAGE;
+  const pageCards = filteredCollection.slice(start, start + CARDS_PER_BINDER_PAGE);
+  
+  const renderPageCards = (cards) => cards.map(card => `
+    <div class="binder-card" data-scryfall-id="${card.scryfallId}">
+      <a href="detail.html?id=${card.scryfallId}">
+        <img alt="${card.name}" class="card-image">
+      </a>
+    </div>
+  `).join('') + Array(9 - cards.length).fill('<div class="binder-card"></div>').join('');
+  
+  leftPage.innerHTML = renderPageCards(pageCards.slice(0, 9));
+  rightPage.innerHTML = renderPageCards(pageCards.slice(9, 18));
+  
+  document.getElementById('binder-page-num').textContent = `${binderPage + 1} / ${Math.ceil(filteredCollection.length / CARDS_PER_BINDER_PAGE) || 1}`;
+  document.querySelector('.binder-prev').disabled = binderPage === 0;
+  document.querySelector('.binder-next').disabled = start + CARDS_PER_BINDER_PAGE >= filteredCollection.length;
+  
+  // Lazy load binder images
+  document.querySelectorAll('.binder-card[data-scryfall-id]').forEach(card => {
+    const img = card.querySelector('img');
+    const id = card.dataset.scryfallId;
+    fetchCardImage(id).then(url => { if (url) img.src = url; });
+  });
+}
+
+function setView(view) {
+  currentView = view;
+  document.getElementById('list-view').classList.toggle('active', view === 'list');
+  document.getElementById('binder-view').classList.toggle('active', view === 'binder');
+  document.getElementById('collection').classList.toggle('hidden', view !== 'list');
+  document.getElementById('binder').classList.toggle('hidden', view !== 'binder');
+  if (view === 'list') renderCollection();
+  else renderBinder();
 }
 
 function setupAutocomplete(inputId, listId, getItems) {
@@ -316,6 +360,11 @@ document.getElementById('set-filter').addEventListener('input', applyFilters);
 document.getElementById('rarity-filter').addEventListener('change', applyFilters);
 document.getElementById('foil-filter').addEventListener('change', applyFilters);
 document.getElementById('sort').addEventListener('change', applyFilters);
+
+document.getElementById('list-view').addEventListener('click', () => setView('list'));
+document.getElementById('binder-view').addEventListener('click', () => setView('binder'));
+document.querySelector('.binder-prev').addEventListener('click', () => { binderPage--; renderBinder(); });
+document.querySelector('.binder-next').addEventListener('click', () => { binderPage++; renderBinder(); });
 
 setupAutocomplete('search', 'search-autocomplete', () => [...new Set(collection.map(c => c.name))]);
 setupAutocomplete('set-filter', 'set-autocomplete', () => [...new Set(collection.map(c => c.setName))]);
