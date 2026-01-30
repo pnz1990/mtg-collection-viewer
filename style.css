@@ -359,8 +359,12 @@ h1 {
 .foil-foil { background: #4a6a8c; }
 .foil-etched { background: #6a4a6a; }
 
-.quantity {
-  background: #4a4a4a;
+.duplicate-badge {
+  background: #e65100;
+}
+
+.card.duplicate {
+  box-shadow: 0 0 0 2px #e65100, 0 4px 15px rgba(230, 81, 0, 0.3);
 }
 
 /* Dashboard */

@@ -121,11 +121,19 @@ function renderCharts() {
 
 function renderCollection() {
   const container = document.getElementById('collection');
+  
+  // Count duplicates by name
+  const nameCounts = {};
+  filteredCollection.forEach(c => {
+    nameCounts[c.name] = (nameCounts[c.name] || 0) + c.quantity;
+  });
+  
   container.innerHTML = filteredCollection.map(card => {
     const foilClass = card.foil !== 'normal' ? card.foil : '';
+    const dupeClass = nameCounts[card.name] >= 2 ? 'duplicate' : '';
     const setIcon = `https://svgs.scryfall.io/sets/${card.setCode.toLowerCase()}.svg`;
     return `
-    <div class="card ${foilClass}" data-scryfall-id="${card.scryfallId}">
+    <div class="card ${foilClass} ${dupeClass}" data-scryfall-id="${card.scryfallId}">
       <a href="detail.html?id=${card.scryfallId}" class="card-link">
         <div class="card-image-wrapper">
           <div class="card-image-inner">
@@ -141,7 +149,7 @@ function renderCollection() {
         <div class="card-details">
           <span class="badge rarity-${card.rarity}">${card.rarity}</span>
           ${card.foil !== 'normal' ? `<span class="badge foil-${card.foil}">${card.foil}</span>` : ''}
-          ${card.quantity > 1 ? `<span class="badge quantity">x${card.quantity}</span>` : ''}
+          ${nameCounts[card.name] >= 2 ? `<span class="badge duplicate-badge">x${nameCounts[card.name]}</span>` : ''}
         </div>
       </a>
     </div>`;
