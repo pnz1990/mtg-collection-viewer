@@ -495,11 +495,11 @@ h1 {
 }
 
 .flip-page.flipping-next {
-  animation: flipNext 0.6s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+  animation: flipNext 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
 }
 
 .flip-page.flipping-prev {
-  animation: flipPrev 0.6s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+  animation: flipPrev 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
 }
 
 @keyframes flipNext {
@@ -558,6 +558,9 @@ h1 {
   height: 100%;
   object-fit: cover;
   border-radius: 4px;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 .binder-card a {
