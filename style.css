@@ -28,21 +28,55 @@
   background: var(--bg-tertiary);
 }
 
-.menu-dropdown {
+.menu-overlay {
   display: none;
-  position: absolute;
-  top: 50px;
+  position: fixed;
+  top: 0;
   left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+}
+
+.menu-overlay.show {
+  display: block;
+}
+
+.menu-dropdown {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 250px;
+  height: 100vh;
   background: var(--bg-secondary);
-  border: 1px solid var(--bg-tertiary);
-  border-radius: 8px;
-  overflow: hidden;
-  min-width: 180px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  border-right: 1px solid var(--bg-tertiary);
+  overflow-y: auto;
+  transition: left 0.3s ease;
+  z-index: 1001;
 }
 
 .menu-dropdown.show {
-  display: block;
+  left: 0;
+}
+
+.menu-header {
+  padding: 20px 16px;
+  border-bottom: 1px solid var(--bg-tertiary);
+  font-weight: bold;
+  color: var(--accent);
+}
+
+.menu-section {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--bg-tertiary);
+}
+
+.menu-section-title {
+  padding: 8px 16px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
 }
 
 .menu-item {
@@ -60,6 +94,33 @@
 .menu-item.active {
   background: var(--accent);
   color: var(--bg-primary);
+}
+
+.menu-btn {
+  display: block;
+  width: calc(100% - 32px);
+  margin: 8px 16px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.menu-btn:hover {
+  transform: scale(1.02);
+}
+
+.menu-btn.random {
+  background: linear-gradient(135deg, #9C27B0, #673AB7);
+  color: white;
+}
+
+.menu-btn.load-data {
+  background: linear-gradient(135deg, #4CAF50, #388E3C);
+  color: white;
 }
 
 :root {

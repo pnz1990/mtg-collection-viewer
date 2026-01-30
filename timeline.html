@@ -10,104 +10,21 @@
 <body>
   <div class="nav-menu">
     <button type="button" class="menu-toggle" id="menu-toggle">☰</button>
+    <div class="menu-overlay" id="menu-overlay"></div>
     <div class="menu-dropdown" id="menu-dropdown">
-      <a href="index.html" class="menu-item">⊞ Grid View</a>
-      <a href="binder.html" class="menu-item">📖 Binder View</a>
-      <a href="carousel.html" class="menu-item">🎠 Carousel View</a>
-      <a href="timeline.html" class="menu-item active">📅 Timeline View</a>
-      <a href="deck-checker.html" class="menu-item">🔍 Deck Checker</a>
-    </div>
-  </div>
-  <header>
-    <h1>MTG Collection Viewer</h1>
-    <div class="stats">
-      <span>Total Cards: <strong id="total-cards">0</strong></span>
-      <span>Total Value: <strong id="total-value">$0.00</strong></span>
-      <select id="theme-select" class="theme-select">
-        <option value="">Dark (Default)</option>
-        <option value="azorius">Azorius</option>
-        <option value="dimir">Dimir</option>
-        <option value="rakdos">Rakdos</option>
-        <option value="gruul">Gruul</option>
-        <option value="selesnya">Selesnya</option>
-        <option value="orzhov">Orzhov</option>
-        <option value="izzet">Izzet</option>
-        <option value="golgari">Golgari</option>
-        <option value="boros">Boros</option>
-        <option value="simic">Simic</option>
-      </select>
-    </div>
-  </header>
-
-  <div class="filters">
-    <div class="filter-group autocomplete-wrapper">
-      <input type="text" id="search" placeholder="Search by name..." autocomplete="off">
-      <div id="search-autocomplete" class="autocomplete-list"></div>
-    </div>
-    <div class="filter-group autocomplete-wrapper">
-      <input type="text" id="set-filter" placeholder="Filter by set..." autocomplete="off">
-      <div id="set-autocomplete" class="autocomplete-list"></div>
-    </div>
-    <div class="filter-group price-slider">
-      <label>Price: $<span id="price-min-val">0</span> - $<span id="price-max-val">∞</span></label>
-      <div id="price-range"></div>
-    </div>
-    <select id="rarity-filter">
-      <option value="">All Rarities</option>
-      <option value="common">Common</option>
-      <option value="uncommon">Uncommon</option>
-      <option value="rare">Rare</option>
-      <option value="mythic">Mythic</option>
-    </select>
-    <select id="foil-filter">
-      <option value="">All Finishes</option>
-      <option value="normal">Normal</option>
-      <option value="foil">Foil</option>
-      <option value="etched">Etched</option>
-    </select>
-    <select id="type-filter">
-      <option value="">All Types</option>
-      <option value="Creature">Creature</option>
-      <option value="Instant">Instant</option>
-      <option value="Sorcery">Sorcery</option>
-      <option value="Artifact">Artifact</option>
-      <option value="Enchantment">Enchantment</option>
-      <option value="Land">Land</option>
-      <option value="Planeswalker">Planeswalker</option>
-    </select>
-    <select id="color-filter">
-      <option value="">All Colors</option>
-      <option value="W">White</option>
-      <option value="U">Blue</option>
-      <option value="B">Black</option>
-      <option value="R">Red</option>
-      <option value="G">Green</option>
-      <option value="C">Colorless</option>
-      <option value="M">Multicolor</option>
-    </select>
-    <div class="filter-group color-identity-filter">
-      <label>Color Identity:</label>
-      <div class="color-checkboxes">
-        <label class="color-check W"><input type="checkbox" value="W"><span>W</span></label>
-        <label class="color-check U"><input type="checkbox" value="U"><span>U</span></label>
-        <label class="color-check B"><input type="checkbox" value="B"><span>B</span></label>
-        <label class="color-check R"><input type="checkbox" value="R"><span>R</span></label>
-        <label class="color-check G"><input type="checkbox" value="G"><span>G</span></label>
-        <label class="color-check C"><input type="checkbox" value="C"><span>C</span></label>
+      <div class="menu-header">MTG Collection</div>
+      <div class="menu-section">
+        <div class="menu-section-title">Views</div>
+        <a href="index.html" class="menu-item">⊞ Grid View</a>
+        <a href="binder.html" class="menu-item">📖 Binder View</a>
+        <a href="carousel.html" class="menu-item">🎠 Carousel View</a>
+        <a href="timeline.html" class="menu-item active">📅 Timeline View</a>
+      </div>
+      <div class="menu-section">
+        <div class="menu-section-title">Tools</div>
+        <a href="deck-checker.html" class="menu-item">🔍 Deck Checker</a>
+        <button type="button" class="menu-btn random" id="menu-random">🎲 Random Card</button>
+        <button type="button" class="menu-btn load-data" id="menu-load-data">📥 Load Full Data</button>
       </div>
     </div>
-    <select id="sort">
-      <option value="price">Price</option>
-      <option value="recent">Most Recent</option>
-      <option value="name">Name</option>
-      <option value="rarity">Rarity</option>
-      <option value="set">Set</option>
-    </select>
   </div>
-
-  <div id="timeline" class="timeline"></div>
-
-  <script src="shared.js"></script>
-  <script src="timeline.js"></script>
-</body>
-</html>

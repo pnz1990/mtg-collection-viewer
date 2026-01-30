@@ -343,10 +343,46 @@ if (themeSelect) {
 // Hamburger menu
 const menuToggle = document.getElementById('menu-toggle');
 const menuDropdown = document.getElementById('menu-dropdown');
+const menuOverlay = document.getElementById('menu-overlay');
+
+function closeMenu() {
+  menuDropdown?.classList.remove('show');
+  menuOverlay?.classList.remove('show');
+}
+
 if (menuToggle && menuDropdown) {
-  menuToggle.addEventListener('click', () => menuDropdown.classList.toggle('show'));
-  document.addEventListener('click', e => {
-    if (!e.target.closest('.nav-menu')) menuDropdown.classList.remove('show');
+  menuToggle.addEventListener('click', () => {
+    menuDropdown.classList.toggle('show');
+    menuOverlay?.classList.toggle('show');
+  });
+  menuOverlay?.addEventListener('click', closeMenu);
+}
+
+// Menu random card button
+document.getElementById('menu-random')?.addEventListener('click', () => {
+  if (collection.length > 0) {
+    const randomCard = collection[Math.floor(Math.random() * collection.length)];
+    window.location.href = `detail.html?id=${randomCard.scryfallId}&reveal=1`;
+  }
+});
+
+// Menu load data button
+const menuLoadBtn = document.getElementById('menu-load-data');
+if (menuLoadBtn) {
+  const updateMenuLoadBtn = () => {
+    if (isFullDataLoaded()) {
+      menuLoadBtn.textContent = '🔄 Refresh Data';
+    } else {
+      menuLoadBtn.textContent = '📥 Load Full Data';
+    }
+  };
+  
+  menuLoadBtn.addEventListener('click', async () => {
+    menuLoadBtn.textContent = '📥 Loading...';
+    await loadFullCardData(null, true);
+    updateMenuLoadBtn();
+    closeMenu();
+    if (typeof onFiltersApplied === 'function') applyFilters();
   });
 }
 

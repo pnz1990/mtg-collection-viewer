@@ -10,12 +10,22 @@
 <body>
   <div class="nav-menu">
     <button type="button" class="menu-toggle" id="menu-toggle">☰</button>
+    <div class="menu-overlay" id="menu-overlay"></div>
     <div class="menu-dropdown" id="menu-dropdown">
-      <a href="index.html" class="menu-item active">⊞ Grid View</a>
-      <a href="binder.html" class="menu-item">📖 Binder View</a>
-      <a href="carousel.html" class="menu-item">🎠 Carousel View</a>
-      <a href="timeline.html" class="menu-item">📅 Timeline View</a>
-      <a href="deck-checker.html" class="menu-item">🔍 Deck Checker</a>
+      <div class="menu-header">MTG Collection</div>
+      <div class="menu-section">
+        <div class="menu-section-title">Views</div>
+        <a href="index.html" class="menu-item active">⊞ Grid View</a>
+        <a href="binder.html" class="menu-item">📖 Binder View</a>
+        <a href="carousel.html" class="menu-item">🎠 Carousel View</a>
+        <a href="timeline.html" class="menu-item">📅 Timeline View</a>
+      </div>
+      <div class="menu-section">
+        <div class="menu-section-title">Tools</div>
+        <a href="deck-checker.html" class="menu-item">🔍 Deck Checker</a>
+        <button type="button" class="menu-btn random" id="menu-random">🎲 Random Card</button>
+        <button type="button" class="menu-btn load-data" id="menu-load-data">📥 Load Full Data</button>
+      </div>
     </div>
   </div>
   
