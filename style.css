@@ -579,13 +579,6 @@ h1 {
     rgba(255,255,255,0.1) 75%,
     transparent 100%
   );
-  background-size: 200% 200%;
-  animation: shimmer 3s ease-in-out infinite;
-}
-
-@keyframes shimmer {
-  0%, 100% { background-position: 200% 200%; }
-  50% { background-position: 0% 0%; }
 }
 
 .binder-nav {
