@@ -94,7 +94,8 @@ async function loadFullCardData(onProgress, forceRefresh = false) {
           cmc: cardData.cmc,
           colors: cardData.colors || cardData.card_faces?.[0]?.colors || [],
           color_identity: cardData.color_identity || [],
-          keywords: cardData.keywords || []
+          keywords: cardData.keywords || [],
+          reserved: cardData.reserved || false
         };
         
         await cacheCardData(cardData.id, extracted);
@@ -240,6 +241,7 @@ function applyFilters() {
   const typeFilter = document.getElementById('type-filter')?.value || '';
   const colorFilter = document.getElementById('color-filter')?.value || '';
   const keywordFilter = document.getElementById('keyword-filter')?.value || '';
+  const reservedFilter = document.getElementById('reserved-filter')?.value || '';
   const sort = document.getElementById('sort').value;
   const [priceMin, priceMax] = priceSlider ? priceSlider.get().map(Number) : [0, maxPriceValue];
   const cmcFilter = window.cmcFilter;
@@ -254,6 +256,7 @@ function applyFilters() {
     const matchesIdentity = selectedColors.length === 0 || matchColorIdentity(card, selectedColors);
     const matchesKeyword = !keywordFilter || (card.keywords && card.keywords.includes(keywordFilter));
     const matchesCmc = cmcFilter === undefined || (cmcFilter === 6 ? card.cmc >= 6 : card.cmc === cmcFilter);
+    const matchesReserved = !reservedFilter || (reservedFilter === 'yes' ? card.reserved : !card.reserved);
     
     return card.name.toLowerCase().includes(search) &&
       (!setFilter || card.setName.toLowerCase().includes(setFilter)) &&
@@ -264,6 +267,7 @@ function applyFilters() {
       matchesIdentity &&
       matchesKeyword &&
       matchesCmc &&
+      matchesReserved &&
       card.price >= priceMin && card.price <= priceMax;
   });
   
@@ -336,6 +340,7 @@ document.getElementById('sort').addEventListener('change', applyFilters);
 document.getElementById('type-filter')?.addEventListener('change', applyFilters);
 document.getElementById('color-filter')?.addEventListener('change', applyFilters);
 document.getElementById('keyword-filter')?.addEventListener('change', applyFilters);
+document.getElementById('reserved-filter')?.addEventListener('change', applyFilters);
 document.querySelectorAll('.color-checkboxes input').forEach(cb => cb.addEventListener('change', applyFilters));
 
 document.getElementById('clear-filters')?.addEventListener('click', () => {
@@ -346,6 +351,7 @@ document.getElementById('clear-filters')?.addEventListener('click', () => {
   document.getElementById('type-filter') && (document.getElementById('type-filter').value = '');
   document.getElementById('color-filter') && (document.getElementById('color-filter').value = '');
   document.getElementById('keyword-filter') && (document.getElementById('keyword-filter').value = '');
+  document.getElementById('reserved-filter') && (document.getElementById('reserved-filter').value = '');
   document.querySelectorAll('.color-checkboxes input').forEach(cb => cb.checked = false);
   if (priceSlider) priceSlider.set([0, maxPriceValue]);
   window.cmcFilter = undefined;

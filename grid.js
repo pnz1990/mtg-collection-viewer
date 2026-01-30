@@ -201,6 +201,48 @@ function renderCharts() {
       avgCmc[type] = Math.round((typeCmc[type] / typeCount[type]) * 10) / 10;
     }
     createChart('avg-cmc-chart', avgCmc, 'bar');
+    
+    // Reserved List charts
+    const reservedCards = collection.filter(c => c.reserved);
+    if (reservedCards.length > 0) {
+      document.getElementById('reserved-charts').style.display = '';
+      
+      // Reserved count vs non-reserved
+      createChart('reserved-count-chart', {
+        'Reserved': reservedCards.length,
+        'Non-Reserved': collection.length - reservedCards.length
+      }, 'doughnut', v => {
+        document.getElementById('reserved-filter').value = v === 'Reserved' ? 'yes' : 'no';
+        applyFilters();
+      });
+      
+      // Reserved value vs non-reserved
+      const reservedValue = reservedCards.reduce((s, c) => s + c.price * c.quantity, 0);
+      const totalValue = collection.reduce((s, c) => s + c.price * c.quantity, 0);
+      createChart('reserved-value-chart', {
+        'Reserved': Math.round(reservedValue),
+        'Non-Reserved': Math.round(totalValue - reservedValue)
+      }, 'doughnut', v => {
+        document.getElementById('reserved-filter').value = v === 'Reserved' ? 'yes' : 'no';
+        applyFilters();
+      });
+      
+      // Reserved by type
+      const rlTypes = {};
+      reservedCards.forEach(c => {
+        const t = getMainType(c.type_line) || 'Other';
+        rlTypes[t] = (rlTypes[t] || 0) + c.quantity;
+      });
+      createChart('reserved-type-chart', rlTypes, 'doughnut', v => {
+        document.getElementById('reserved-filter').value = 'yes';
+        document.getElementById('type-filter').value = v === 'Other' ? '' : v;
+        applyFilters();
+      });
+      
+      // Top reserved by value
+      const topRL = [...reservedCards].sort((a, b) => b.price - a.price).slice(0, 6);
+      createChart('reserved-top-chart', Object.fromEntries(topRL.map(c => [c.name, Math.round(c.price)])), 'bar');
+    }
   }
 }
 
@@ -242,6 +284,7 @@ function renderCollection() {
         <div class="card-details">
           <span class="badge rarity-${card.rarity} clickable" data-filter="rarity" data-value="${card.rarity}">${card.rarity}</span>
           ${card.foil !== 'normal' ? `<span class="badge foil-${card.foil} clickable" data-filter="foil" data-value="${card.foil}">${card.foil}</span>` : ''}
+          ${card.reserved ? `<span class="badge reserved-badge clickable" data-filter="reserved" data-value="yes">RL</span>` : ''}
           ${mainType ? `<span class="badge type-badge clickable" data-filter="type" data-value="${mainType}">${mainType}</span>` : ''}
           ${card.cmc !== undefined && !card.type_line?.includes('Land') ? `<span class="badge cmc-badge clickable" data-filter="cmc" data-value="${card.cmc}">⬡${card.cmc}</span>` : ''}
           ${nameCounts[card.name] >= 2 ? `<span class="badge duplicate-badge">x${nameCounts[card.name]}</span>` : ''}
@@ -304,6 +347,7 @@ function renderCollection() {
       else if (filter === 'keyword') document.getElementById('keyword-filter').value = value;
       else if (filter === 'set') document.getElementById('set-filter').value = value;
       else if (filter === 'cmc') window.cmcFilter = parseInt(value);
+      else if (filter === 'reserved') document.getElementById('reserved-filter').value = value;
       applyFilters();
     });
   });

@@ -614,6 +614,12 @@ h1 {
   font-size: 0.65rem;
 }
 
+.reserved-badge {
+  background: linear-gradient(135deg, #b8860b, #daa520);
+  color: #000;
+  font-weight: bold;
+}
+
 .clickable {
   cursor: pointer;
   transition: transform 0.1s, filter 0.1s;

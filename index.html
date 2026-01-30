@@ -106,6 +106,24 @@
         <canvas id="avg-cmc-chart"></canvas>
       </div>
     </div>
+    <div class="chart-row" id="reserved-charts" style="display:none">
+      <div class="chart-box">
+        <h3>Reserved List Count</h3>
+        <canvas id="reserved-count-chart"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>Reserved List Value</h3>
+        <canvas id="reserved-value-chart"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>Reserved by Type</h3>
+        <canvas id="reserved-type-chart"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>Top Reserved Cards</h3>
+        <canvas id="reserved-top-chart"></canvas>
+      </div>
+    </div>
   </div>
 
   <div class="filters">
@@ -156,6 +174,11 @@
     </select>
     <select id="keyword-filter">
       <option value="">All Keywords</option>
+    </select>
+    <select id="reserved-filter">
+      <option value="">All Cards</option>
+      <option value="yes">Reserved List</option>
+      <option value="no">Non-Reserved</option>
     </select>
     <select id="sort">
       <option value="price">Price</option>
