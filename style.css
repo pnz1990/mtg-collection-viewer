@@ -373,6 +373,10 @@ h1 {
   font-size: 1.2rem;
   cursor: pointer;
   transition: all 0.2s;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .view-btn:hover {

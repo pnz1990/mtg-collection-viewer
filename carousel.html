@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MTG Collection Viewer</title>
+  <title>Carousel View - MTG Collection Viewer</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15/dist/nouislider.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -15,27 +15,6 @@
       <span>Total Value: <strong id="total-value">$0.00</strong></span>
     </div>
   </header>
-
-  <div id="dashboard" class="dashboard">
-    <div class="chart-container">
-      <div class="chart-box">
-        <h3>By Rarity</h3>
-        <canvas id="rarity-chart"></canvas>
-      </div>
-      <div class="chart-box">
-        <h3>By Set</h3>
-        <canvas id="set-chart"></canvas>
-      </div>
-      <div class="chart-box">
-        <h3>By Finish</h3>
-        <canvas id="finish-chart"></canvas>
-      </div>
-      <div class="chart-box">
-        <h3>By Price</h3>
-        <canvas id="price-chart"></canvas>
-      </div>
-    </div>
-  </div>
 
   <div class="filters">
     <div class="filter-group autocomplete-wrapper">
@@ -70,15 +49,26 @@
       <option value="set">Set</option>
     </select>
     <div class="view-toggle">
-      <a href="index.html" class="view-btn active" title="List View">▤</a>
+      <a href="index.html" class="view-btn" title="List View">▤</a>
       <a href="binder.html" class="view-btn" title="Binder View">▦</a>
-      <a href="carousel.html" class="view-btn" title="Carousel View">◐</a>
+      <a href="carousel.html" class="view-btn active" title="Carousel View">◐</a>
     </div>
   </div>
 
-  <div id="collection" class="collection"></div>
+  <div id="carousel" class="carousel">
+    <button type="button" class="carousel-nav carousel-prev">‹</button>
+    <div class="carousel-track">
+      <div class="carousel-cards"></div>
+    </div>
+    <button type="button" class="carousel-nav carousel-next">›</button>
+    <div class="carousel-mobile-nav">
+      <button type="button" class="carousel-mobile-prev">‹</button>
+      <button type="button" class="carousel-mobile-next">›</button>
+    </div>
+    <div class="carousel-counter"><span id="carousel-current">1</span> / <span id="carousel-total">1</span></div>
+  </div>
 
   <script src="shared.js"></script>
-  <script src="grid.js"></script>
+  <script src="carousel.js"></script>
 </body>
 </html>
