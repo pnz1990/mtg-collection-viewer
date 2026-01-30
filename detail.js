@@ -86,7 +86,10 @@ function renderCardDetails(card, collectionCard) {
     <div class="detail-content">
       <div class="detail-left">
         <div class="detail-image-wrapper ${foilClass}">
-          <img src="${imageUrl}" alt="${card.name}" class="detail-image">
+          <div class="detail-image-inner">
+            <img src="${imageUrl}" alt="${card.name}" class="detail-image">
+            <img src="back.png" alt="Card back" class="detail-back">
+          </div>
         </div>
       </div>
       
@@ -176,7 +179,7 @@ function renderCardDetails(card, collectionCard) {
   
   // Add 3D tilt effect on click+drag
   const wrapper = document.querySelector('.detail-image-wrapper');
-  const img = wrapper.querySelector('.detail-image');
+  const inner = wrapper.querySelector('.detail-image-inner');
   let isDragging = false;
   
   const startDrag = e => {
@@ -187,10 +190,10 @@ function renderCardDetails(card, collectionCard) {
   const endDrag = () => {
     if (isDragging) {
       isDragging = false;
-      img.style.transform = '';
-      img.style.boxShadow = '';
-      wrapper.style.setProperty('--shimmer-x', '50%');
-      wrapper.style.setProperty('--shimmer-y', '50%');
+      inner.style.transform = '';
+      inner.style.boxShadow = '';
+      inner.style.setProperty('--shimmer-x', '50%');
+      inner.style.setProperty('--shimmer-y', '50%');
     }
   };
   
@@ -201,10 +204,10 @@ function renderCardDetails(card, collectionCard) {
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     const x = (clientX - rect.left) / rect.width - 0.5;
     const y = (clientY - rect.top) / rect.height - 0.5;
-    img.style.transform = `rotateX(${-y * 20}deg) rotateY(${x * 20}deg)`;
-    img.style.boxShadow = `${x * -30}px ${15 + y * -15}px 40px rgba(0,0,0,0.5)`;
-    wrapper.style.setProperty('--shimmer-x', `${50 + x * 100}%`);
-    wrapper.style.setProperty('--shimmer-y', `${50 + y * 100}%`);
+    inner.style.transform = `rotateX(${-y * 20}deg) rotateY(${x * 20}deg)`;
+    inner.style.boxShadow = `${x * -30}px ${15 + y * -15}px 40px rgba(0,0,0,0.5)`;
+    inner.style.setProperty('--shimmer-x', `${50 + x * 100}%`);
+    inner.style.setProperty('--shimmer-y', `${50 + y * 100}%`);
   };
   
   wrapper.addEventListener('mousedown', startDrag);
