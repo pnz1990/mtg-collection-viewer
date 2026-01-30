@@ -82,6 +82,14 @@ function renderCardDetails(card, collectionCard) {
     <div class="detail-content">
       <div class="detail-left">
         <img src="${imageUrl}" alt="${card.name}" class="detail-image">
+      </div>
+      
+      <div class="detail-info">
+        <div class="card-title">
+          <h2>${card.name}</h2>
+          <div class="mana-cost">${renderManaSymbols(card.mana_cost)}</div>
+        </div>
+        
         ${collectionCard ? `
         <div class="collection-info">
           <h3>Your Collection</h3>
@@ -105,13 +113,6 @@ function renderCardDetails(card, collectionCard) {
           </div>
         </div>
         ` : ''}
-      </div>
-      
-      <div class="detail-info">
-        <div class="card-title">
-          <h2>${card.name}</h2>
-          <div class="mana-cost">${renderManaSymbols(card.mana_cost)}</div>
-        </div>
         
         <div class="type-line">${card.type_line}</div>
         
