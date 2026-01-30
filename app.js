@@ -509,6 +509,7 @@ function setView(view) {
 
 function renderCarousel() {
   const container = document.querySelector('.carousel-cards');
+  const scrollY = window.scrollY;
   const visibleCount = 5;
   
   // Calculate visible range, ensuring active card is centered
@@ -533,7 +534,7 @@ function renderCarousel() {
     return `
       <div class="carousel-card ${isActive ? 'active' : ''} ${isAdjacent ? 'adjacent' : ''} ${foilClass}" data-index="${card.index}" data-scryfall-id="${card.scryfallId}">
         <a href="detail.html?id=${card.scryfallId}">
-          <img alt="${card.name}" class="card-image">
+          <img alt="${card.name}" class="card-image" draggable="false">
         </a>
         <div class="carousel-card-info">
           <div class="carousel-card-name">${card.name}</div>
@@ -542,6 +543,8 @@ function renderCarousel() {
       </div>
     `;
   }).join('');
+  
+  window.scrollTo(0, scrollY);
   
   document.getElementById('carousel-current').textContent = carouselIndex + 1;
   document.getElementById('carousel-total').textContent = filteredCollection.length;
