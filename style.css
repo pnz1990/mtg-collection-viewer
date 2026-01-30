@@ -474,6 +474,16 @@ h1 {
   z-index: 10;
 }
 
+.flip-page-next {
+  right: 20px;
+  transform-origin: left center;
+}
+
+.flip-page-prev {
+  left: 20px;
+  transform-origin: right center;
+}
+
 .flip-page-inner {
   position: relative;
   width: 100%;
@@ -502,22 +512,12 @@ h1 {
   transform: rotateY(180deg);
 }
 
-.flip-page-next {
-  right: 20px;
-  transform-origin: left center;
+.flip-page-next.flipping {
+  animation: flipNextPage 1.2s cubic-bezier(0.3, 0.0, 0.2, 1) forwards;
 }
 
-.flip-page-prev {
-  left: 20px;
-  transform-origin: right center;
-}
-
-.flip-page-next.flipping .flip-page-inner {
-  animation: flipNextPage 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
-}
-
-.flip-page-prev.flipping .flip-page-inner {
-  animation: flipPrevPage 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+.flip-page-prev.flipping {
+  animation: flipPrevPage 1.2s cubic-bezier(0.3, 0.0, 0.2, 1) forwards;
 }
 
 @keyframes flipNextPage {
