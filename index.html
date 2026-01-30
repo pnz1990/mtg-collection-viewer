@@ -109,21 +109,20 @@
   </div>
 
   <div class="filters">
-    
-      <div class="filter-group autocomplete-wrapper">
-        <input type="text" id="search" placeholder="Search by name..." autocomplete="off">
-        <div id="search-autocomplete" class="autocomplete-list"></div>
-      </div>
-      <div class="filter-group autocomplete-wrapper">
-        <input type="text" id="set-filter" placeholder="Filter by set..." autocomplete="off">
-        <div id="set-autocomplete" class="autocomplete-list"></div>
-      </div>
-      <div class="filter-group price-slider">
-        <label>Price: $<span id="price-min-val">0</span> - $<span id="price-max-val">∞</span></label>
-        <div id="price-range"></div>
-      </div>
-      <select id="rarity-filter">
-        <option value="">All Rarities</option>
+    <div class="filter-group autocomplete-wrapper">
+      <input type="text" id="search" placeholder="Search by name..." autocomplete="off">
+      <div id="search-autocomplete" class="autocomplete-list"></div>
+    </div>
+    <div class="filter-group autocomplete-wrapper">
+      <input type="text" id="set-filter" placeholder="Filter by set..." autocomplete="off">
+      <div id="set-autocomplete" class="autocomplete-list"></div>
+    </div>
+    <div class="filter-group price-slider">
+      <label>Price: $<span id="price-min-val">0</span> - $<span id="price-max-val">∞</span></label>
+      <div id="price-range"></div>
+    </div>
+    <select id="rarity-filter">
+      <option value="">All Rarities</option>
       <option value="common">Common</option>
       <option value="uncommon">Uncommon</option>
       <option value="rare">Rare</option>
@@ -135,15 +134,6 @@
       <option value="foil">Foil</option>
       <option value="etched">Etched</option>
     </select>
-    <select id="sort">
-      <option value="price">Price</option>
-      <option value="recent">Most Recent</option>
-      <option value="name">Name</option>
-      <option value="rarity">Rarity</option>
-      <option value="set">Set</option>
-    </select>
-    </div>
-    
     <select id="type-filter">
       <option value="">All Types</option>
       <option value="Creature">Creature</option>
@@ -167,6 +157,13 @@
     <select id="keyword-filter">
       <option value="">All Keywords</option>
     </select>
+    <select id="sort">
+      <option value="price">Price</option>
+      <option value="recent">Most Recent</option>
+      <option value="name">Name</option>
+      <option value="rarity">Rarity</option>
+      <option value="set">Set</option>
+    </select>
     <div class="filter-group color-identity-filter">
       <label>Color Identity:</label>
       <div class="color-checkboxes">
@@ -177,7 +174,6 @@
         <label class="color-check G"><input type="checkbox" value="G"><span>G</span></label>
         <label class="color-check C"><input type="checkbox" value="C"><span>C</span></label>
       </div>
-    </div>
     </div>
   </div>
 
