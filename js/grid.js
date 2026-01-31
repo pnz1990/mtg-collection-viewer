@@ -70,7 +70,13 @@ function renderCharts() {
       },
       options: {
         responsive: true,
-        plugins: { legend: { position: 'bottom', labels: { color: '#e0e0e0', boxWidth: 12, padding: 8 } } },
+        plugins: { 
+          legend: { 
+            position: 'bottom', 
+            labels: { color: '#e0e0e0', boxWidth: 12, padding: 8 },
+            onClick: (e, item, legend) => { if (onClick) onClick(item.text); }
+          } 
+        },
         animation: { animateRotate: true, duration: 800 },
         onClick: (e, els) => { if (els.length && onClick) onClick(labels[els[0].index]); }
       }
