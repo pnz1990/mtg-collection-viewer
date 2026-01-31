@@ -96,7 +96,7 @@ function renderCharts() {
   });
   
   createChart('price-chart', countBy(collection, c => getPriceRange(c.price)), 'doughnut', v => {
-    const ranges = { '$0-1': [0,1], '$1-5': [1,5], '$5-10': [5,10], '$10-25': [10,25], '$25-50': [25,50], '$50+': [50, maxPriceValue] };
+    const ranges = { '<$5': [0,5], '$5-20': [5,20], '$20-50': [20,50], '$50-100': [50,100], '$100+': [100, maxPriceValue] };
     if (ranges[v] && priceSlider) { priceSlider.set(ranges[v]); applyFilters(); }
   });
   
