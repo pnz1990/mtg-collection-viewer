@@ -505,8 +505,11 @@ if (menuLoadBtn) {
   };
   
   menuLoadBtn.addEventListener('click', async () => {
-    menuLoadBtn.textContent = '📥 Loading...';
-    await loadFullCardData(null, true);
+    menuLoadBtn.textContent = '📥 Loading... 0%';
+    await loadFullCardData((done, total) => {
+      const pct = Math.round((done / total) * 100);
+      menuLoadBtn.textContent = `📥 Loading... ${pct}%`;
+    }, true);
     updateMenuLoadBtn();
     populateKeywordFilter();
     closeMenu();
