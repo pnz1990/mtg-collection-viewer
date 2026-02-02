@@ -9,11 +9,13 @@ async function loadCardDetails() {
   }
 
   try {
-    // Add delay to avoid rate limiting
-    await new Promise(r => setTimeout(r, 100));
+    // Add delay to avoid rate limiting (Scryfall allows ~10 requests/sec)
+    await new Promise(r => setTimeout(r, 150));
     
     const [cardResponse, csvResponse] = await Promise.all([
-      fetch(`https://api.scryfall.com/cards/${scryfallId}`),
+      fetch(`https://api.scryfall.com/cards/${scryfallId}`, {
+        headers: { 'Accept': 'application/json' }
+      }),
       fetch('data/Collection.csv')
     ]);
     
