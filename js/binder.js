@@ -96,6 +96,12 @@ function renderBinder(direction = null) {
     const currStart = binderPage * CARDS_PER_BINDER_PAGE;
     const currCards = filteredCollection.slice(currStart, currStart + CARDS_PER_BINDER_PAGE);
     
+    // Set new content immediately underneath
+    leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
+    rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
+    loadImages();
+    
+    // Create flip overlay showing old right page flipping to reveal new left
     const flipPage = document.createElement('div');
     flipPage.className = 'flip-page flip-page-next';
     flipPage.innerHTML = `
@@ -105,14 +111,10 @@ function renderBinder(direction = null) {
       </div>
     `;
     pagesContainer.appendChild(flipPage);
-    loadImages();
     
     requestAnimationFrame(() => {
       flipPage.classList.add('flipping');
       flipPage.addEventListener('animationend', () => {
-        leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
-        rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
-        loadImages();
         flipPage.remove();
         setupBinderHover();
       }, { once: true });
@@ -124,6 +126,12 @@ function renderBinder(direction = null) {
     const currStart = binderPage * CARDS_PER_BINDER_PAGE;
     const currCards = filteredCollection.slice(currStart, currStart + CARDS_PER_BINDER_PAGE);
     
+    // Set new content immediately underneath
+    leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
+    rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
+    loadImages();
+    
+    // Create flip overlay showing old left page flipping back
     const flipPage = document.createElement('div');
     flipPage.className = 'flip-page flip-page-prev';
     flipPage.innerHTML = `
@@ -133,14 +141,10 @@ function renderBinder(direction = null) {
       </div>
     `;
     pagesContainer.appendChild(flipPage);
-    loadImages();
     
     requestAnimationFrame(() => {
       flipPage.classList.add('flipping');
       flipPage.addEventListener('animationend', () => {
-        leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
-        rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
-        loadImages();
         flipPage.remove();
         setupBinderHover();
       }, { once: true });
