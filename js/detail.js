@@ -9,15 +9,15 @@ async function loadCardDetails() {
   }
 
   try {
+    // Add delay to avoid rate limiting
+    await new Promise(r => setTimeout(r, 100));
+    
     const [cardResponse, csvResponse] = await Promise.all([
-      fetch(`https://api.scryfall.com/cards/${scryfallId}`, {
-        headers: {
-          'User-Agent': 'MTGCollectionViewer/1.0',
-          'Accept': 'application/json'
-        }
-      }),
-      fetch('Collection.csv')
+      fetch(`https://api.scryfall.com/cards/${scryfallId}`),
+      fetch('data/Collection.csv')
     ]);
+    
+    if (!cardResponse.ok) throw new Error('Card not found');
     
     const card = await cardResponse.json();
     const csvText = await csvResponse.text();
