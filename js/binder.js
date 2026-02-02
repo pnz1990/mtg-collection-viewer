@@ -84,11 +84,20 @@ function renderBinder(direction = null) {
   }
   
   // Desktop two-page logic
+  const prevBtn = document.querySelector('.binder-prev');
+  const nextBtn = document.querySelector('.binder-next');
+  
   const updateNav = () => {
     document.getElementById('binder-page-num').textContent = `${binderPage + 1} / ${Math.ceil(filteredCollection.length / CARDS_PER_BINDER_PAGE) || 1}`;
-    document.querySelector('.binder-prev').disabled = binderPage === 0;
-    document.querySelector('.binder-next').disabled = (binderPage + 1) * CARDS_PER_BINDER_PAGE >= filteredCollection.length;
+    prevBtn.disabled = binderPage === 0;
+    nextBtn.disabled = (binderPage + 1) * CARDS_PER_BINDER_PAGE >= filteredCollection.length;
   };
+  
+  // Disable buttons during animation
+  if (direction) {
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
+  }
   
   if (direction === 'next') {
     // NEXT: Right page flips left to reveal new spread
