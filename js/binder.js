@@ -91,75 +91,73 @@ function renderBinder(direction = null) {
   };
   
   if (direction === 'next') {
-    const prevStart = (binderPage - 1) * CARDS_PER_BINDER_PAGE;
-    const prevCards = filteredCollection.slice(prevStart, prevStart + CARDS_PER_BINDER_PAGE);
+    // NEXT: Right page flips left to reveal new spread
+    // Clone current pages (with loaded images)
+    const leftClone = leftPage.innerHTML;
+    const rightClone = rightPage.innerHTML;
     const currStart = binderPage * CARDS_PER_BINDER_PAGE;
     const currCards = filteredCollection.slice(currStart, currStart + CARDS_PER_BINDER_PAGE);
     
-    // Clone current right page for flip animation (already has images loaded)
-    const rightClone = rightPage.cloneNode(true);
-    
-    // Set new content immediately underneath
-    leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
+    // Only update right page underneath (left stays visible until covered)
     rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
     loadImages();
     
-    // Create flip overlay using cloned content
+    // Flip overlay: front=old right, back=new left. Covers left page during flip.
     const flipPage = document.createElement('div');
     flipPage.className = 'flip-page flip-page-next';
-    flipPage.innerHTML = `<div class="flip-page-inner"><div class="flip-page-front"></div><div class="flip-page-back"></div></div>`;
-    flipPage.querySelector('.flip-page-front').appendChild(rightClone);
-    flipPage.querySelector('.flip-page-front').innerHTML = rightClone.innerHTML;
-    flipPage.querySelector('.flip-page-back').innerHTML = leftPage.innerHTML;
+    flipPage.innerHTML = `<div class="flip-page-inner">
+      <div class="flip-page-front">${rightClone}</div>
+      <div class="flip-page-back">${renderPageCards(currCards.slice(0, 9))}</div>
+    </div>`;
     pagesContainer.appendChild(flipPage);
     
     // Load images in flip back
     flipPage.querySelectorAll('.flip-page-back .binder-card[data-scryfall-id]').forEach(card => {
       const img = card.querySelector('img');
-      const id = card.dataset.scryfallId;
-      fetchCardImage(id, 'small').then(url => { if (url) img.src = url; });
+      fetchCardImage(card.dataset.scryfallId, 'small').then(url => { if (url) img.src = url; });
     });
     
     requestAnimationFrame(() => {
       flipPage.classList.add('flipping');
       flipPage.addEventListener('animationend', () => {
+        leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
+        loadImages();
         flipPage.remove();
         setupBinderHover();
       }, { once: true });
     });
     
   } else if (direction === 'prev') {
-    const nextStart = (binderPage + 1) * CARDS_PER_BINDER_PAGE;
-    const nextCards = filteredCollection.slice(nextStart, nextStart + CARDS_PER_BINDER_PAGE);
+    // PREV: Left page flips right to reveal new spread
+    const leftClone = leftPage.innerHTML;
+    const rightClone = rightPage.innerHTML;
     const currStart = binderPage * CARDS_PER_BINDER_PAGE;
     const currCards = filteredCollection.slice(currStart, currStart + CARDS_PER_BINDER_PAGE);
     
-    // Clone current left page for flip animation (already has images loaded)
-    const leftClone = leftPage.cloneNode(true);
-    
-    // Set new content immediately underneath
+    // Only update left page underneath (right stays visible until covered)
     leftPage.innerHTML = renderPageCards(currCards.slice(0, 9));
-    rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
     loadImages();
     
-    // Create flip overlay using cloned content
+    // Flip overlay: front=old left, back=new right. Covers right page during flip.
     const flipPage = document.createElement('div');
     flipPage.className = 'flip-page flip-page-prev';
-    flipPage.innerHTML = `<div class="flip-page-inner"><div class="flip-page-front"></div><div class="flip-page-back"></div></div>`;
-    flipPage.querySelector('.flip-page-front').innerHTML = leftClone.innerHTML;
-    flipPage.querySelector('.flip-page-back').innerHTML = rightPage.innerHTML;
+    flipPage.innerHTML = `<div class="flip-page-inner">
+      <div class="flip-page-front">${leftClone}</div>
+      <div class="flip-page-back">${renderPageCards(currCards.slice(9, 18))}</div>
+    </div>`;
     pagesContainer.appendChild(flipPage);
     
     // Load images in flip back
     flipPage.querySelectorAll('.flip-page-back .binder-card[data-scryfall-id]').forEach(card => {
       const img = card.querySelector('img');
-      const id = card.dataset.scryfallId;
-      fetchCardImage(id, 'small').then(url => { if (url) img.src = url; });
+      fetchCardImage(card.dataset.scryfallId, 'small').then(url => { if (url) img.src = url; });
     });
     
     requestAnimationFrame(() => {
       flipPage.classList.add('flipping');
       flipPage.addEventListener('animationend', () => {
+        rightPage.innerHTML = renderPageCards(currCards.slice(9, 18));
+        loadImages();
         flipPage.remove();
         setupBinderHover();
       }, { once: true });
