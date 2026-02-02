@@ -516,7 +516,7 @@ Sunfall,MOM,March of the Machine,349,foil,rare,1,81207,b961b23d-a16f-4126-9293-2
 Wrath of God,SLD,Secret Lair Drop,185,normal,rare,1,58933,caff117f-844b-4d11-a104-930d7f238114,17.68,false,false,near_mint,en,CAD
 Dusk // Dawn,AKH,Amonkhet,210,normal,rare,1,5475,937dbc51-b589-4237-9fce-ea5c757f7c48,0.5,false,false,near_mint,en,CAD
 Patch Up,SNC,Streets of New Capenna,23,normal,uncommon,1,67669,2ce30c92-c5f2-45d2-819e-177390bc26f5,0.27,false,false,near_mint,en,CAD
-Sevinne's Reclamation,MH3,Modern Horizons 3,267,foil,rare,1,94343,0f055754-58cf-474a-a3a9-59490dbf9dce,1.61,false,false,near_mint,en,CAD
+Sevinne's Reclamation,MH3,Modern Horizons 3,267,foil,rare,2,94343,0f055754-58cf-474a-a3a9-59490dbf9dce,1.65,false,false,near_mint,en,CAD
 Winds of Abandon,MH1,Modern Horizons,37,normal,rare,1,44897,3bb17913-fe4d-4acd-9b75-71f5a90f898b,8.38,false,false,near_mint,en,CAD
 Dismantling Wave,TDC,Tarkir: Dragonstorm Commander,112,normal,rare,1,104844,a06bc946-8625-4a87-8695-ecf236df95bc,0.34,false,false,near_mint,en,CAD
 Idyllic Tutor,SLD,Secret Lair Drop,1020,foil,rare,1,67303,d0ccb445-53dc-40d7-abea-d6d8dff60ce4,40.86,false,false,near_mint,en,CAD
@@ -1578,3 +1578,134 @@ Eldritch Evolution,SLD,Secret Lair Drop,1414,foil,rare,1,85885,57906b54-9fea-460
 Eldritch Evolution,SLP,Secret Lair Promo,5,foil,rare,1,79077,f743b688-25e8-421e-97b5-d294dda34817,54.48,false,false,near_mint,en,CAD
 Rampant Growth,2X2,Double Masters 2022,371,foil,common,1,70450,b4bbf009-0798-4d8b-b375-6d6fde975c34,2.44,false,false,near_mint,en,CAD
 Primal Command,STA,Strixhaven Mystical Archive,118,normal,mythic,1,58475,ff5f2c89-dbe9-4b44-b892-8e2325860e62,7.1,false,false,near_mint,en,CAD
+"Ashiok, Dream Render",SLD,Secret Lair Drop,399,normal,rare,1,67310,dd6f76d4-a2b3-40e5-b6a7-b27c42caf615,28.32,false,false,near_mint,en,CAD
+Wrenn and Six,2X2,Double Masters 2022,296,foil,mythic,1,70250,5bd498cc-a609-4457-9325-6888d59ca36f,22.5,false,false,near_mint,en,CAD
+"Oko, Thief of Crowns",ELD,Throne of Eldraine,271,normal,mythic,1,46036,95da027e-34c1-4098-827d-1647693ad8f4,14.95,false,false,near_mint,en,CAD
+"Aminatou, the Fateshifter",C18,Commander 2018,37,foil,mythic,1,806,16b9f43a-9c3f-4bfa-9eb1-734189a4bb1f,3.31,false,false,near_mint,en,CAD
+"Tyvar, Jubilant Brawler",ONE,Phyrexia: All Will Be One,344,foil,rare,1,78727,9bddf1b3-e23f-4f05-977d-257881b8babe,2.07,false,false,near_mint,en,CAD
+"Nicol Bolas, Dragon-God",SLD,Secret Lair Drop,1246,foil,mythic,1,80493,eee1dee4-651a-4038-ba96-d265bd53c9a0,10.21,false,false,near_mint,en,CAD
+Saheeli Rai,KLD,Kaladesh,186,normal,mythic,1,7457,94b38464-39cd-4ee6-b9bf-a0bc1e128d9a,2.19,false,false,near_mint,en,CAD
+Nissa of Shadowed Boughs,ZNR,Zendikar Rising,283,normal,mythic,1,54775,dabac59d-8319-417e-9cd5-e4ee59b2e5f2,1.81,false,false,near_mint,en,CAD
+"Dihada, Binder of Wills",DMC,Dominaria United Commander,1,foil,mythic,1,71806,ddeb54d6-a600-42b9-98df-20f8d58caed8,21.73,false,false,near_mint,en,CAD
+"Oko, the Trickster",ELD,Throne of Eldraine,309,normal,mythic,1,46062,83e61813-c4c8-4e80-8808-ac5107966ee3,1.09,false,false,near_mint,en,CAD
+"Huatli, Dinosaur Knight",XLN,Ixalan,285,foil,mythic,1,3727,6a5a6f7b-149d-46d3-9814-d38a302db17c,5.44,false,false,near_mint,pt,CAD
+"Daretti, Ingenious Iconoclast",CN2,Conspiracy: Take the Crown,74,normal,mythic,1,8023,ad30aec2-cb67-4c92-9694-d33bef1884ee,7.49,false,false,near_mint,en,CAD
+Geyadrone Dihada,MH2,Modern Horizons 2,305,normal,mythic,1,59604,69ef067b-58ac-4b88-a983-83316d157fcb,2.73,false,false,near_mint,en,CAD
+Domri Rade,RVR,Ravnica Remastered,444,normal,mythic,1,89633,36a56ad2-ca21-4ab4-a819-a20642d3fadd,1.32,false,false,near_mint,en,CAD
+"Teferi, Time Raveler",SLD,Secret Lair Drop,526,foil,rare,1,46690,6e2b2e55-21a3-4f71-a14b-d3d1b137d18c,16.56,false,false,near_mint,en,CAD
+"Ral, Storm Conduit",SLD,Secret Lair Drop,523,foil,rare,1,46693,828289fa-6335-43c3-9d42-1c0199b9af67,2.78,false,false,near_mint,en,CAD
+"Angrath, the Flame-Chained",SLD,Secret Lair Drop,398,foil,mythic,1,67299,ba48c787-a444-4e15-bab7-39994a6e23e7,5.08,false,false,near_mint,en,CAD
+"Dovin, Hand of Control",SLD,Secret Lair Drop,529,foil,uncommon,1,47389,8f906233-7223-4e59-a6dd-2fb2db2d8e40,2.25,false,false,near_mint,en,CAD
+Oath of Teferi,DOM,Dominaria,200,normal,rare,1,2076,5a7fadca-0a94-4624-ab95-2c2410829824,1.36,false,false,near_mint,en,CAD
+Dire Undercurrents,SLD,Secret Lair Drop,1578★,foil,rare,1,91605,32c0e63c-778e-4749-9a96-a192699904c5,6.81,false,false,near_mint,en,CAD
+Invasion of Alara // Awaken the Maelstrom,MOM,March of the Machine,230,foil,rare,1,81047,318c363b-61cc-4e2f-8f86-a4287539ea07,0.65,false,false,near_mint,en,CAD
+Invasion of Amonkhet // Lazotep Convert,MOM,March of the Machine,231,foil,uncommon,1,81165,981f091a-17f8-412e-9752-69070ebed4ea,0.55,false,false,near_mint,en,CAD
+Thousand-Year Storm,2X2,Double Masters 2022,390,normal,rare,1,70589,ec17fa3c-9033-4eab-a236-3f0068595536,5.46,false,false,near_mint,en,CAD
+Legion's Initiative,2X2,Double Masters 2022,517,etched,rare,1,70117,257cd42e-c808-41b5-9878-e0c4386eb0c1,4.09,false,false,near_mint,en,CAD
+Thopter Foundry,2XM,Double Masters,222,normal,uncommon,1,51864,3d8dcd5e-d4d0-49ae-a591-78d80322105d,0.57,false,false,near_mint,en,CAD
+Hidetsugu Consumes All // Vessel of the All-Consuming,NEO,Kamigawa: Neon Dynasty,221,normal,mythic,1,66571,8e910464-329a-4de1-930a-be85b1956676,0.82,false,false,near_mint,en,CAD
+Bounty of the Luxa,2X2,Double Masters 2022,187,normal,uncommon,1,70052,0e038250-f8a9-4bce-baa6-7c2502929b59,0.34,false,false,near_mint,en,CAD
+Jeskai Ascendancy,KTK,Khans of Tarkir,180,normal,rare,1,13218,ca9c2522-5606-4bbd-863d-f0ab0a612b4e,2.37,false,false,near_mint,en,CAD
+Theater of Horrors,AFC,Forgotten Realms Commander,194,normal,rare,1,60760,72651e82-ab11-4ec7-812a-8cff8d7e7a2e,0.41,false,false,near_mint,en,CAD
+Privileged Position,2X2,Double Masters 2022,263,normal,rare,1,70392,9655bbe4-062f-4278-ad05-a326a64c5b69,7.62,false,false,near_mint,en,CAD
+Aura Shards,INV,Invasion,233,normal,uncommon,1,33100,df4039ef-af72-4267-ade9-fdb7c921279e,29.66,false,false,near_mint,en,CAD
+Riveteers Ascendancy,SNC,Streets of New Capenna,216,normal,rare,1,67640,21235916-2379-470c-b9ee-84246043d703,0.95,false,false,near_mint,en,CAD
+Wargate,ARB,Alara Reborn,129,foil,rare,1,23379,8f4fe11d-c404-489a-b17f-34f33b1597e8,372.17,false,false,near_mint,en,CAD
+Squirming Emergence,LCI,The Lost Caverns of Ixalan,386,foil,rare,1,88915,d165f708-65e9-4dbb-8a8c-085c5a2881d6,1.04,false,false,near_mint,en,CAD
+Expressive Iteration,TDC,Tarkir: Dragonstorm Commander,288,normal,uncommon,1,104596,45e92d69-0684-4a57-8c1c-bbf742bd8a23,0.49,false,false,near_mint,en,CAD
+Cut // Ribbons,AKH,Amonkhet,223,normal,rare,1,5462,c6f61e2b-e93b-4dda-95cf-9d0ff198c0a6,0.68,false,false,near_mint,en,CAD
+Guided Passage,2X2,Double Masters 2022,224,normal,rare,1,70453,b66c8ada-82a6-46d9-acd0-b4ff9e1e12bd,0.67,false,false,near_mint,en,CAD
+Dreadbore,RTR,Return to Ravnica,157,normal,rare,1,17265,a83945c6-4dc6-4d9a-9bc2-2d4a264e5422,1.02,false,false,near_mint,en,CAD
+Neoform,WAR,War of the Spark,206,normal,uncommon,1,44198,92d8f67e-4f2f-4a1f-b190-7c3f39e477e4,1.35,false,false,near_mint,en,CAD
+Life // Death,APC,Apocalypse,130,normal,uncommon,1,32326,7ab75cdb-93a1-4f78-b404-37566295c321,1.64,false,false,near_mint,en,CAD
+Bring to Light,2X2,Double Masters 2022,188,normal,rare,1,70565,e3399260-a81a-475c-9b87-1efb1a13f8d6,0.8,false,false,near_mint,en,CAD
+Mnemonic Betrayal,GRN,Guilds of Ravnica,189,normal,mythic,1,294,a5cf45aa-ed34-4add-a2ec-fc11f8c15ffa,12.69,false,false,near_mint,en,CAD
+Reconstruct History,STX,Strixhaven: School of Mages,222,normal,uncommon,1,58068,3e565e38-43d5-482e-a911-ce525dfee74f,0.29,false,false,near_mint,en,CAD
+Fatal Grudge,SNC,Streets of New Capenna,187,normal,uncommon,1,68068,ec7de8d6-edad-4845-9868-781351480258,0.27,false,false,near_mint,en,CAD
+Epic Experiment,OTC,Outlaws of Thunder Junction Commander,222,normal,mythic,1,93875,d3ad9626-3124-4ad6-9cac-49aa9c3ce88c,0.56,false,false,near_mint,en,CAD
+Blot Out the Sky,STX,Strixhaven: School of Mages,167,normal,mythic,1,57967,0141312f-4b68-4c56-b1dc-5b7e6afbb96c,1.06,false,false,near_mint,en,CAD
+Incandescent Aria,SNC,Streets of New Capenna,192,normal,rare,1,67837,77e2ed9e-ee1d-440a-94b4-d4b17d30b800,0.34,false,false,near_mint,en,CAD
+Fevered Suspicion,AFC,Forgotten Realms Commander,47,normal,rare,1,60552,82c35cce-5b13-4870-8710-1b05af2c5c40,3.8,false,false,near_mint,en,CAD
+Culling Ritual,STX,Strixhaven: School of Mages,172,foil,rare,1,58214,8f6f91d3-cc07-4a42-99a0-5fb83b29cc25,3.24,false,false,near_mint,en,CAD
+Eladamri's Call,MH1,Modern Horizons,197,normal,rare,1,44737,ea751fe2-b64a-4265-8885-a9016b29b5b3,13.87,false,false,near_mint,en,CAD
+Lim-Dûl's Vault,SLC,Secret Lair Countdown,1996,foil,rare,1,75249,9911cc02-ef9a-458b-94d2-50af92ad6628,27.93,false,false,near_mint,en,CAD
+Waterlogged Teachings // Inundated Archive,MH3,Modern Horizons 3,261,foil,uncommon,1,94328,060f9675-4921-4cbb-bae2-54c85c679fd4,3.0,false,false,near_mint,en,CAD
+Drown in the Loch,SLD,Secret Lair Drop,270,foil,rare,1,58917,01acd1c1-86b2-4423-9ba7-5b9725c0514f,17.58,false,false,near_mint,en,CAD
+Assassin's Trophy,SLD,Secret Lair Drop,139,normal,rare,1,56637,d00efb55-a859-408c-b727-6914584c06d2,27.74,false,false,near_mint,en,CAD
+Clutch of the Undercity,PLST,The List,RAV-197,normal,uncommon,1,69821,63749e0f-74db-49d6-b11f-9b51ce55b727,0.4,false,false,near_mint,en,CAD
+Fire Covenant,ICE,Ice Age,289,normal,uncommon,1,39520,6a0139c2-ad86-4c71-ab6d-4840c37d5d20,3.87,false,false,near_mint,en,CAD
+Flame of Anor,LTR,The Lord of the Rings: Tales of Middle-earth,406,foil,rare,1,83608,e882ef7d-ddff-40f5-a4f5-bff5c8169dc1,8.14,false,false,near_mint,en,CAD
+Rite of Harmony,MID,Innistrad: Midnight Hunt,236,foil,rare,1,63486,eb1a16f9-13d4-4188-8e1e-0f2394349c7a,1.29,false,false,near_mint,en,CAD
+Fracture,STX,Strixhaven: School of Mages,378,normal,uncommon,1,58072,4033ffe6-3e81-440f-bde7-0cf267a54b36,2.37,false,false,near_mint,en,CAD
+Vanishing Verse,STX,Strixhaven: School of Mages,354,normal,rare,1,58376,ee7441bf-8783-48b9-b828-31c071e97847,1.93,false,false,near_mint,en,CAD
+Bedevil,AFC,Forgotten Realms Commander,179,normal,rare,1,60928,ffd34d49-9c77-499d-a9ad-a491f5d169d0,0.97,false,false,near_mint,en,CAD
+Disorder in the Court,VOC,Crimson Vow Commander,29,normal,rare,1,64543,576bee63-54d8-4d5c-ab30-6c9b2a72a501,0.38,false,false,near_mint,en,CAD
+Aurelia's Fury,GTC,Gatecrash,144,normal,mythic,1,16680,1a3465b6-ee7f-4553-bbf1-85fae9734b67,2.25,false,false,near_mint,en,CAD
+Terminate,AFC,Forgotten Realms Commander,193,normal,uncommon,1,60701,4c942af8-e5c1-47e0-a662-d9ef531f0dad,0.63,false,false,near_mint,en,CAD
+Endless Detour,SNC,Streets of New Capenna,183,normal,rare,1,67620,13798c8c-1aa5-4f95-979b-b971e73d715f,0.34,false,false,near_mint,en,CAD
+Naya Charm,ZNC,Zendikar Rising Commander,95,normal,uncommon,1,55435,8d999a15-34a4-4a1e-862e-569b91948786,0.55,false,false,near_mint,en,CAD
+Bant Charm,2X2,Double Masters 2022,181,foil,uncommon,1,70329,7906b1e8-3049-4f4e-b1fd-b2547e7079f0,0.42,false,false,near_mint,en,CAD
+Cabaretti Charm,SNC,Streets of New Capenna,300,normal,uncommon,1,68066,eb456da8-6a20-4d5e-9587-e8661ced525b,0.27,false,false,near_mint,en,CAD
+Riveteers Charm,SNC,Streets of New Capenna,217,normal,uncommon,1,67839,784a5915-bc42-49d6-8a1b-45da7749f03a,0.27,false,false,near_mint,en,CAD
+Galvanic Iteration,MID,Innistrad: Midnight Hunt,371,foil,rare,1,63417,bd20ae02-a7d5-40b2-8be2-bc8c0dc0f6d8,1.35,false,false,near_mint,en,CAD
+Putrefy,KHC,Kaldheim Commander,91,normal,uncommon,1,57208,36e2a569-ed40-48f5-b39c-749b491bc207,0.41,false,false,near_mint,en,CAD
+Obscura Charm,SNC,Streets of New Capenna,208,normal,uncommon,1,67905,9961562d-cad9-40e5-afae-3ebce77a2260,0.27,false,false,near_mint,en,CAD
+Abrupt Decay,WMC,World Magic Cup Qualifiers,2016,foil,rare,1,16488,0b10ef54-368c-4841-ab5d-f2e8e1265c83,33.75,false,false,near_mint,en,CAD
+Golgari Charm,RTR,Return to Ravnica,164,normal,uncommon,1,17258,48fce388-eefc-4234-8dd9-1260c1ba97eb,1.2,false,false,near_mint,en,CAD
+Unleash the Inferno,SNC,Streets of New Capenna,337,normal,rare,1,67832,746c267f-ae38-45f4-9dca-8c7278843526,0.38,false,false,near_mint,en,CAD
+Izzet Charm,2X2,Double Masters 2022,230,normal,common,1,70244,58f4b8a7-4153-4694-9aae-f61d3124c785,0.34,false,false,near_mint,en,CAD
+Rakdos Charm,AFC,Forgotten Realms Commander,190,normal,uncommon,1,60673,3632fbff-c3cc-4f6f-b15d-c7ca3cb77a7c,0.71,false,false,near_mint,en,CAD
+Simic Charm,CMR,Commander Legends,451,normal,uncommon,1,56040,3384ee4e-738f-4442-bccd-4f96022b7219,1.38,false,false,near_mint,en,CAD
+Kolaghan's Command,2X2,Double Masters 2022,381,normal,rare,1,70093,1e8bdd10-0bdc-4339-bd84-b540606438d6,2.73,false,false,near_mint,en,CAD
+Growth Spiral,STA,Strixhaven Mystical Archive,61,normal,rare,1,58271,ae9f9b3d-d463-4bc6-b822-872a1f8867c8,1.96,false,false,near_mint,en,CAD
+Anguished Unmaking,SLD,Secret Lair Drop,138,normal,rare,1,56634,bbd79be1-3e84-41a3-89ae-b1132cb31ed9,18.46,false,false,near_mint,en,CAD
+Vexing Shusher,PSHM,Shadowmoor Promos,222★,foil,rare,1,24552,fbecaab0-e5d7-4bec-9fb5-c24b587eaa42,31.33,false,false,near_mint,en,CAD
+Archon of Valor's Reach,BBD,Battlebond,74,normal,rare,1,1919,c43f47e3-ebb8-4d6e-a00c-4c190e2d3daf,0.68,false,false,near_mint,en,CAD
+Notion Thief,ZNC,Zendikar Rising Commander,96,normal,rare,1,55502,f675f509-4343-4568-96dd-265626cb6c2b,2.63,false,false,near_mint,en,CAD
+Mayhem Devil,RVR,Ravnica Remastered,199,foil,uncommon,1,89630,345ea65e-3dbb-4cb4-ae65-7797a65eafce,1.02,false,false,near_mint,en,CAD
+Colossal Skyturtle,NEO,Kamigawa: Neon Dynasty,216,normal,uncommon,1,66842,f40bd797-4d12-4098-a1a8-d7e5b7b82ac9,0.55,false,false,near_mint,en,CAD
+Witherbloom Apprentice,STX,Strixhaven: School of Mages,247,foil,uncommon,1,58177,7f80a11b-188b-464c-b00d-c9d1cfb8ddee,0.79,false,false,near_mint,en,CAD
+Frenetic Efreet,MIR,Mirage,264,normal,rare,1,38326,50d4468b-f7de-44fe-898a-4125d26d242f,10.3,false,false,near_mint,en,CAD
+Master of Death,MH2,Modern Horizons 2,465,foil,rare,1,59755,b2c398de-b96d-4fa6-89c4-3ce8183dc27e,1.38,false,false,near_mint,en,CAD
+Golgari Findbroker,KHC,Kaldheim Commander,86,normal,uncommon,1,57203,26413356-327c-494b-a895-0a0ddd466242,0.3,false,false,near_mint,en,CAD
+Coiling Oracle,2X2,Double Masters 2022,375,normal,common,1,70030,033e6145-cf40-4fa8-98a4-ed8b5e8a66ab,0.4,false,false,near_mint,en,CAD
+Goblin Electromancer,C15,Commander 2015,220,normal,common,1,9816,489af7f6-c521-4891-b370-f3907304346b,0.44,false,false,near_mint,en,CAD
+Deathrite Shaman,RTR,Return to Ravnica,213,normal,rare,1,17209,70496f16-c4c0-4c03-beef-454eb4824cd1,10.66,false,false,near_mint,en,CAD
+Shambling Shell,RVR,Ravnica Remastered,460,foil,common,1,89763,807557f3-5265-448f-9dbe-3f6688657284,0.35,false,false,near_mint,en,CAD
+Prince of Thralls,SLD,Secret Lair Drop,1549★,foil,mythic,1,91616,689fbfbc-1eea-4cc0-801b-72305160bf8e,6.62,false,false,near_mint,en,CAD
+Burning-Tree Emissary,2X2,Double Masters 2022,374,normal,common,1,70328,78efee5c-970c-4f9b-9a6b-96ef3e79caaa,0.34,false,false,near_mint,en,CAD
+Qasali Pridemage,2X2,Double Masters 2022,386,foil,common,1,70440,b035fa74-7e0d-4bcc-8bd7-4ae0c33db317,0.41,false,false,near_mint,en,CAD
+Ziatora's Envoy,SNC,Streets of New Capenna,232,normal,rare,1,67969,ba39154c-aace-4d55-a3ad-7c9eb717ed2b,0.34,false,false,near_mint,en,CAD
+Savage Ventmaw,DTK,Dragons of Tarkir,231,normal,uncommon,1,11583,690008d1-d1fe-49ad-810c-84be57cecc6c,1.23,false,false,near_mint,en,CAD
+Biomancer's Familiar,RNA,Ravnica Allegiance,158,normal,rare,1,43707,d38c9891-36d1-4565-9c4a-1cd9dbf8c048,1.61,false,false,near_mint,en,CAD
+Soulherder,H1R,Modern Horizons 1 Timeshifts,30,foil,uncommon,1,59852,e5434026-a606-41df-8dfd-23694040b488,5.07,false,false,near_mint,en,CAD
+Lore Drakkis,IKO,Ikoria: Lair of Behemoths,301,normal,uncommon,1,49776,e938fac3-544a-4f27-9726-a67153392031,0.34,false,false,near_mint,en,CAD
+Goblin Anarchomancer,MH2,Modern Horizons 2,200,foil,common,1,59593,633a3423-501d-4b22-95a6-743233be521e,1.35,false,false,near_mint,en,CAD
+High Priest of Penance,CLB,Commander Legends: Battle for Baldur's Gate,848,normal,rare,1,69730,fc264fad-c541-4cc6-8b56-44abf3f1e8a0,0.41,false,false,near_mint,en,CAD
+Cloudblazer,KHC,Kaldheim Commander,84,normal,uncommon,1,57281,edab81f0-dd20-45bd-946d-75b682e1d3d0,0.34,false,false,near_mint,en,CAD
+Jukai Naturalist,NEO,Kamigawa: Neon Dynasty,225,foil,uncommon,1,66369,5366900b-2abf-4e5c-8507-f51aca9c7ce8,0.89,false,false,near_mint,en,CAD
+Blade Historian,STX,Strixhaven: School of Mages,165,normal,rare,1,58249,a46d64ec-aca4-428e-bce6-66cd755c8cc3,6.38,false,false,near_mint,en,CAD
+Havengul Lich,DKA,Dark Ascension,139,normal,mythic,1,18398,321077a4-e468-4e74-94f7-80c83790e0d9,1.98,false,false,near_mint,en,CAD
+Cruel Celebrant,WAR,War of the Spark,188,normal,uncommon,1,44216,87ead6ac-b1c5-4852-8413-7fa43c6cfc57,0.78,false,false,near_mint,en,CAD
+Faeburrow Elder,ELD,Throne of Eldraine,190,foil,rare,1,46148,1ca29912-88b1-413f-ad9d-63d7d1b1ca16,5.55,false,false,near_mint,en,CAD
+Diregraf Captain,MIC,Midnight Hunt Commander,148,normal,uncommon,1,63562,158407ad-35a9-40e1-9762-1c0572b56ecb,0.61,false,false,near_mint,en,CAD
+Halo Forager,MOM,March of the Machine,227,foil,uncommon,1,81266,edb5f0cc-c826-4e7b-882c-63f6e51fa932,0.61,false,false,near_mint,en,CAD
+Reflector Mage,OGW,Oath of the Gatewatch,157,normal,uncommon,1,9225,9473fe01-83f6-4432-ab01-f7953d2ca904,0.67,false,false,near_mint,en,CAD
+Murkfiend Liege,2X2,Double Masters 2022,529,etched,rare,1,70397,98fcfb7a-2a7c-4ae8-8719-8d1b37d07819,13.01,false,false,near_mint,en,CAD
+Falkenrath Aristocrat,2XM,Double Masters,195,normal,rare,1,51898,57ac7f19-bf6f-4a87-ad39-6eb2553d2202,0.68,false,false,near_mint,en,CAD
+"Nahiri, the Unforgiving",ONE,Phyrexia: All Will Be One,211,foil,mythic,1,78558,578e35b9-7252-4767-a1f3-aecd71256515,1.01,false,false,near_mint,en,CAD
+Seasonal Sequels,HHO,Happy Holidays,23,foil,mythic,1,89073,5a2c94d3-a389-4f23-8d32-e71ab8eaf540,40.43,false,false,near_mint,en,CAD
+"Johnny, Combo Player",UND,Unsanctioned,23,normal,rare,1,47339,f8fc7a61-226c-426a-9b99-21d87aca2f6f,0.61,false,false,near_mint,en,CAD
+Lightning Bolt,3ED,Revised Edition,162,normal,common,1,41263,cb9b9a9d-ae4c-4e04-bf9d-cae48f01292c,2.28,false,false,near_mint,en,CAD
+Mana Geyser,C21,Commander 2021,176,normal,common,1,58504,109447b2-d507-433a-a81c-3a7a255444b1,4.5,false,false,near_mint,en,CAD
+Lightning Bolt,SLD,Secret Lair Drop,86,foil,rare,1,50495,c3eb3895-b64c-46ab-b704-3c46963920ba,8.6,false,false,near_mint,en,CAD
+Solve the Equation,SLD,Secret Lair Drop,1022,foil,rare,1,67298,b9e8c1c1-1917-4858-afd1-ea4412d02375,6.8,false,false,near_mint,en,CAD
+Fierce Guardianship,C20,Commander 2020,35,normal,rare,1,50383,4c5ffa83-c88d-4f5d-851e-a642b229d596,68.68,false,false,near_mint,en,CAD
+Counterbalance,MP2,Amonkhet Invocations,9,foil,special,1,5829,3f4a8acd-1d49-4fa7-a88e-83cfe741de89,77.89,false,false,near_mint,en,CAD
+Stoneforge Mystic,SLD,Secret Lair Drop,1253,foil,rare,1,82207,fb220c6c-8dda-45f4-87fa-f754e94fac42,57.16,false,false,near_mint,en,CAD
+Lightning Greaves,SLD,Secret Lair Drop,99,foil,rare,1,54381,19080c3f-67fa-4f98-9b5a-ede8579823d6,44.55,false,false,near_mint,en,CAD
+Sol Ring,3ED,Revised Edition,274,normal,uncommon,1,41151,803fd65f-4ca6-4fe4-abc2-72aa32ebb3a5,25.39,false,false,near_mint,en,CAD
+Sol Ring,SLD,Secret Lair Drop,1011,foil,rare,1,68553,e3b2235b-6c18-436e-9d80-4a82ce0cac14,33.45,false,false,near_mint,en,CAD
+Evolving Wilds,SLD,Secret Lair Drop,824,foil,rare,1,96596,bbd37785-bbef-4628-b88a-4ff28b0a7034,4.17,false,false,near_mint,en,CAD
+Reliquary Tower,PF23,MagicFest 2023,3,normal,rare,1,85134,ab474dc9-945d-48cc-8c74-7e5bd59ef8b5,20.43,false,false,near_mint,en,CAD
+Command Tower,SLD,Secret Lair Drop,758,normal,rare,1,89483,bdbf73e9-91ff-4c25-b618-62d652e75587,56.24,false,false,near_mint,en,CAD
