@@ -132,6 +132,7 @@ function renderCardHTML(card, nameCounts = {}) {
   const foilClass = card.foil !== 'normal' ? card.foil : '';
   const dupeClass = nameCounts[card.name] >= 2 ? 'duplicate' : '';
   const setIcon = `https://svgs.scryfall.io/sets/${card.setCode.toLowerCase()}.svg`;
+  const fallbackIcon = 'https://svgs.scryfall.io/sets/default.svg';
   const mainType = getMainType(card.type_line);
   const keywordTags = (card.keywords || []).slice(0, 3).map(k => `<span class="badge keyword-badge clickable" data-filter="keyword" data-value="${k}">${k}</span>`).join('');
   return `
@@ -147,7 +148,7 @@ function renderCardHTML(card, nameCounts = {}) {
         <div class="card-name">${card.name}</div>
         <div class="card-value">${formatPrice(card.price * card.quantity, card.currency)}</div>
       </div>
-      <div class="card-set clickable" data-filter="set" data-value="${card.setName}"><img src="${setIcon}" class="set-icon" alt="${card.setCode}">${card.setName}</div>
+      <div class="card-set clickable" data-filter="set" data-value="${card.setName}"><img src="${setIcon}" class="set-icon" alt="${card.setCode}" onerror="this.src='${fallbackIcon}'">${card.setName}</div>
       <div class="card-details">
         <span class="badge rarity-${card.rarity} clickable" data-filter="rarity" data-value="${card.rarity}">${card.rarity}</span>
         ${card.foil !== 'normal' ? `<span class="badge foil-${card.foil} clickable" data-filter="foil" data-value="${card.foil}">${card.foil}</span>` : ''}

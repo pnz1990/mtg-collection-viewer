@@ -61,7 +61,7 @@ function renderTimeline() {
       ${yearGroups[year].map(set => `
         <div class="timeline-set">
           <div class="set-header" onclick="this.parentElement.classList.toggle('collapsed')">
-            <img src="https://svgs.scryfall.io/sets/${set.code}.svg" class="set-icon">
+            <img src="https://svgs.scryfall.io/sets/${set.code}.svg" class="set-icon" onerror="this.src='https://svgs.scryfall.io/sets/default.svg'">
             <span class="set-name">${set.name}</span>
             <span class="set-date">${formatDate(set.released)}</span>
             <span class="set-count">${set.cards.reduce((s, c) => s + c.quantity, 0)} cards</span>
