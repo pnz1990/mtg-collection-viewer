@@ -19,6 +19,10 @@ async function loadCardDetails() {
       fetch('data/Collection.csv')
     ]);
     
+    if (cardResponse.status === 429) {
+      document.getElementById('detail-container').innerHTML = '<div class="loading">Scryfall is throttling requests. Please try again in a minute.</div>';
+      return;
+    }
     if (!cardResponse.ok) throw new Error('Card not found');
     
     const card = await cardResponse.json();
