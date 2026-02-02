@@ -132,6 +132,9 @@ mtg-collection-viewer/
 
 MIT License - Feel free to use and modify for your own collection!
 
+---
+Last updated: February 2026
+
 ## Credits
 
 - Card images and data from [Scryfall](https://scryfall.com/)
