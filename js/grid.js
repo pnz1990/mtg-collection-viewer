@@ -1,6 +1,8 @@
 // Grid view specific code
 let imageObserver;
 let charts = {};
+const CARDS_PER_PAGE = 30;
+let displayedCards = 0;
 
 function setupImageObserver() {
   imageObserver = new IntersectionObserver((entries) => {
@@ -16,7 +18,7 @@ function setupImageObserver() {
       const url = await fetchCardImage(scryfallId);
       if (url) img.src = url;
     });
-  }, { rootMargin: '200px' });
+  }, { rootMargin: '400px' });
 }
 
 function countBy(arr, key) {
@@ -255,8 +257,14 @@ function renderCharts() {
   }
 }
 
-function renderCollection() {
+function renderCollection(append = false) {
   const container = document.getElementById('collection');
+  const loadMoreBtn = document.getElementById('load-more');
+  
+  if (!append) {
+    displayedCards = 0;
+    container.innerHTML = '';
+  }
   
   // Count duplicates by name
   const nameCounts = {};
@@ -264,19 +272,49 @@ function renderCollection() {
     nameCounts[c.name] = (nameCounts[c.name] || 0) + c.quantity;
   });
   
-  container.innerHTML = filteredCollection.map(card => renderCardHTML(card, nameCounts)).join('');
+  const cardsToShow = filteredCollection.slice(displayedCards, displayedCards + CARDS_PER_PAGE);
+  const html = cardsToShow.map(card => renderCardHTML(card, nameCounts)).join('');
   
-  // Observe images for lazy loading
-  container.querySelectorAll('.card-image-wrapper').forEach(wrapper => {
-    imageObserver.observe(wrapper);
+  if (append) {
+    container.insertAdjacentHTML('beforeend', html);
+  } else {
+    container.innerHTML = html;
+  }
+  
+  displayedCards += cardsToShow.length;
+  
+  // Show/hide load more button
+  if (loadMoreBtn) {
+    loadMoreBtn.style.display = displayedCards < filteredCollection.length ? 'block' : 'none';
+  }
+  
+  // Observe new images for lazy loading
+  const newCards = container.querySelectorAll('.card:not([data-observed])');
+  newCards.forEach(card => {
+    card.dataset.observed = '1';
+    const wrapper = card.querySelector('.card-image-wrapper');
+    if (wrapper) imageObserver.observe(wrapper);
   });
   
-  // Setup interactions
+  // Setup interactions for new cards
   setupCardInteractions(container);
 }
 
 async function onCollectionLoaded() {
   setupImageObserver();
+  
+  // Setup collapsible sections
+  document.getElementById('charts-toggle')?.addEventListener('click', function() {
+    this.classList.toggle('expanded');
+    document.getElementById('dashboard').classList.toggle('collapsed');
+  });
+  document.getElementById('achievements-toggle')?.addEventListener('click', function() {
+    this.classList.toggle('expanded');
+    document.getElementById('achievements').classList.toggle('collapsed');
+  });
+  
+  // Load more button
+  document.getElementById('load-more')?.addEventListener('click', () => renderCollection(true));
   
   // Wait for Chart.js if not ready
   const initCharts = () => {

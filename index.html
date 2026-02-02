@@ -6,7 +6,6 @@
   <title>Collection Explorer - MTG Collection Viewer</title>
   <link rel="icon" href="images/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15/dist/nouislider.min.css">
-  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -31,14 +30,12 @@
       </div>
     </div>
   </div>
-  
+
   <header>
     <h1>MTG Collection Viewer</h1>
     <div class="stats">
       <span>Total Cards: <strong id="total-cards">0</strong></span>
       <span>Total Value: <strong id="total-value">$0.00</strong></span>
-      <button type="button" id="random-card" class="random-btn">🎲 Random</button>
-      <button type="button" id="load-full-data" class="load-data-btn">📥 Load Full Data</button>
       <select id="theme-select" class="theme-select">
         <option value="">Dark (Default)</option>
         <option value="azorius">Azorius</option>
@@ -54,78 +51,6 @@
       </select>
     </div>
   </header>
-
-  <div id="dashboard" class="dashboard">
-    <div class="chart-container">
-      <div class="chart-box">
-        <h3>By Rarity</h3>
-        <canvas id="rarity-chart"></canvas>
-      </div>
-      <div class="chart-box">
-        <h3>By Set (Count)</h3>
-        <canvas id="set-chart"></canvas>
-      </div>
-      <div class="chart-box">
-        <h3>By Finish</h3>
-        <canvas id="finish-chart"></canvas>
-      </div>
-      <div class="chart-box">
-        <h3>By Price Range</h3>
-        <canvas id="price-chart"></canvas>
-      </div>
-      <div class="chart-box">
-        <h3>Value by Set</h3>
-        <canvas id="set-value-chart"></canvas>
-      </div>
-      <div class="chart-box stats-box">
-        <h3>Price Stats</h3>
-        <div class="stat-item"><span>Average:</span><strong id="stat-avg">$0</strong></div>
-        <div class="stat-item"><span>Median:</span><strong id="stat-median">$0</strong></div>
-        <div class="stat-item"><span>Highest:</span><strong id="stat-max">$0</strong></div>
-        <div class="stat-item"><span>Lowest:</span><strong id="stat-min">$0</strong></div>
-      </div>
-      <div class="chart-box">
-        <h3>By Condition</h3>
-        <canvas id="condition-chart"></canvas>
-      </div>
-      <div class="chart-box">
-        <h3>Value by Rarity</h3>
-        <canvas id="rarity-value-chart"></canvas>
-      </div>
-      <div class="chart-box" id="type-chart-box" style="display:none">
-        <h3>By Type</h3>
-        <canvas id="type-chart"></canvas>
-      </div>
-      <div class="chart-box" id="color-chart-box" style="display:none">
-        <h3>By Color</h3>
-        <canvas id="color-chart"></canvas>
-      </div>
-      <div class="chart-box" id="cmc-chart-box" style="display:none">
-        <h3>Mana Curve</h3>
-        <canvas id="cmc-chart"></canvas>
-      </div>
-      <div class="chart-box" id="avg-cmc-chart-box" style="display:none">
-        <h3>Avg CMC by Type</h3>
-        <canvas id="avg-cmc-chart"></canvas>
-      </div>
-      <div class="chart-box" id="reserved-count-box" style="display:none">
-        <h3>Reserved List Count</h3>
-        <canvas id="reserved-count-chart"></canvas>
-      </div>
-      <div class="chart-box" id="reserved-value-box" style="display:none">
-        <h3>Reserved List Value</h3>
-        <canvas id="reserved-value-chart"></canvas>
-      </div>
-      <div class="chart-box" id="reserved-type-box" style="display:none">
-        <h3>Reserved by Type</h3>
-        <canvas id="reserved-type-chart"></canvas>
-      </div>
-      <div class="chart-box" id="reserved-top-box" style="display:none">
-        <h3>Top Reserved Cards</h3>
-        <canvas id="reserved-top-chart"></canvas>
-      </div>
-    </div>
-  </div>
 
   <div class="filters">
     <div class="filter-group autocomplete-wrapper">
@@ -201,9 +126,43 @@
     <button type="button" id="clear-filters" class="clear-filters-btn">Clear Filters</button>
   </div>
 
-  <div id="achievements" class="achievements"></div>
+  <div class="collapsible-section">
+    <button type="button" class="section-toggle" id="charts-toggle">📊 Charts & Statistics <span class="toggle-icon">▶</span></button>
+    <div id="dashboard" class="dashboard collapsed">
+      <div class="chart-container">
+        <div class="chart-box"><h3>By Rarity</h3><canvas id="rarity-chart"></canvas></div>
+        <div class="chart-box"><h3>By Set (Count)</h3><canvas id="set-chart"></canvas></div>
+        <div class="chart-box"><h3>By Finish</h3><canvas id="finish-chart"></canvas></div>
+        <div class="chart-box"><h3>By Price Range</h3><canvas id="price-chart"></canvas></div>
+        <div class="chart-box"><h3>Value by Set</h3><canvas id="set-value-chart"></canvas></div>
+        <div class="chart-box stats-box">
+          <h3>Price Stats</h3>
+          <div class="stat-item"><span>Average:</span><strong id="stat-avg">$0</strong></div>
+          <div class="stat-item"><span>Median:</span><strong id="stat-median">$0</strong></div>
+          <div class="stat-item"><span>Highest:</span><strong id="stat-max">$0</strong></div>
+          <div class="stat-item"><span>Lowest:</span><strong id="stat-min">$0</strong></div>
+        </div>
+        <div class="chart-box"><h3>By Condition</h3><canvas id="condition-chart"></canvas></div>
+        <div class="chart-box"><h3>Value by Rarity</h3><canvas id="rarity-value-chart"></canvas></div>
+        <div class="chart-box" id="type-chart-box" style="display:none"><h3>By Type</h3><canvas id="type-chart"></canvas></div>
+        <div class="chart-box" id="color-chart-box" style="display:none"><h3>By Color</h3><canvas id="color-chart"></canvas></div>
+        <div class="chart-box" id="cmc-chart-box" style="display:none"><h3>Mana Curve</h3><canvas id="cmc-chart"></canvas></div>
+        <div class="chart-box" id="avg-cmc-chart-box" style="display:none"><h3>Avg CMC by Type</h3><canvas id="avg-cmc-chart"></canvas></div>
+        <div class="chart-box" id="reserved-count-box" style="display:none"><h3>Reserved List Count</h3><canvas id="reserved-count-chart"></canvas></div>
+        <div class="chart-box" id="reserved-value-box" style="display:none"><h3>Reserved List Value</h3><canvas id="reserved-value-chart"></canvas></div>
+        <div class="chart-box" id="reserved-type-box" style="display:none"><h3>Reserved by Type</h3><canvas id="reserved-type-chart"></canvas></div>
+        <div class="chart-box" id="reserved-top-box" style="display:none"><h3>Top Reserved Cards</h3><canvas id="reserved-top-chart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="collapsible-section">
+    <button type="button" class="section-toggle" id="achievements-toggle">🏆 Achievements <span class="toggle-icon">▶</span></button>
+    <div id="achievements" class="achievements collapsed"></div>
+  </div>
 
   <div id="collection" class="collection"></div>
+  <button type="button" id="load-more" class="load-more-btn" style="display:none">Load More Cards</button>
 
   <script src="js/shared.js"></script>
   <script src="js/grid.js"></script>

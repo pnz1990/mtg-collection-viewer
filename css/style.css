@@ -639,10 +639,67 @@ h1 {
   box-shadow: 0 0 0 2px #e65100, 0 4px 15px rgba(230, 81, 0, 0.3);
 }
 
+/* Collapsible Sections */
+.collapsible-section {
+  max-width: 1200px;
+  margin: 0 auto 15px;
+  padding: 0 20px;
+}
+
+.section-toggle {
+  width: 100%;
+  padding: 12px 20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--bg-tertiary);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.section-toggle:hover {
+  background: var(--bg-tertiary);
+}
+
+.toggle-icon {
+  transition: transform 0.3s;
+}
+
+.section-toggle.expanded .toggle-icon {
+  transform: rotate(90deg);
+}
+
+.collapsed {
+  display: none !important;
+}
+
+.load-more-btn {
+  display: block;
+  width: 200px;
+  margin: 20px auto;
+  padding: 12px 24px;
+  background: var(--accent);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.load-more-btn:hover {
+  filter: brightness(1.1);
+}
+
 /* Dashboard */
 .dashboard {
   max-width: 1200px;
-  margin: 0 auto 20px;
+  margin: 15px auto 20px;
+  padding: 0 20px;
 }
 
 .chart-container {
@@ -1231,10 +1288,6 @@ h1 {
   
   .filters select {
     width: 100%;
-  }
-  
-  .dashboard {
-    display: none;
   }
   
   header h1 {
