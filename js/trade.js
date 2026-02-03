@@ -276,6 +276,10 @@ function renderComparison() {
 
 function openVersionModal(idx) {
   const card = receivingCards[idx];
+  if (!card.versions || card.versions.length === 0) {
+    alert('No versions available');
+    return;
+  }
   const modal = document.createElement('div');
   modal.className = 'version-modal-overlay';
   modal.innerHTML = `
@@ -286,21 +290,23 @@ function openVersionModal(idx) {
       </div>
       <div class="version-modal-grid">
         ${card.versions.map(v => {
-          const normalPrice = parseFloat(v.prices.usd) || 0;
-          const foilPrice = parseFloat(v.prices.usd_foil) || 0;
+          const normalPrice = parseFloat(v.prices?.usd) || 0;
+          const foilPrice = parseFloat(v.prices?.usd_foil) || 0;
           const isCurrentNormal = !card.foil && v.scryfallId === card.scryfallId;
           const isCurrentFoil = card.foil && v.scryfallId === card.scryfallId;
+          const imgUrl = v.imageUrl || `https://cards.scryfall.io/normal/front/${v.scryfallId[0]}/${v.scryfallId[1]}/${v.scryfallId}.jpg`;
           return `
           <div class="version-option-card">
-            <img src="${v.imageUrl || 'images/back.png'}" onerror="this.src='images/back.png'">
+            <img src="${imgUrl}" onerror="this.src='images/back.png'">
             <div class="version-details">
-              <div class="version-set-name">${v.setName}</div>
-              <div class="version-set-code">${v.set.toUpperCase()} #${v.collectorNumber || '?'}</div>
+              <div class="version-set-name">${v.setName || 'Unknown'}</div>
+              <div class="version-set-code">${(v.set || '???').toUpperCase()} #${v.collectorNumber || '?'}</div>
               <div class="version-prices">
                 ${normalPrice > 0 ? `<button class="version-price-btn ${isCurrentNormal ? 'selected' : ''}" 
                   data-id="${v.scryfallId}" data-foil="false">Normal $${normalPrice.toFixed(2)}</button>` : ''}
                 ${foilPrice > 0 ? `<button class="version-price-btn foil ${isCurrentFoil ? 'selected' : ''}" 
                   data-id="${v.scryfallId}" data-foil="true">Foil ✨ $${foilPrice.toFixed(2)}</button>` : ''}
+                ${normalPrice === 0 && foilPrice === 0 ? '<div class="no-price">No price available</div>' : ''}
               </div>
             </div>
           </div>`;
