@@ -380,6 +380,60 @@ h1 {
   opacity: 1;
 }
 
+/* Hero search bar */
+.search-hero {
+  display: flex;
+  justify-content: center;
+  padding: 30px 20px;
+  margin-bottom: 10px;
+}
+
+.search-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+}
+
+.search-wrapper .search-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.4rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.search-wrapper input {
+  width: 100%;
+  padding: 18px 24px 18px 55px;
+  font-size: 1.2rem;
+  border: 2px solid var(--bg-tertiary);
+  border-radius: 50px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.search-wrapper input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 4px 30px rgba(var(--accent-rgb, 100,100,100), 0.3);
+}
+
+.search-wrapper input::placeholder {
+  color: #888;
+}
+
+.search-wrapper .autocomplete-list {
+  top: 100%;
+  margin-top: 8px;
+  border-radius: 20px;
+  max-height: 300px;
+}
+
 .filters {
   display: flex;
   flex-wrap: wrap;
