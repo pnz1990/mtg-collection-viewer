@@ -247,6 +247,7 @@ function renderCardDetails(card, collectionCard) {
         <div class="external-links">
           <h3>Explore</h3>
           <div class="link-buttons">
+            <a href="${card.scryfall_uri}" target="_blank" class="ext-btn scryfall">Scryfall</a>
             <a href="https://edhrec.com/cards/${card.name.toLowerCase().replace(/'/g, '').replace(/[^a-z0-9]+/g, '-')}" target="_blank" class="ext-btn edhrec">EDHRec</a>
             <a href="https://commanderspellbook.com/search/?q=${encodeURIComponent(card.name)}" target="_blank" class="ext-btn spellbook">Combos</a>
             <a href="https://www.mtggoldfish.com/price/${card.set}/${encodeURIComponent(card.name.replace(/'/g, ''))}" target="_blank" class="ext-btn goldfish">MTGGoldfish</a>

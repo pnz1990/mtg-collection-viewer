@@ -436,6 +436,7 @@ body.has-art-bg::after {
   opacity: 0.9;
 }
 
+.ext-btn.scryfall { background: #6b46c1; color: white; }
 .ext-btn.edhrec { background: #5c4d7d; color: white; }
 .ext-btn.spellbook { background: #9c27b0; color: white; }
 .ext-btn.goldfish { background: #1a73e8; color: white; }
