@@ -350,6 +350,7 @@ async function onCollectionLoaded() {
       }, true); // force refresh
       
       updateLoadButton();
+      if (typeof updatePriceSourceState === 'function') updatePriceSourceState();
       renderCharts();
       renderAchievements();
       applyFilters();

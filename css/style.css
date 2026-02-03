@@ -261,6 +261,10 @@ h1 {
   font-size: 0.9rem;
 }
 
+.price-source-select option:disabled {
+  color: #666;
+}
+
 .color-identity-filter {
   display: flex;
   align-items: center;

@@ -544,6 +544,7 @@ if (menuLoadBtn) {
     }, true);
     updateMenuLoadBtn();
     populateKeywordFilter();
+    if (typeof updatePriceSourceState === 'function') updatePriceSourceState();
     closeMenu();
     if (typeof onFiltersApplied === 'function') applyFilters();
   });
@@ -563,7 +564,26 @@ function initApp() {
   // Setup price source toggle
   const priceSourceSelect = document.getElementById('price-source');
   if (priceSourceSelect) {
-    priceSourceSelect.value = getPriceSource();
+    const scryfallOption = priceSourceSelect.querySelector('option[value="scryfall"]');
+    
+    const updatePriceSourceState = () => {
+      if (isFullDataLoaded()) {
+        scryfallOption.disabled = false;
+        scryfallOption.title = '';
+        priceSourceSelect.value = getPriceSource();
+      } else {
+        scryfallOption.disabled = true;
+        scryfallOption.title = 'Load Full Data first';
+        if (getPriceSource() === 'scryfall') {
+          localStorage.setItem('priceSource', 'manabox');
+        }
+        priceSourceSelect.value = 'manabox';
+      }
+    };
+    
+    updatePriceSourceState();
+    window.updatePriceSourceState = updatePriceSourceState;
+    
     priceSourceSelect.addEventListener('change', () => {
       localStorage.setItem('priceSource', priceSourceSelect.value);
       applyFilters();
