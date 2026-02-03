@@ -320,21 +320,4 @@ document.getElementById('new-trade').onclick = () => {
   updateSelectionInfo();
 };
 
-// Menu
-document.getElementById('menu-toggle').onclick = () => {
-  document.getElementById('menu-dropdown').classList.toggle('show');
-  document.getElementById('menu-overlay').classList.toggle('show');
-};
-document.getElementById('menu-overlay').onclick = () => {
-  document.getElementById('menu-dropdown').classList.remove('show');
-  document.getElementById('menu-overlay').classList.remove('show');
-};
-
-// Theme
-const themeSelect = document.getElementById('theme-select');
-themeSelect.value = localStorage.getItem('mtg-theme') || '';
-document.documentElement.dataset.theme = themeSelect.value;
-themeSelect.onchange = () => {
-  document.documentElement.dataset.theme = themeSelect.value;
-  localStorage.setItem('mtg-theme', themeSelect.value);
-};
+// Menu handled by shared.js

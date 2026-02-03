@@ -123,6 +123,18 @@
   color: white;
 }
 
+.menu-theme-select {
+  width: calc(100% - 32px);
+  margin: 8px 16px;
+  padding: 10px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--bg-tertiary);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
 :root {
   --bg-primary: #1a1a1a;
   --bg-secondary: #2a2a2a;
