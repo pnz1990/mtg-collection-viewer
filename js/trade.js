@@ -285,13 +285,23 @@ function openVersionModal(idx) {
       </div>
       <div class="version-modal-grid">
         ${card.versions.map(v => {
-          const vp = card.foil ? parseFloat(v.prices.usd_foil) || 0 : parseFloat(v.prices.usd) || 0;
+          const normalPrice = parseFloat(v.prices.usd) || 0;
+          const foilPrice = parseFloat(v.prices.usd_foil) || 0;
+          const isCurrentNormal = !card.foil && v.scryfallId === card.scryfallId;
+          const isCurrentFoil = card.foil && v.scryfallId === card.scryfallId;
           return `
-          <div class="version-option ${v.scryfallId === card.scryfallId ? 'selected' : ''}" data-id="${v.scryfallId}">
-            <img src="${v.imageUrl}" onerror="this.src='images/back.png'">
-            <div class="version-info">
-              <div class="version-set">${v.setName}</div>
-              <div class="version-price">$${vp.toFixed(2)}</div>
+          <div class="version-option-card">
+            <img src="https://cards.scryfall.io/normal/front/${v.scryfallId[0]}/${v.scryfallId[1]}/${v.scryfallId}.jpg" 
+                 onerror="this.src='images/back.png'">
+            <div class="version-details">
+              <div class="version-set-name">${v.setName}</div>
+              <div class="version-set-code">${v.set.toUpperCase()} #${v.collectorNumber || '?'}</div>
+              <div class="version-prices">
+                ${normalPrice > 0 ? `<button class="version-price-btn ${isCurrentNormal ? 'selected' : ''}" 
+                  data-id="${v.scryfallId}" data-foil="false">Normal $${normalPrice.toFixed(2)}</button>` : ''}
+                ${foilPrice > 0 ? `<button class="version-price-btn foil ${isCurrentFoil ? 'selected' : ''}" 
+                  data-id="${v.scryfallId}" data-foil="true">Foil ✨ $${foilPrice.toFixed(2)}</button>` : ''}
+              </div>
             </div>
           </div>`;
         }).join('')}
@@ -302,15 +312,18 @@ function openVersionModal(idx) {
   modal.querySelector('.version-modal-close').onclick = () => modal.remove();
   modal.onclick = e => { if (e.target === modal) modal.remove(); };
   
-  modal.querySelectorAll('.version-option').forEach(opt => {
-    opt.onclick = () => {
-      const newVersion = card.versions.find(v => v.scryfallId === opt.dataset.id);
+  modal.querySelectorAll('.version-price-btn').forEach(btn => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      const newVersion = card.versions.find(v => v.scryfallId === btn.dataset.id);
       if (newVersion) {
+        const isFoil = btn.dataset.foil === 'true';
         card.scryfallId = newVersion.scryfallId;
         card.setName = newVersion.setName;
         card.set = newVersion.set;
         card.imageUrl = newVersion.imageUrl;
-        card.price = card.foil ? parseFloat(newVersion.prices.usd_foil) || 0 : parseFloat(newVersion.prices.usd) || 0;
+        card.foil = isFoil;
+        card.price = isFoil ? parseFloat(newVersion.prices.usd_foil) || 0 : parseFloat(newVersion.prices.usd) || 0;
         modal.remove();
         renderComparison();
       }
