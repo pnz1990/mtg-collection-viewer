@@ -301,8 +301,10 @@ function updateStats() {
   const totalCards = filteredCollection.reduce((sum, c) => sum + c.quantity, 0);
   const totalValue = filteredCollection.reduce((sum, c) => sum + getCardPrice(c) * c.quantity, 0);
   const currency = getPriceSource() === 'scryfall' ? 'USD' : (collection[0]?.currency || 'USD');
-  document.getElementById('total-cards').textContent = totalCards;
-  document.getElementById('total-value').textContent = formatPrice(totalValue, currency);
+  const cardsEl = document.getElementById('total-cards');
+  const valueEl = document.getElementById('total-value');
+  if (cardsEl) cardsEl.textContent = totalCards;
+  if (valueEl) valueEl.textContent = formatPrice(totalValue, currency);
 }
 
 async function loadCollection() {
