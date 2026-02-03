@@ -601,7 +601,18 @@ function initApp() {
     
     priceSourceSelect.addEventListener('change', () => {
       localStorage.setItem('priceSource', priceSourceSelect.value);
-      applyFilters();
+      // Re-sort collection with new prices
+      filteredCollection.sort((a, b) => {
+        const sort = document.getElementById('sort')?.value || 'price';
+        switch(sort) {
+          case 'name': return a.name.localeCompare(b.name);
+          case 'rarity': return b.rarity.localeCompare(a.rarity);
+          case 'set': return a.setName.localeCompare(b.setName);
+          default: return (getCardPrice(b) * b.quantity) - (getCardPrice(a) * a.quantity);
+        }
+      });
+      updateStats();
+      if (typeof onFiltersApplied === 'function') onFiltersApplied();
       if (typeof renderCharts === 'function') renderCharts();
     });
   }
