@@ -282,59 +282,86 @@ function openVersionModal(idx) {
   }
   const modal = document.createElement('div');
   modal.className = 'version-modal-overlay';
+  
+  const renderVersions = (filter = '') => {
+    const filtered = filter 
+      ? card.versions.filter(v => v.setName.toLowerCase().includes(filter) || v.set.toLowerCase().includes(filter))
+      : card.versions;
+    return filtered.map(v => {
+      const normalPrice = parseFloat(v.prices?.usd) || 0;
+      const foilPrice = parseFloat(v.prices?.usd_foil) || 0;
+      const isCurrentNormal = !card.foil && v.scryfallId === card.scryfallId;
+      const isCurrentFoil = card.foil && v.scryfallId === card.scryfallId;
+      const imgUrl = v.imageUrl || `https://cards.scryfall.io/normal/front/${v.scryfallId[0]}/${v.scryfallId[1]}/${v.scryfallId}.jpg`;
+      return `
+      <div class="version-option-card">
+        <img src="${imgUrl}" onerror="this.src='images/back.png'">
+        <div class="version-details">
+          <div class="version-set-name">${v.setName || 'Unknown'}</div>
+          <div class="version-set-code">${(v.set || '???').toUpperCase()} #${v.collectorNumber || '?'}</div>
+          <div class="version-prices">
+            ${normalPrice > 0 ? `<button class="version-price-btn ${isCurrentNormal ? 'selected' : ''}" 
+              data-id="${v.scryfallId}" data-foil="false">Normal $${normalPrice.toFixed(2)}</button>` : ''}
+            ${foilPrice > 0 ? `<button class="version-price-btn foil ${isCurrentFoil ? 'selected' : ''}" 
+              data-id="${v.scryfallId}" data-foil="true">Foil ✨ $${foilPrice.toFixed(2)}</button>` : ''}
+            ${normalPrice === 0 && foilPrice === 0 ? '<div class="no-price">No price available</div>' : ''}
+          </div>
+        </div>
+      </div>`;
+    }).join('') || '<div class="no-results">No matching sets</div>';
+  };
+
   modal.innerHTML = `
     <div class="version-modal">
       <div class="version-modal-header">
         <h3>Select Version: ${card.name}</h3>
         <button class="version-modal-close">×</button>
       </div>
-      <div class="version-modal-grid">
-        ${card.versions.map(v => {
-          const normalPrice = parseFloat(v.prices?.usd) || 0;
-          const foilPrice = parseFloat(v.prices?.usd_foil) || 0;
-          const isCurrentNormal = !card.foil && v.scryfallId === card.scryfallId;
-          const isCurrentFoil = card.foil && v.scryfallId === card.scryfallId;
-          const imgUrl = v.imageUrl || `https://cards.scryfall.io/normal/front/${v.scryfallId[0]}/${v.scryfallId[1]}/${v.scryfallId}.jpg`;
-          return `
-          <div class="version-option-card">
-            <img src="${imgUrl}" onerror="this.src='images/back.png'">
-            <div class="version-details">
-              <div class="version-set-name">${v.setName || 'Unknown'}</div>
-              <div class="version-set-code">${(v.set || '???').toUpperCase()} #${v.collectorNumber || '?'}</div>
-              <div class="version-prices">
-                ${normalPrice > 0 ? `<button class="version-price-btn ${isCurrentNormal ? 'selected' : ''}" 
-                  data-id="${v.scryfallId}" data-foil="false">Normal $${normalPrice.toFixed(2)}</button>` : ''}
-                ${foilPrice > 0 ? `<button class="version-price-btn foil ${isCurrentFoil ? 'selected' : ''}" 
-                  data-id="${v.scryfallId}" data-foil="true">Foil ✨ $${foilPrice.toFixed(2)}</button>` : ''}
-                ${normalPrice === 0 && foilPrice === 0 ? '<div class="no-price">No price available</div>' : ''}
-              </div>
-            </div>
-          </div>`;
-        }).join('')}
+      <div class="version-filter">
+        <input type="text" id="version-filter-input" placeholder="Filter by set name..." autocomplete="off">
+        <span class="version-count">${card.versions.length} printings</span>
       </div>
+      <div class="version-modal-grid">${renderVersions()}</div>
     </div>`;
   document.body.appendChild(modal);
   
+  const grid = modal.querySelector('.version-modal-grid');
+  const input = modal.querySelector('#version-filter-input');
+  const countEl = modal.querySelector('.version-count');
+  
+  input.oninput = () => {
+    const filter = input.value.toLowerCase().trim();
+    grid.innerHTML = renderVersions(filter);
+    const count = filter 
+      ? card.versions.filter(v => v.setName.toLowerCase().includes(filter) || v.set.toLowerCase().includes(filter)).length
+      : card.versions.length;
+    countEl.textContent = `${count} printings`;
+    attachPriceHandlers();
+  };
+  
+  const attachPriceHandlers = () => {
+    modal.querySelectorAll('.version-price-btn').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const newVersion = card.versions.find(v => v.scryfallId === btn.dataset.id);
+        if (newVersion) {
+          const isFoil = btn.dataset.foil === 'true';
+          card.scryfallId = newVersion.scryfallId;
+          card.setName = newVersion.setName;
+          card.set = newVersion.set;
+          card.imageUrl = newVersion.imageUrl;
+          card.foil = isFoil;
+          card.price = isFoil ? parseFloat(newVersion.prices.usd_foil) || 0 : parseFloat(newVersion.prices.usd) || 0;
+          modal.remove();
+          renderComparison();
+        }
+      };
+    });
+  };
+  
   modal.querySelector('.version-modal-close').onclick = () => modal.remove();
   modal.onclick = e => { if (e.target === modal) modal.remove(); };
-  
-  modal.querySelectorAll('.version-price-btn').forEach(btn => {
-    btn.onclick = (e) => {
-      e.stopPropagation();
-      const newVersion = card.versions.find(v => v.scryfallId === btn.dataset.id);
-      if (newVersion) {
-        const isFoil = btn.dataset.foil === 'true';
-        card.scryfallId = newVersion.scryfallId;
-        card.setName = newVersion.setName;
-        card.set = newVersion.set;
-        card.imageUrl = newVersion.imageUrl;
-        card.foil = isFoil;
-        card.price = isFoil ? parseFloat(newVersion.prices.usd_foil) || 0 : parseFloat(newVersion.prices.usd) || 0;
-        modal.remove();
-        renderComparison();
-      }
-    };
-  });
+  attachPriceHandlers();
 }
 
 function onCollectionLoaded() {

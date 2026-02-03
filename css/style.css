@@ -2272,6 +2272,34 @@ h1 {
   line-height: 1;
 }
 
+.version-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--bg-tertiary);
+}
+.version-filter input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--bg-tertiary);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+.version-count {
+  font-size: 0.8rem;
+  color: #888;
+  white-space: nowrap;
+}
+.no-results {
+  padding: 40px;
+  text-align: center;
+  color: #888;
+  width: 100%;
+}
+
 .version-modal-grid {
   display: flex;
   flex-wrap: wrap;
