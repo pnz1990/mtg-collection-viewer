@@ -12,12 +12,20 @@ async function loadCardDetails() {
     // Add delay to avoid rate limiting (Scryfall allows ~10 requests/sec)
     await new Promise(r => setTimeout(r, 150));
     
-    const [cardResponse, csvResponse] = await Promise.all([
-      fetch(`https://api.scryfall.com/cards/${scryfallId}`, {
+    const csvResponse = await fetch('data/Collection.csv');
+    const csvText = await csvResponse.text();
+    const collectionCard = parseCollectionData(csvText, scryfallId);
+    
+    let cardResponse;
+    try {
+      cardResponse = await fetch(`https://api.scryfall.com/cards/${scryfallId}`, {
         headers: { 'Accept': 'application/json' }
-      }),
-      fetch('data/Collection.csv')
-    ]);
+      });
+    } catch (e) {
+      // CORS error on 429 - fetch fails entirely
+      document.getElementById('detail-container').innerHTML = '<div class="loading">Scryfall is throttling requests. Please try again in a minute.</div>';
+      return;
+    }
     
     if (cardResponse.status === 429) {
       document.getElementById('detail-container').innerHTML = '<div class="loading">Scryfall is throttling requests. Please try again in a minute.</div>';
@@ -26,9 +34,6 @@ async function loadCardDetails() {
     if (!cardResponse.ok) throw new Error('Card not found');
     
     const card = await cardResponse.json();
-    const csvText = await csvResponse.text();
-    const collectionCard = parseCollectionData(csvText, scryfallId);
-    
     renderCardDetails(card, collectionCard);
   } catch (error) {
     document.getElementById('detail-container').innerHTML = '<div class="loading">Failed to load card details</div>';
