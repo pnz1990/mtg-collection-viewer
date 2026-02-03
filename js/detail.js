@@ -2,6 +2,39 @@ const params = new URLSearchParams(window.location.search);
 const scryfallId = params.get('id');
 const isReveal = params.get('reveal') === '1';
 
+// IndexedDB for caching full card details
+const DB_NAME = 'mtg-detail-cache';
+const DB_VERSION = 1;
+let detailDb = null;
+
+async function openDetailDb() {
+  if (detailDb) return detailDb;
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => e.target.result.createObjectStore('cards', { keyPath: 'id' });
+    req.onsuccess = e => { detailDb = e.target.result; resolve(detailDb); };
+    req.onerror = () => resolve(null);
+  });
+}
+
+async function getCachedCard(id) {
+  const db = await openDetailDb();
+  if (!db) return null;
+  return new Promise(resolve => {
+    const tx = db.transaction('cards', 'readonly');
+    const req = tx.objectStore('cards').get(id);
+    req.onsuccess = () => resolve(req.result?.data);
+    req.onerror = () => resolve(null);
+  });
+}
+
+async function cacheCard(id, data) {
+  const db = await openDetailDb();
+  if (!db) return;
+  const tx = db.transaction('cards', 'readwrite');
+  tx.objectStore('cards').put({ id, data, cached: Date.now() });
+}
+
 async function loadCardDetails() {
   if (!scryfallId) {
     document.getElementById('detail-container').innerHTML = '<div class="loading">No card specified</div>';
@@ -9,31 +42,37 @@ async function loadCardDetails() {
   }
 
   try {
-    // Add delay to avoid rate limiting (Scryfall allows ~10 requests/sec)
-    await new Promise(r => setTimeout(r, 150));
-    
     const csvResponse = await fetch('data/Collection.csv');
     const csvText = await csvResponse.text();
     const collectionCard = parseCollectionData(csvText, scryfallId);
     
-    let cardResponse;
-    try {
-      cardResponse = await fetch(`https://api.scryfall.com/cards/${scryfallId}`, {
-        headers: { 'Accept': 'application/json' }
-      });
-    } catch (e) {
-      // CORS error on 429 - fetch fails entirely
-      document.getElementById('detail-container').innerHTML = '<div class="loading">Scryfall is throttling requests. Please try again in a minute.</div>';
-      return;
+    // Try cache first
+    let card = await getCachedCard(scryfallId);
+    
+    if (!card) {
+      // Add delay to avoid rate limiting
+      await new Promise(r => setTimeout(r, 150));
+      
+      let cardResponse;
+      try {
+        cardResponse = await fetch(`https://api.scryfall.com/cards/${scryfallId}`, {
+          headers: { 'Accept': 'application/json' }
+        });
+      } catch (e) {
+        document.getElementById('detail-container').innerHTML = '<div class="loading">Scryfall is throttling requests. Please try again in a minute.</div>';
+        return;
+      }
+      
+      if (cardResponse.status === 429) {
+        document.getElementById('detail-container').innerHTML = '<div class="loading">Scryfall is throttling requests. Please try again in a minute.</div>';
+        return;
+      }
+      if (!cardResponse.ok) throw new Error('Card not found');
+      
+      card = await cardResponse.json();
+      await cacheCard(scryfallId, card);
     }
     
-    if (cardResponse.status === 429) {
-      document.getElementById('detail-container').innerHTML = '<div class="loading">Scryfall is throttling requests. Please try again in a minute.</div>';
-      return;
-    }
-    if (!cardResponse.ok) throw new Error('Card not found');
-    
-    const card = await cardResponse.json();
     renderCardDetails(card, collectionCard);
   } catch (error) {
     document.getElementById('detail-container').innerHTML = '<div class="loading">Failed to load card details</div>';
