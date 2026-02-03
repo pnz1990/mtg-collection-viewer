@@ -28,34 +28,35 @@ function renderTimeline() {
   const container = document.getElementById('timeline');
   const useCardDates = isFullDataLoaded();
   
-  // Group cards by set, then by year
+  // Group cards by set+year (to handle sets like SLD with multiple release dates)
   const setGroups = {};
   filteredCollection.forEach(card => {
     const code = card.setCode.toLowerCase();
-    // Use card's released_at if full data loaded, otherwise fall back to set data
-    const cardDate = useCardDates && card.released_at ? card.released_at : null;
-    const setDate = setData[code]?.released || '1993-01-01';
+    const cardDate = useCardDates && card.released_at ? card.released_at : (setData[code]?.released || '1993-01-01');
+    const year = cardDate.substring(0, 4);
+    const groupKey = `${code}_${year}`;
     
-    if (!setGroups[code]) {
-      setGroups[code] = {
+    if (!setGroups[groupKey]) {
+      setGroups[groupKey] = {
+        code,
         name: card.setName,
-        released: cardDate || setDate,
+        released: cardDate,
+        year,
         cards: []
       };
     }
-    setGroups[code].cards.push(card);
+    setGroups[groupKey].cards.push(card);
   });
   
   // Sort sets by release date descending
-  const sortedSets = Object.entries(setGroups)
-    .sort((a, b) => b[1].released.localeCompare(a[1].released));
+  const sortedSets = Object.values(setGroups)
+    .sort((a, b) => b.released.localeCompare(a.released));
   
   // Group by year
   const yearGroups = {};
-  sortedSets.forEach(([code, set]) => {
-    const year = set.released.substring(0, 4);
-    if (!yearGroups[year]) yearGroups[year] = [];
-    yearGroups[year].push({ code, ...set });
+  sortedSets.forEach(set => {
+    if (!yearGroups[set.year]) yearGroups[set.year] = [];
+    yearGroups[set.year].push(set);
   });
   
   const years = Object.keys(yearGroups).sort((a, b) => b - a);
