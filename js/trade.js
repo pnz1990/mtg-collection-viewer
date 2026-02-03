@@ -473,19 +473,28 @@ document.getElementById('new-trade').onclick = () => {
 
 document.getElementById('copy-trade').onclick = async () => {
   const text = generateTradeSummary();
+  let copied = false;
   try {
     await navigator.clipboard.writeText(text);
+    copied = true;
   } catch (e) {
     // Fallback for non-HTTPS
     const ta = document.createElement('textarea');
     ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
     document.body.appendChild(ta);
     ta.select();
-    document.execCommand('copy');
+    ta.setSelectionRange(0, 99999);
+    copied = document.execCommand('copy');
     document.body.removeChild(ta);
   }
   const btn = document.getElementById('copy-trade');
-  btn.textContent = '✓ Summary copied to clipboard';
+  if (copied) {
+    btn.textContent = '✓ Summary copied to clipboard';
+  } else {
+    btn.textContent = '✗ Copy failed';
+  }
   setTimeout(() => btn.textContent = '📋 Copy Summary', 2500);
 };
 
@@ -495,18 +504,23 @@ document.getElementById('share-trade').onclick = async () => {
     alert('Trade is too large to share via URL. Use Copy Summary instead.');
     return;
   }
+  let copied = false;
   try {
     await navigator.clipboard.writeText(url);
+    copied = true;
   } catch (e) {
     const ta = document.createElement('textarea');
     ta.value = url;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
     document.body.appendChild(ta);
     ta.select();
-    document.execCommand('copy');
+    ta.setSelectionRange(0, 99999);
+    copied = document.execCommand('copy');
     document.body.removeChild(ta);
   }
   const btn = document.getElementById('share-trade');
-  btn.textContent = '✓ Link copied to clipboard';
+  btn.textContent = copied ? '✓ Link copied to clipboard' : '✗ Copy failed';
   setTimeout(() => btn.textContent = '🔗 Share Link', 2500);
 };
 

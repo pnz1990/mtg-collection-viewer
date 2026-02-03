@@ -583,27 +583,7 @@ function initApp() {
   if (priceSourceSelect) {
     const scryfallOption = priceSourceSelect.querySelector('option[value="scryfall"]');
     
-    const updatePriceSourceState = () => {
-      if (isFullDataLoaded()) {
-        scryfallOption.disabled = false;
-        scryfallOption.title = '';
-        priceSourceSelect.value = getPriceSource();
-      } else {
-        scryfallOption.disabled = true;
-        scryfallOption.title = 'Load Full Data first';
-        // Only reset to manabox if currently set to scryfall
-        if (priceSourceSelect.value === 'scryfall') {
-          priceSourceSelect.value = 'manabox';
-        }
-      }
-    };
-    
-    updatePriceSourceState();
-    window.updatePriceSourceState = updatePriceSourceState;
-    
-    priceSourceSelect.addEventListener('change', () => {
-      localStorage.setItem('priceSource', priceSourceSelect.value);
-      // Re-sort collection with new prices
+    const refreshPriceDisplay = () => {
       filteredCollection.sort((a, b) => {
         const sort = document.getElementById('sort')?.value || 'price';
         switch(sort) {
@@ -616,6 +596,30 @@ function initApp() {
       updateStats();
       if (typeof onFiltersApplied === 'function') onFiltersApplied();
       if (typeof renderCharts === 'function') renderCharts();
+    };
+    
+    const updatePriceSourceState = () => {
+      const savedSource = getPriceSource();
+      if (isFullDataLoaded()) {
+        scryfallOption.disabled = false;
+        scryfallOption.title = '';
+        priceSourceSelect.value = savedSource;
+        if (savedSource === 'scryfall') refreshPriceDisplay();
+      } else {
+        scryfallOption.disabled = true;
+        scryfallOption.title = 'Load Full Data first';
+        if (priceSourceSelect.value === 'scryfall') {
+          priceSourceSelect.value = 'manabox';
+        }
+      }
+    };
+    
+    updatePriceSourceState();
+    window.updatePriceSourceState = updatePriceSourceState;
+    
+    priceSourceSelect.addEventListener('change', () => {
+      localStorage.setItem('priceSource', priceSourceSelect.value);
+      refreshPriceDisplay();
     });
   }
   
