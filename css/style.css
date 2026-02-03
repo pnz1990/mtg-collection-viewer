@@ -1655,6 +1655,22 @@ h1 {
   border-bottom: 2px solid var(--accent);
   padding-bottom: 10px;
   margin-bottom: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.year-toggle {
+  transition: transform 0.3s;
+}
+
+.timeline-year.year-collapsed .year-toggle {
+  transform: rotate(-90deg);
+}
+
+.timeline-year.year-collapsed .year-content {
+  display: none;
 }
 
 .timeline-set {

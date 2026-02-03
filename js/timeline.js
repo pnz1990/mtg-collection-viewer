@@ -63,10 +63,11 @@ function renderTimeline() {
   
   container.innerHTML = years.map(year => `
     <div class="timeline-year">
-      <div class="year-header">${year}</div>
+      <div class="year-header" onclick="this.parentElement.classList.toggle('year-collapsed')">${year} <span class="year-toggle">▼</span></div>
+      <div class="year-content">
       ${yearGroups[year].map(set => `
         <div class="timeline-set">
-          <div class="set-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <div class="set-header" onclick="event.stopPropagation(); this.parentElement.classList.toggle('collapsed')">
             <img src="https://svgs.scryfall.io/sets/${set.code}.svg" class="set-icon" onerror="this.src='https://svgs.scryfall.io/sets/default.svg'">
             <span class="set-name">${set.name}</span>
             <span class="set-date">${formatDate(set.released)}</span>
@@ -78,6 +79,7 @@ function renderTimeline() {
           </div>
         </div>
       `).join('')}
+      </div>
     </div>
   `).join('');
   
