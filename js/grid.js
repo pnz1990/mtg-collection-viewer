@@ -304,6 +304,10 @@ async function onCollectionLoaded() {
   setupImageObserver();
   
   // Setup collapsible sections
+  document.getElementById('filters-toggle')?.addEventListener('click', function() {
+    this.classList.toggle('expanded');
+    document.getElementById('filters-content').classList.toggle('collapsed');
+  });
   document.getElementById('charts-toggle')?.addEventListener('click', function() {
     this.classList.toggle('expanded');
     document.getElementById('dashboard').classList.toggle('collapsed');

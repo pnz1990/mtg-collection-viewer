@@ -64,74 +64,77 @@
     </div>
   </div>
 
-  <div class="filters">
-    <div class="filter-group autocomplete-wrapper">
-      <input type="text" id="set-filter" placeholder="Filter by set..." autocomplete="off">
-      <div id="set-autocomplete" class="autocomplete-list"></div>
-    </div>
-    <div class="filter-group price-slider">
-      <label>Price: $<span id="price-min-val">0</span> - $<span id="price-max-val">∞</span></label>
-      <div id="price-range"></div>
-    </div>
-    <select id="rarity-filter">
-      <option value="">All Rarities</option>
-      <option value="common">Common</option>
-      <option value="uncommon">Uncommon</option>
-      <option value="rare">Rare</option>
-      <option value="mythic">Mythic</option>
-    </select>
-    <select id="foil-filter">
-      <option value="">All Finishes</option>
-      <option value="normal">Normal</option>
-      <option value="foil">Foil</option>
-      <option value="etched">Etched</option>
-    </select>
-    <select id="type-filter">
-      <option value="">All Types</option>
-      <option value="Creature">Creature</option>
-      <option value="Instant">Instant</option>
-      <option value="Sorcery">Sorcery</option>
-      <option value="Artifact">Artifact</option>
-      <option value="Enchantment">Enchantment</option>
-      <option value="Land">Land</option>
-      <option value="Planeswalker">Planeswalker</option>
-    </select>
-    <select id="color-filter">
-      <option value="">All Colors</option>
-      <option value="W">White</option>
-      <option value="U">Blue</option>
-      <option value="B">Black</option>
-      <option value="R">Red</option>
-      <option value="G">Green</option>
-      <option value="C">Colorless</option>
-      <option value="M">Multicolor</option>
-    </select>
-    <select id="keyword-filter">
-      <option value="">All Keywords</option>
-    </select>
-    <select id="reserved-filter">
-      <option value="">All Cards</option>
-      <option value="yes">Reserved List</option>
-      <option value="no">Non-Reserved</option>
-    </select>
-    <select id="sort">
-      <option value="price">Price</option>
-      <option value="name">Name</option>
-      <option value="rarity">Rarity</option>
-      <option value="set">Set</option>
-    </select>
-    <div class="filter-group color-identity-filter">
-      <label>Color Identity:</label>
-      <div class="color-checkboxes">
-        <label class="color-check W"><input type="checkbox" value="W"><span>W</span></label>
-        <label class="color-check U"><input type="checkbox" value="U"><span>U</span></label>
-        <label class="color-check B"><input type="checkbox" value="B"><span>B</span></label>
-        <label class="color-check R"><input type="checkbox" value="R"><span>R</span></label>
-        <label class="color-check G"><input type="checkbox" value="G"><span>G</span></label>
-        <label class="color-check C"><input type="checkbox" value="C"><span>C</span></label>
+  <div class="collapsible-section">
+    <button type="button" class="section-toggle" id="filters-toggle">🔍 Advanced Filters <span class="toggle-icon">▶</span></button>
+    <div id="filters-content" class="filters collapsed">
+      <div class="filter-group autocomplete-wrapper">
+        <input type="text" id="set-filter" placeholder="Filter by set..." autocomplete="off">
+        <div id="set-autocomplete" class="autocomplete-list"></div>
       </div>
+      <div class="filter-group price-slider">
+        <label>Price: $<span id="price-min-val">0</span> - $<span id="price-max-val">∞</span></label>
+        <div id="price-range"></div>
+      </div>
+      <select id="rarity-filter">
+        <option value="">All Rarities</option>
+        <option value="common">Common</option>
+        <option value="uncommon">Uncommon</option>
+        <option value="rare">Rare</option>
+        <option value="mythic">Mythic</option>
+      </select>
+      <select id="foil-filter">
+        <option value="">All Finishes</option>
+        <option value="normal">Normal</option>
+        <option value="foil">Foil</option>
+        <option value="etched">Etched</option>
+      </select>
+      <select id="type-filter">
+        <option value="">All Types</option>
+        <option value="Creature">Creature</option>
+        <option value="Instant">Instant</option>
+        <option value="Sorcery">Sorcery</option>
+        <option value="Artifact">Artifact</option>
+        <option value="Enchantment">Enchantment</option>
+        <option value="Land">Land</option>
+        <option value="Planeswalker">Planeswalker</option>
+      </select>
+      <select id="color-filter">
+        <option value="">All Colors</option>
+        <option value="W">White</option>
+        <option value="U">Blue</option>
+        <option value="B">Black</option>
+        <option value="R">Red</option>
+        <option value="G">Green</option>
+        <option value="C">Colorless</option>
+        <option value="M">Multicolor</option>
+      </select>
+      <select id="keyword-filter">
+        <option value="">All Keywords</option>
+      </select>
+      <select id="reserved-filter">
+        <option value="">All Cards</option>
+        <option value="yes">Reserved List</option>
+        <option value="no">Non-Reserved</option>
+      </select>
+      <select id="sort">
+        <option value="price">Price</option>
+        <option value="name">Name</option>
+        <option value="rarity">Rarity</option>
+        <option value="set">Set</option>
+      </select>
+      <div class="filter-group color-identity-filter">
+        <label>Color Identity:</label>
+        <div class="color-checkboxes">
+          <label class="color-check W"><input type="checkbox" value="W"><span>W</span></label>
+          <label class="color-check U"><input type="checkbox" value="U"><span>U</span></label>
+          <label class="color-check B"><input type="checkbox" value="B"><span>B</span></label>
+          <label class="color-check R"><input type="checkbox" value="R"><span>R</span></label>
+          <label class="color-check G"><input type="checkbox" value="G"><span>G</span></label>
+          <label class="color-check C"><input type="checkbox" value="C"><span>C</span></label>
+        </div>
+      </div>
+      <button type="button" id="clear-filters" class="clear-filters-btn">Clear Filters</button>
     </div>
-    <button type="button" id="clear-filters" class="clear-filters-btn">Clear Filters</button>
   </div>
 
   <div class="collapsible-section">
