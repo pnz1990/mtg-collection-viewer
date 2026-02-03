@@ -385,6 +385,67 @@ function onFiltersApplied() {
   renderCollection();
 }
 
+function generateTradeSummary() {
+  let text = '--- GIVING ---\n';
+  let givingTotal = 0;
+  for (const card of selectedCards.values()) {
+    const price = getScryPrice(card) * card.quantity;
+    givingTotal += price;
+    const foilTag = card.foil !== 'normal' ? ` ${card.foil}` : '';
+    text += `${card.quantity}x ${card.name} (${card.set.toUpperCase()}${foilTag}) - $${price.toFixed(2)}\n`;
+  }
+  text += `Total: $${givingTotal.toFixed(2)}\n\n`;
+  
+  text += '--- RECEIVING ---\n';
+  let receivingTotal = 0;
+  for (const card of receivingCards) {
+    if (card.error) continue;
+    const price = card.price * card.qty;
+    receivingTotal += price;
+    const foilTag = card.foil ? ' foil' : '';
+    text += `${card.qty}x ${card.name} (${card.set.toUpperCase()}${foilTag}) - $${price.toFixed(2)}\n`;
+  }
+  text += `Total: $${receivingTotal.toFixed(2)}\n\n`;
+  
+  const diff = receivingTotal - givingTotal;
+  const favor = diff > 0 ? 'in your favor' : diff < 0 ? 'against you' : 'even';
+  text += `Balance: ${diff >= 0 ? '+' : ''}$${diff.toFixed(2)} ${favor}`;
+  return text;
+}
+
+function generateShareUrl() {
+  const data = {
+    g: [...selectedCards.values()].map(c => ({ i: c.scryfallId, q: c.quantity })),
+    r: receivingCards.filter(c => !c.error).map(c => ({ n: c.name, s: c.set, f: c.foil ? 1 : 0, q: c.qty }))
+  };
+  const encoded = btoa(JSON.stringify(data));
+  return `${location.origin}${location.pathname}?t=${encoded}`;
+}
+
+async function loadFromShareUrl() {
+  const params = new URLSearchParams(location.search);
+  const t = params.get('t');
+  if (!t) return false;
+  try {
+    const data = JSON.parse(atob(t));
+    // Load giving cards from collection
+    await loadCollection();
+    for (const item of data.g || []) {
+      const card = collection.find(c => c.scryfallId === item.i);
+      if (card) selectedCards.set(card.scryfallId, { ...card, quantity: item.q });
+    }
+    // Load receiving cards
+    if (data.r?.length) {
+      const parsed = data.r.map(r => ({ name: r.n, set: r.s, foil: r.f === 1, qty: r.q }));
+      receivingCards = await resolveReceivingCards(parsed);
+    }
+    goToStep(3);
+    renderComparison();
+    history.replaceState({}, '', location.pathname); // Clean URL
+    return true;
+  } catch (e) { console.error('Failed to load trade:', e); return false; }
+}
+
 // Navigation
 document.getElementById('next-step1').onclick = () => goToStep(2);
 document.getElementById('back-step2').onclick = () => goToStep(1);
@@ -405,5 +466,27 @@ document.getElementById('new-trade').onclick = () => {
   renderCollection();
   updateSelectionInfo();
 };
+
+document.getElementById('copy-trade').onclick = () => {
+  navigator.clipboard.writeText(generateTradeSummary());
+  const btn = document.getElementById('copy-trade');
+  btn.textContent = '✓ Copied!';
+  setTimeout(() => btn.textContent = '📋 Copy Summary', 2000);
+};
+
+document.getElementById('share-trade').onclick = () => {
+  const url = generateShareUrl();
+  if (url.length > 2000) {
+    alert('Trade is too large to share via URL. Use Copy Summary instead.');
+    return;
+  }
+  navigator.clipboard.writeText(url);
+  const btn = document.getElementById('share-trade');
+  btn.textContent = '✓ Link Copied!';
+  setTimeout(() => btn.textContent = '🔗 Share Link', 2000);
+};
+
+// Check for shared trade on load
+loadFromShareUrl();
 
 // Menu handled by shared.js
