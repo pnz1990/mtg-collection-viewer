@@ -343,6 +343,9 @@ async function loadCollection() {
     if (cached) Object.assign(card, cached);
   }
   
+  // Update price source state after loading cached data
+  if (typeof updatePriceSourceState === 'function') updatePriceSourceState();
+  
   populateKeywordFilter();
   
   if (typeof onCollectionLoaded === 'function') {

@@ -546,7 +546,7 @@ h1 {
 .card.etched .card-image-inner::after {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: -50%;
   border-radius: 8px;
   background: linear-gradient(
     125deg,
@@ -1973,5 +1973,34 @@ h1 {
   
   .summary-count {
     font-size: 1.8rem;
+  }
+}
+
+/* Mobile fixes */
+@media (max-width: 768px) {
+  .back-button {
+    position: static;
+    transform: none;
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .search-hero {
+    flex-direction: column;
+    padding: 15px;
+    gap: 10px;
+  }
+  
+  .search-hero .search-wrapper {
+    max-width: 100%;
+  }
+  
+  .search-wrapper input {
+    padding: 14px 18px 14px 45px;
+    font-size: 1rem;
   }
 }

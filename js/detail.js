@@ -90,7 +90,8 @@ function parseCollectionData(csvText, scryfallId) {
         quantity: parseInt(parts[6]) || 1,
         price: parseFloat(parts[9]) || 0,
         foil: parts[4],
-        condition: parts[12]
+        condition: parts[12],
+        currency: parts[14] || 'USD'
       };
     }
   }
@@ -117,10 +118,16 @@ function parseCSVLine(line) {
   return result;
 }
 
+function formatDetailPrice(price, currency = 'USD') {
+  const symbols = { USD: '$', CAD: 'CA$', EUR: '€', GBP: '£', AUD: 'A$', JPY: '¥' };
+  const symbol = symbols[currency] || currency + ' ';
+  return `${symbol}${price.toFixed(2)}`;
+}
+
 function renderManaSymbols(text) {
   if (!text) return '';
   return text.replace(/\{([^}]+)\}/g, (match, symbol) => {
-    const sym = symbol.toLowerCase();
+    let sym = symbol.toLowerCase().replace(/\//g, '');
     if (sym === 't') return '<i class="ms ms-tap ms-cost"></i>';
     if (sym === 'q') return '<i class="ms ms-untap ms-cost"></i>';
     return `<i class="ms ms-${sym} ms-cost"></i>`;
@@ -179,7 +186,7 @@ function renderCardDetails(card, collectionCard) {
             </div>
             <div class="stat">
               <span class="stat-label">Value</span>
-              <span class="stat-value">$${(collectionCard.price * collectionCard.quantity).toFixed(2)}</span>
+              <span class="stat-value">${formatDetailPrice(collectionCard.price * collectionCard.quantity, collectionCard.currency)}</span>
             </div>
             <div class="stat">
               <span class="stat-label">Finish</span>
