@@ -101,6 +101,12 @@ function setupTimelineCards() {
 async function onCollectionLoaded() {
   await loadSetData();
   renderTimeline();
+  
+  // Setup collapsible filters
+  document.getElementById('filters-toggle')?.addEventListener('click', function() {
+    this.classList.toggle('expanded');
+    document.getElementById('filters-content').classList.toggle('collapsed');
+  });
 }
 
 function onFiltersApplied() {

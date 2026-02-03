@@ -66,7 +66,9 @@
     <button type="button" id="clear-filters" class="clear-filters-btn">Clear Filters</button>
   </div>
 
-  <div class="filters">
+  <div class="collapsible-section">
+    <button type="button" class="section-toggle" id="filters-toggle">🔍 Advanced Filters <span class="toggle-icon">▶</span></button>
+    <div id="filters-content" class="filters collapsed">
     <div class="filter-group autocomplete-wrapper">
       <input type="text" id="set-filter" placeholder="Filter by set..." autocomplete="off">
       <div id="set-autocomplete" class="autocomplete-list"></div>
@@ -139,6 +141,7 @@
         <label class="color-check C"><input type="checkbox" value="C"><span>C</span></label>
       </div>
     </div>
+  </div>
   </div>
 
   <div id="carousel" class="carousel">
