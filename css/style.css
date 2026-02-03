@@ -2231,22 +2231,28 @@ h1 {
 
 .version-modal-overlay {
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.8);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.85);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .version-modal {
   background: var(--bg-secondary);
   border-radius: 12px;
-  width: 90vw;
-  max-width: 900px;
-  max-height: 85vh;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .version-modal-header {
@@ -2255,67 +2261,69 @@ h1 {
   align-items: center;
   padding: 15px 20px;
   border-bottom: 1px solid var(--bg-tertiary);
-  flex-shrink: 0;
 }
-.version-modal-header h3 { margin: 0; }
+.version-modal-header h3 { margin: 0; font-size: 1.1rem; }
 .version-modal-close {
   background: none;
   border: none;
   color: var(--text-primary);
-  font-size: 24px;
+  font-size: 28px;
   cursor: pointer;
+  line-height: 1;
 }
 
 .version-modal-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
   padding: 20px;
   overflow-y: auto;
-  flex: 1;
+  justify-content: center;
 }
 
 .version-option-card {
   background: var(--bg-tertiary);
-  border-radius: 10px;
+  border-radius: 8px;
+  width: 160px;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
 .version-option-card img {
-  width: 100%;
-  aspect-ratio: 488 / 680;
-  object-fit: cover;
+  width: 160px;
+  height: 223px;
+  object-fit: contain;
   display: block;
+  background: #111;
 }
 .version-details {
-  padding: 10px;
-  flex-shrink: 0;
+  padding: 8px;
 }
 .version-set-name {
   font-weight: bold;
-  margin-bottom: 2px;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .version-set-code {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #888;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 .version-prices {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
 }
 .version-price-btn {
-  padding: 6px 10px;
-  border: 2px solid var(--bg-secondary);
+  width: 100%;
+  padding: 6px 8px;
+  border: 2px solid transparent;
   background: var(--bg-secondary);
   color: var(--text-primary);
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 0.8rem;
-  transition: all 0.2s;
+  font-size: 0.75rem;
+  text-align: center;
 }
 .version-price-btn:hover {
   border-color: var(--accent);
@@ -2326,12 +2334,12 @@ h1 {
   color: white;
 }
 .version-price-btn.foil {
-  background: linear-gradient(135deg, var(--bg-secondary) 0%, #3a3a4a 100%);
+  background: linear-gradient(135deg, #2a2a3a 0%, #3a3a4a 100%);
 }
 .no-price {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #666;
-  font-style: italic;
+  text-align: center;
 }
 
 .trade-balance {
