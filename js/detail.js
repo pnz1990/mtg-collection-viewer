@@ -124,6 +124,19 @@ function formatDetailPrice(price, currency = 'USD') {
   return `${symbol}${price.toFixed(2)}`;
 }
 
+function getDetailPrice(collectionCard, scryfallCard) {
+  const priceSource = localStorage.getItem('priceSource') || 'manabox';
+  if (priceSource === 'scryfall' && scryfallCard.prices) {
+    const p = scryfallCard.prices;
+    let price = 0;
+    if (collectionCard.foil === 'etched' && p.usd_etched) price = parseFloat(p.usd_etched);
+    else if (collectionCard.foil === 'foil' && p.usd_foil) price = parseFloat(p.usd_foil);
+    else if (p.usd) price = parseFloat(p.usd);
+    return { price: price * collectionCard.quantity, currency: 'USD' };
+  }
+  return { price: collectionCard.price * collectionCard.quantity, currency: collectionCard.currency };
+}
+
 function renderManaSymbols(text) {
   if (!text) return '';
   return text.replace(/\{([^}]+)\}/g, (match, symbol) => {
@@ -186,7 +199,7 @@ function renderCardDetails(card, collectionCard) {
             </div>
             <div class="stat">
               <span class="stat-label">Value</span>
-              <span class="stat-value">${formatDetailPrice(collectionCard.price * collectionCard.quantity, collectionCard.currency)}</span>
+              <span class="stat-value">${(() => { const p = getDetailPrice(collectionCard, card); return formatDetailPrice(p.price, p.currency); })()}</span>
             </div>
             <div class="stat">
               <span class="stat-label">Finish</span>
