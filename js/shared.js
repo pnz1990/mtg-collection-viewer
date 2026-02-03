@@ -107,7 +107,8 @@ async function loadFullCardData(onProgress, forceRefresh = false) {
           color_identity: cardData.color_identity || [],
           keywords: cardData.keywords || [],
           reserved: cardData.reserved || false,
-          scryfallPrices: cardData.prices || null
+          scryfallPrices: cardData.prices || null,
+          released_at: cardData.released_at || null
         };
         
         await cacheCardData(cardData.id, extracted);

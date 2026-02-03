@@ -26,15 +26,20 @@ async function loadSetData() {
 
 function renderTimeline() {
   const container = document.getElementById('timeline');
+  const useCardDates = isFullDataLoaded();
   
   // Group cards by set, then by year
   const setGroups = {};
   filteredCollection.forEach(card => {
     const code = card.setCode.toLowerCase();
+    // Use card's released_at if full data loaded, otherwise fall back to set data
+    const cardDate = useCardDates && card.released_at ? card.released_at : null;
+    const setDate = setData[code]?.released || '1993-01-01';
+    
     if (!setGroups[code]) {
       setGroups[code] = {
         name: card.setName,
-        released: setData[code]?.released || '1993-01-01',
+        released: cardDate || setDate,
         cards: []
       };
     }
