@@ -211,7 +211,8 @@ function renderComparison() {
     const price = getScryPrice(card) * card.quantity;
     givingTotal += price;
     return `
-    <div class="trade-card">
+    <div class="trade-card" data-scryfall-id="${card.scryfallId}">
+      <button class="remove-card" data-side="giving" data-id="${card.scryfallId}">×</button>
       <img src="https://cards.scryfall.io/small/front/${card.scryfallId[0]}/${card.scryfallId[1]}/${card.scryfallId}.jpg" 
            onerror="this.src='images/back.png'">
       <div class="trade-card-info">
@@ -233,19 +234,13 @@ function renderComparison() {
     const hasVersions = card.versions && card.versions.length > 1;
     return `
     <div class="trade-card ${card.error ? 'error' : ''}">
+      <button class="remove-card" data-side="receiving" data-idx="${idx}">×</button>
       <img src="${card.imageUrl || 'images/back.png'}" onerror="this.src='images/back.png'">
       <div class="trade-card-info">
         <div class="trade-card-name">${card.qty > 1 ? card.qty + 'x ' : ''}${card.name}</div>
         <div class="trade-card-set">${card.error ? 'Not found' : card.setName} ${card.foil ? '(foil)' : ''}</div>
         <div class="trade-card-price">${card.error ? '?' : '$' + totalPrice.toFixed(2)}</div>
-        ${hasVersions ? `<select class="version-select" data-idx="${idx}">
-          ${card.versions.map(v => {
-            const vp = card.foil ? parseFloat(v.prices.usd_foil) || 0 : parseFloat(v.prices.usd) || 0;
-            return `<option value="${v.scryfallId}" ${v.scryfallId === card.scryfallId ? 'selected' : ''}>
-              ${v.setName} - $${vp.toFixed(2)}
-            </option>`;
-          }).join('')}
-        </select>` : ''}
+        ${hasVersions ? `<button class="change-version-btn" data-idx="${idx}">Change Version</button>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -260,18 +255,63 @@ function renderComparison() {
   balanceEl.textContent = `${diff >= 0 ? '+' : ''}$${diff.toFixed(2)}`;
   indicatorEl.className = 'balance-indicator ' + (diff > 0 ? 'positive' : diff < 0 ? 'negative' : 'even');
   
-  // Version change handlers
-  document.querySelectorAll('.version-select').forEach(sel => {
-    sel.onchange = () => {
-      const idx = parseInt(sel.dataset.idx);
-      const card = receivingCards[idx];
-      const newVersion = card.versions.find(v => v.scryfallId === sel.value);
+  // Remove handlers
+  document.querySelectorAll('.remove-card').forEach(btn => {
+    btn.onclick = () => {
+      if (btn.dataset.side === 'giving') {
+        selectedCards.delete(btn.dataset.id);
+      } else {
+        receivingCards.splice(parseInt(btn.dataset.idx), 1);
+      }
+      renderComparison();
+    };
+  });
+  
+  // Version modal handlers
+  document.querySelectorAll('.change-version-btn').forEach(btn => {
+    btn.onclick = () => openVersionModal(parseInt(btn.dataset.idx));
+  });
+}
+
+function openVersionModal(idx) {
+  const card = receivingCards[idx];
+  const modal = document.createElement('div');
+  modal.className = 'version-modal-overlay';
+  modal.innerHTML = `
+    <div class="version-modal">
+      <div class="version-modal-header">
+        <h3>Select Version: ${card.name}</h3>
+        <button class="version-modal-close">×</button>
+      </div>
+      <div class="version-modal-grid">
+        ${card.versions.map(v => {
+          const vp = card.foil ? parseFloat(v.prices.usd_foil) || 0 : parseFloat(v.prices.usd) || 0;
+          return `
+          <div class="version-option ${v.scryfallId === card.scryfallId ? 'selected' : ''}" data-id="${v.scryfallId}">
+            <img src="${v.imageUrl}" onerror="this.src='images/back.png'">
+            <div class="version-info">
+              <div class="version-set">${v.setName}</div>
+              <div class="version-price">$${vp.toFixed(2)}</div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  
+  modal.querySelector('.version-modal-close').onclick = () => modal.remove();
+  modal.onclick = e => { if (e.target === modal) modal.remove(); };
+  
+  modal.querySelectorAll('.version-option').forEach(opt => {
+    opt.onclick = () => {
+      const newVersion = card.versions.find(v => v.scryfallId === opt.dataset.id);
       if (newVersion) {
         card.scryfallId = newVersion.scryfallId;
         card.setName = newVersion.setName;
         card.set = newVersion.set;
         card.imageUrl = newVersion.imageUrl;
         card.price = card.foil ? parseFloat(newVersion.prices.usd_foil) || 0 : parseFloat(newVersion.prices.usd) || 0;
+        modal.remove();
         renderComparison();
       }
     };
