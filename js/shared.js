@@ -589,10 +589,10 @@ function initApp() {
       } else {
         scryfallOption.disabled = true;
         scryfallOption.title = 'Load Full Data first';
-        if (getPriceSource() === 'scryfall') {
-          localStorage.setItem('priceSource', 'manabox');
+        // Only reset to manabox if currently set to scryfall
+        if (priceSourceSelect.value === 'scryfall') {
+          priceSourceSelect.value = 'manabox';
         }
-        priceSourceSelect.value = 'manabox';
       }
     };
     
