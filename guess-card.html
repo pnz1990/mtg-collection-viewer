@@ -168,34 +168,75 @@
       });
     }
 
+    async function fetchCardData(scryfallId) {
+      try {
+        const response = await fetch(`https://api.scryfall.com/cards/${scryfallId}`);
+        if (!response.ok) return null;
+        const data = await response.json();
+        return {
+          colors: data.colors || [],
+          color_identity: data.color_identity || [],
+          type_line: data.type_line,
+          cmc: data.cmc,
+          mana_cost: data.mana_cost,
+          power: data.power,
+          toughness: data.toughness,
+          keywords: data.keywords || [],
+          oracle_text: data.oracle_text,
+          artist: data.artist
+        };
+      } catch { return null; }
+    }
+
     function generateHints(card) {
       const h = [];
-      // Easy hints last, hard hints first
-      if (card.cmc !== undefined) h.push({ label: 'Mana Value', value: card.cmc });
-      if (card.colors?.length) h.push({ label: 'Colors', value: card.colors.join(', ') || 'Colorless' });
-      else h.push({ label: 'Colors', value: 'Colorless' });
-      if (card.rarity) h.push({ label: 'Rarity', value: card.rarity.charAt(0).toUpperCase() + card.rarity.slice(1) });
-      if (card.type_line) {
-        const mainType = card.type_line.split('—')[0].trim();
-        h.push({ label: 'Type', value: mainType });
-      }
+      // 1. Mana Value
+      h.push({ label: 'Mana Value', value: card.cmc ?? '?' });
+      // 2. Colors
+      const colors = card.colors?.length ? card.colors.join(', ') : 'Colorless';
+      h.push({ label: 'Colors', value: colors });
+      // 3. Rarity
+      h.push({ label: 'Rarity', value: (card.rarity || 'unknown').charAt(0).toUpperCase() + (card.rarity || 'unknown').slice(1) });
+      // 4. Card Type (main)
+      const mainType = card.type_line?.split('—')[0]?.trim() || 'Unknown';
+      h.push({ label: 'Card Type', value: mainType });
+      // 5. Set
       h.push({ label: 'Set', value: card.setName });
-      h.push({ label: 'Price', value: `$${card.price.toFixed(2)}` });
-      if (card.type_line?.includes('Creature') && card.power) {
+      // 6. Price
+      h.push({ label: 'Price', value: `$${(card.price || 0).toFixed(2)}` });
+      // 7. Mana Cost
+      h.push({ label: 'Mana Cost', value: card.mana_cost || 'None' });
+      // 8. Power/Toughness or Keywords
+      if (card.power !== undefined) {
         h.push({ label: 'Power/Toughness', value: `${card.power}/${card.toughness}` });
+      } else if (card.keywords?.length) {
+        h.push({ label: 'Keywords', value: card.keywords.slice(0, 3).join(', ') });
+      } else {
+        h.push({ label: 'Artist', value: card.artist || 'Unknown' });
       }
-      if (card.keywords?.length) h.push({ label: 'Keywords', value: card.keywords.slice(0, 3).join(', ') });
-      if (card.type_line) {
-        const subtype = card.type_line.split('—')[1]?.trim();
-        if (subtype) h.push({ label: 'Subtype', value: subtype });
+      // 9. Subtype or Color Identity
+      const subtype = card.type_line?.split('—')[1]?.trim();
+      if (subtype) {
+        h.push({ label: 'Subtype', value: subtype });
+      } else {
+        const ci = card.color_identity?.length ? card.color_identity.join(', ') : 'Colorless';
+        h.push({ label: 'Color Identity', value: ci });
       }
-      // First letter as final hint
+      // 10. First Letter
       h.push({ label: 'First Letter', value: `Starts with "${card.name[0].toUpperCase()}"` });
       return h;
     }
 
-    function startNewRound() {
+    async function startNewRound() {
+      document.getElementById('hints-list').innerHTML = '<div class="hint"><div class="hint-value">Loading card...</div></div>';
       currentCard = collection[Math.floor(Math.random() * collection.length)];
+      
+      // Fetch full data if missing colors
+      if (!currentCard.colors) {
+        const data = await fetchCardData(currentCard.scryfallId);
+        if (data) Object.assign(currentCard, data);
+      }
+      
       hints = generateHints(currentCard);
       hintIndex = 0;
       document.getElementById('hints-list').innerHTML = '';
