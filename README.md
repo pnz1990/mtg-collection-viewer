@@ -73,7 +73,18 @@ Choose between two price sources:
 ### 🔧 Additional Tools
 
 - **Deck Checker** - Paste a deck list to see which cards you own vs. need
+- **Trade Calculator** - Compare trade values with visual card selection
+  - Select cards from your collection to trade away
+  - Enter cards to receive (fetches all printings from Scryfall)
+  - Visual version picker with normal/foil prices
+  - Copy trade summary to clipboard
+  - Generate shareable trade links
 - **Collection Trivia** - 10-question quiz game testing your knowledge of your own collection
+- **Guess the Card** - Progressive hint game with 10 clues per card
+  - Hints reveal: mana value, colors, rarity, type, set, price, mana cost, P/T, subtype, first letter
+  - Autocomplete from your collection
+  - Score based on hints used
+  - Dramatic card reveal animation
 - **Random Card** - Jump to a random card in your collection
 - **Load Full Data** - Fetch extended card data (types, colors, keywords) from Scryfall API
 - **Clear Filters** - Reset all filters with one click
@@ -116,7 +127,9 @@ mtg-collection-viewer/
 ├── timeline.html       # Timeline view
 ├── detail.html         # Card detail page
 ├── deck-checker.html   # Deck checker tool
+├── trade-calculator.html # Trade calculator
 ├── trivia.html         # Collection trivia game
+├── guess-card.html     # Guess the card game
 ├── data/
 │   └── Collection.csv  # Your card collection data
 ├── js/
