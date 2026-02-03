@@ -397,7 +397,8 @@ function generateTradeSummary() {
     const price = getScryPrice(card) * card.quantity;
     givingTotal += price;
     const foilTag = card.foil !== 'normal' ? ` ${card.foil}` : '';
-    text += `${card.quantity}x ${card.name} (${card.set.toUpperCase()}${foilTag}) - $${price.toFixed(2)}\n`;
+    const setCode = (card.setCode || card.set || '???').toUpperCase();
+    text += `${card.quantity}x ${card.name} (${setCode}${foilTag}) - $${price.toFixed(2)}\n`;
   }
   text += `Total: $${givingTotal.toFixed(2)}\n\n`;
   
@@ -408,7 +409,8 @@ function generateTradeSummary() {
     const price = card.price * card.qty;
     receivingTotal += price;
     const foilTag = card.foil ? ' foil' : '';
-    text += `${card.qty}x ${card.name} (${card.set.toUpperCase()}${foilTag}) - $${price.toFixed(2)}\n`;
+    const setCode = (card.set || '???').toUpperCase();
+    text += `${card.qty}x ${card.name} (${setCode}${foilTag}) - $${price.toFixed(2)}\n`;
   }
   text += `Total: $${receivingTotal.toFixed(2)}\n\n`;
   
