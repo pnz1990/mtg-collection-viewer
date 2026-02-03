@@ -36,6 +36,12 @@ An immersive, interactive web application for viewing and exploring your Magic: 
 - Color Identity (for EDH/Commander)
 - **Clickable Labels** - Click any badge on a card to filter by that attribute
 
+### 💰 Price Source Toggle
+
+Choose between two price sources:
+- **Manabox Prices** - Uses prices from your CSV export (supports any currency)
+- **Scryfall Prices (USD)** - Uses cached Scryfall prices (requires "Load Full Data")
+
 ### 📊 Analytics Dashboard
 
 12 interactive charts (click any segment to filter):

@@ -402,16 +402,14 @@ function applyFilters() {
       getCardPrice(card) >= priceMin && getCardPrice(card) <= priceMax;
   });
   
-  if (sort !== 'recent') {
-    filteredCollection.sort((a, b) => {
-      switch(sort) {
-        case 'name': return a.name.localeCompare(b.name);
-        case 'rarity': return b.rarity.localeCompare(a.rarity);
-        case 'set': return a.setName.localeCompare(b.setName);
-        default: return (getCardPrice(b) * b.quantity) - (getCardPrice(a) * a.quantity);
-      }
-    });
-  }
+  filteredCollection.sort((a, b) => {
+    switch(sort) {
+      case 'name': return a.name.localeCompare(b.name);
+      case 'rarity': return b.rarity.localeCompare(a.rarity);
+      case 'set': return a.setName.localeCompare(b.setName);
+      default: return (getCardPrice(b) * b.quantity) - (getCardPrice(a) * a.quantity);
+    }
+  });
   
   updateStats();
   if (typeof onFiltersApplied === 'function') {
