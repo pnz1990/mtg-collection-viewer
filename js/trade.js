@@ -364,9 +364,14 @@ function openVersionModal(idx) {
   attachPriceHandlers();
 }
 
-function onCollectionLoaded() {
+async function onCollectionLoaded() {
   setupImageObserver();
-  renderCollection();
+  
+  // Check for shared trade URL first
+  const loaded = await loadFromShareUrl();
+  if (!loaded) {
+    renderCollection();
+  }
   
   document.getElementById('filters-toggle')?.addEventListener('click', function() {
     this.classList.toggle('expanded');
@@ -428,8 +433,7 @@ async function loadFromShareUrl() {
   if (!t) return false;
   try {
     const data = JSON.parse(atob(t));
-    // Load giving cards from collection
-    await loadCollection();
+    // Load giving cards from collection (already loaded)
     for (const item of data.g || []) {
       const card = collection.find(c => c.scryfallId === item.i);
       if (card) selectedCards.set(card.scryfallId, { ...card, quantity: item.q });
@@ -485,8 +489,5 @@ document.getElementById('share-trade').onclick = () => {
   btn.textContent = '✓ Link Copied!';
   setTimeout(() => btn.textContent = '🔗 Share Link', 2000);
 };
-
-// Check for shared trade on load
-loadFromShareUrl();
 
 // Menu handled by shared.js
