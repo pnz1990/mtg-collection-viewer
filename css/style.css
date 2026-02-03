@@ -655,6 +655,10 @@ h1 {
 .foil-foil { background: #4a6a8c; }
 .foil-etched { background: #6a4a6a; }
 
+.qty-badge {
+  background: #546e7a;
+}
+
 .duplicate-badge {
   background: #e65100;
 }
@@ -691,10 +695,6 @@ h1 {
 .card-set.clickable:hover {
   transform: none;
   color: var(--accent);
-}
-
-.card.duplicate {
-  box-shadow: 0 0 0 2px #e65100, 0 4px 15px rgba(230, 81, 0, 0.3);
 }
 
 /* Collapsible Sections */

@@ -266,10 +266,10 @@ function renderCollection(append = false) {
     container.innerHTML = '';
   }
   
-  // Count duplicates by name
+  // Count card entries by name (not quantity, just how many different entries)
   const nameCounts = {};
   filteredCollection.forEach(c => {
-    nameCounts[c.name] = (nameCounts[c.name] || 0) + c.quantity;
+    nameCounts[c.name] = (nameCounts[c.name] || 0) + 1;
   });
   
   const cardsToShow = filteredCollection.slice(displayedCards, displayedCards + CARDS_PER_PAGE);

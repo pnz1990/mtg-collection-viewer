@@ -145,13 +145,13 @@ function getMainType(typeLine) {
 
 function renderCardHTML(card, nameCounts = {}) {
   const foilClass = card.foil !== 'normal' ? card.foil : '';
-  const dupeClass = nameCounts[card.name] >= 2 ? 'duplicate' : '';
   const setIcon = `https://svgs.scryfall.io/sets/${card.setCode.toLowerCase()}.svg`;
   const fallbackIcon = 'https://svgs.scryfall.io/sets/default.svg';
   const mainType = getMainType(card.type_line);
   const keywordTags = (card.keywords || []).slice(0, 3).map(k => `<span class="badge keyword-badge clickable" data-filter="keyword" data-value="${k}">${k}</span>`).join('');
+  const hasDuplicateName = nameCounts[card.name] > 1; // More than 1 card entry with same name
   return `
-  <div class="card ${foilClass} ${dupeClass}" data-scryfall-id="${card.scryfallId}">
+  <div class="card ${foilClass}" data-scryfall-id="${card.scryfallId}">
     <a href="detail.html?id=${card.scryfallId}" class="card-link">
       <div class="card-image-wrapper">
         <div class="card-image-inner">
@@ -170,7 +170,8 @@ function renderCardHTML(card, nameCounts = {}) {
         ${card.reserved ? `<span class="badge reserved-badge clickable" data-filter="reserved" data-value="yes">RL</span>` : ''}
         ${mainType ? `<span class="badge type-badge clickable" data-filter="type" data-value="${mainType}">${mainType}</span>` : ''}
         ${card.cmc !== undefined && !card.type_line?.includes('Land') ? `<span class="badge cmc-badge clickable" data-filter="cmc" data-value="${card.cmc}">⬡${card.cmc}</span>` : ''}
-        ${nameCounts[card.name] >= 2 ? `<span class="badge duplicate-badge">x${nameCounts[card.name]}</span>` : ''}
+        ${card.quantity > 1 ? `<span class="badge qty-badge">x${card.quantity}</span>` : ''}
+        ${hasDuplicateName ? `<span class="badge duplicate-badge clickable" data-filter="search" data-value="${card.name}">Duplicate</span>` : ''}
         ${keywordTags}
       </div>
     </a>
