@@ -731,6 +731,10 @@ h1 {
   transform: rotate(90deg);
 }
 
+#filters-content, #achievements {
+  padding-top: 15px;
+}
+
 .collapsed {
   display: none !important;
 }
