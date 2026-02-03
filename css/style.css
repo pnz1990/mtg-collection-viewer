@@ -2242,9 +2242,9 @@ h1 {
 .version-modal {
   background: var(--bg-secondary);
   border-radius: 12px;
-  max-width: 90vw;
-  max-height: 80vh;
-  overflow: hidden;
+  width: 90vw;
+  max-width: 900px;
+  max-height: 85vh;
   display: flex;
   flex-direction: column;
 }
@@ -2255,6 +2255,7 @@ h1 {
   align-items: center;
   padding: 15px 20px;
   border-bottom: 1px solid var(--bg-tertiary);
+  flex-shrink: 0;
 }
 .version-modal-header h3 { margin: 0; }
 .version-modal-close {
@@ -2267,46 +2268,53 @@ h1 {
 
 .version-modal-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
   padding: 20px;
   overflow-y: auto;
+  flex: 1;
 }
 
 .version-option-card {
   background: var(--bg-tertiary);
   border-radius: 10px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 .version-option-card img {
   width: 100%;
+  aspect-ratio: 488 / 680;
+  object-fit: cover;
   display: block;
 }
 .version-details {
-  padding: 12px;
+  padding: 10px;
+  flex-shrink: 0;
 }
 .version-set-name {
   font-weight: bold;
   margin-bottom: 2px;
+  font-size: 0.85rem;
 }
 .version-set-code {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #888;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 .version-prices {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 .version-price-btn {
-  padding: 8px 12px;
+  padding: 6px 10px;
   border: 2px solid var(--bg-secondary);
   background: var(--bg-secondary);
   color: var(--text-primary);
   border-radius: 6px;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   transition: all 0.2s;
 }
 .version-price-btn:hover {
@@ -2319,6 +2327,11 @@ h1 {
 }
 .version-price-btn.foil {
   background: linear-gradient(135deg, var(--bg-secondary) 0%, #3a3a4a 100%);
+}
+.no-price {
+  font-size: 0.75rem;
+  color: #666;
+  font-style: italic;
 }
 
 .trade-balance {
