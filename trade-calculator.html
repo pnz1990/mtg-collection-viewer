@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trade Calculator - MTG Collection Viewer</title>
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15/dist/nouislider.min.css">
+</head>
+<body>
+  <div class="nav-menu">
+    <button type="button" class="menu-toggle" id="menu-toggle">☰</button>
+    <div class="menu-overlay" id="menu-overlay"></div>
+    <div class="menu-dropdown" id="menu-dropdown">
+      <div class="menu-header">MTG Collection</div>
+      <div class="menu-section">
+        <div class="menu-section-title">Views</div>
+        <a href="index.html" class="menu-item">⊞ Collection Explorer</a>
+        <a href="binder.html" class="menu-item">📖 Binder View</a>
+        <a href="carousel.html" class="menu-item">🎠 Carousel View</a>
+        <a href="timeline.html" class="menu-item">📅 Timeline View</a>
+      </div>
+      <div class="menu-section">
+        <div class="menu-section-title">Tools</div>
+        <a href="deck-checker.html" class="menu-item">🔍 Deck Checker</a>
+        <a href="trade-calculator.html" class="menu-item active">⚖️ Trade Calculator</a>
+        <a href="trivia.html" class="menu-item">🎯 Collection Trivia</a>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <h1>Trade Calculator</h1>
+    <div class="stats">
+      <select id="theme-select" class="theme-select">
+        <option value="">Dark (Default)</option>
+        <option value="azorius">Azorius</option>
+        <option value="dimir">Dimir</option>
+        <option value="rakdos">Rakdos</option>
+        <option value="gruul">Gruul</option>
+        <option value="selesnya">Selesnya</option>
+        <option value="orzhov">Orzhov</option>
+        <option value="izzet">Izzet</option>
+        <option value="golgari">Golgari</option>
+        <option value="boros">Boros</option>
+        <option value="simic">Simic</option>
+      </select>
+    </div>
+  </header>
+
+  <div class="trade-calculator">
+    <!-- Step indicator -->
+    <div class="trade-steps">
+      <div class="step active" data-step="1">1. Select Cards to Trade Away</div>
+      <div class="step" data-step="2">2. Enter Cards to Receive</div>
+      <div class="step" data-step="3">3. Compare Trade</div>
+    </div>
+
+    <!-- Step 1: Select from collection -->
+    <div id="step1" class="trade-step">
+      <div class="search-hero">
+        <div class="search-wrapper autocomplete-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search" placeholder="Search your collection..." autocomplete="off">
+          <div id="search-autocomplete" class="autocomplete-list"></div>
+        </div>
+      </div>
+      
+      <div class="collapsible-section">
+        <button type="button" class="section-toggle" id="filters-toggle">🔍 Advanced Filters <span class="toggle-icon">▶</span></button>
+        <div id="filters-content" class="filters collapsed">
+          <div class="filter-group autocomplete-wrapper">
+            <input type="text" id="set-filter" placeholder="Filter by set..." autocomplete="off">
+            <div id="set-autocomplete" class="autocomplete-list"></div>
+          </div>
+          <div class="filter-group price-slider">
+            <label>Price: $<span id="price-min-val">0</span> - $<span id="price-max-val">∞</span></label>
+            <div id="price-range"></div>
+          </div>
+          <select id="rarity-filter">
+            <option value="">All Rarities</option>
+            <option value="common">Common</option>
+            <option value="uncommon">Uncommon</option>
+            <option value="rare">Rare</option>
+            <option value="mythic">Mythic</option>
+          </select>
+          <select id="foil-filter">
+            <option value="">All Finishes</option>
+            <option value="normal">Normal</option>
+            <option value="foil">Foil</option>
+            <option value="etched">Etched</option>
+          </select>
+          <select id="type-filter">
+            <option value="">All Types</option>
+            <option value="Creature">Creature</option>
+            <option value="Instant">Instant</option>
+            <option value="Sorcery">Sorcery</option>
+            <option value="Artifact">Artifact</option>
+            <option value="Enchantment">Enchantment</option>
+            <option value="Land">Land</option>
+            <option value="Planeswalker">Planeswalker</option>
+          </select>
+          <select id="color-filter">
+            <option value="">All Colors</option>
+            <option value="W">White</option>
+            <option value="U">Blue</option>
+            <option value="B">Black</option>
+            <option value="R">Red</option>
+            <option value="G">Green</option>
+            <option value="C">Colorless</option>
+            <option value="M">Multicolor</option>
+          </select>
+          <select id="sort">
+            <option value="price">Price</option>
+            <option value="name">Name</option>
+            <option value="rarity">Rarity</option>
+            <option value="set">Set</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="trade-selection-info">
+        <span>Selected: <strong id="selected-count">0</strong> cards</span>
+        <span>Value: <strong id="selected-value">$0.00</strong></span>
+        <button type="button" id="clear-selection" class="clear-filters-btn">Clear Selection</button>
+      </div>
+
+      <div id="collection" class="collection trade-collection"></div>
+      <button type="button" id="load-more" class="load-more-btn" style="display:none">Load More Cards</button>
+      <button type="button" id="next-step1" class="trade-next-btn">Next: Enter Cards to Receive →</button>
+    </div>
+
+    <!-- Step 2: Enter cards to receive -->
+    <div id="step2" class="trade-step hidden">
+      <div class="trade-input">
+        <h2>Cards You'll Receive</h2>
+        <p>Enter cards (format: 1 Card Name or 1 Card Name [SET] *F for foil)</p>
+        <textarea id="receive-list" placeholder="1 Sol Ring&#10;1 Mana Crypt [2XM] *F&#10;1 Force of Will [ALL]&#10;..." class="deck-list-input"></textarea>
+        <div class="trade-buttons">
+          <button type="button" id="back-step2" class="trade-back-btn">← Back</button>
+          <button type="button" id="next-step2" class="trade-next-btn">Next: Compare Trade →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Compare -->
+    <div id="step3" class="trade-step hidden">
+      <div class="trade-comparison">
+        <div class="trade-side giving">
+          <h2>You're Giving</h2>
+          <div class="trade-total">Total: <strong id="giving-total">$0.00</strong></div>
+          <div id="giving-cards" class="trade-cards"></div>
+        </div>
+        <div class="trade-balance">
+          <div class="balance-indicator" id="balance-indicator">
+            <div class="balance-label">Difference</div>
+            <div class="balance-value" id="balance-value">$0.00</div>
+          </div>
+        </div>
+        <div class="trade-side receiving">
+          <h2>You're Receiving</h2>
+          <div class="trade-total">Total: <strong id="receiving-total">$0.00</strong></div>
+          <div id="receiving-cards" class="trade-cards"></div>
+        </div>
+      </div>
+      <div class="trade-buttons">
+        <button type="button" id="back-step3" class="trade-back-btn">← Back</button>
+        <button type="button" id="new-trade" class="trade-next-btn">Start New Trade</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/shared.js"></script>
+  <script src="js/trade.js"></script>
+</body>
+</html>
