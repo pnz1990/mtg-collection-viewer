@@ -604,7 +604,10 @@ function initApp() {
         scryfallOption.disabled = false;
         scryfallOption.title = '';
         priceSourceSelect.value = savedSource;
-        if (savedSource === 'scryfall') refreshPriceDisplay();
+        // Only refresh if collection is already rendered (imageObserver exists)
+        if (savedSource === 'scryfall' && typeof imageObserver !== 'undefined') {
+          refreshPriceDisplay();
+        }
       } else {
         scryfallOption.disabled = true;
         scryfallOption.title = 'Load Full Data first';
