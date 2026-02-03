@@ -230,6 +230,7 @@ function setupCardInteractions(container) {
       else if (filter === 'set') document.getElementById('set-filter').value = value;
       else if (filter === 'cmc') window.cmcFilter = parseInt(value);
       else if (filter === 'reserved') document.getElementById('reserved-filter').value = value;
+      else if (filter === 'search') document.getElementById('search').value = value;
       applyFilters();
     });
   });
@@ -374,6 +375,7 @@ function applyFilters() {
   const colorFilter = document.getElementById('color-filter')?.value || '';
   const keywordFilter = document.getElementById('keyword-filter')?.value || '';
   const reservedFilter = document.getElementById('reserved-filter')?.value || '';
+  const duplicatesFilter = document.getElementById('duplicates-filter')?.value || '';
   const sort = document.getElementById('sort').value;
   const [priceMin, priceMax] = priceSlider ? priceSlider.get().map(Number) : [0, maxPriceValue];
   const cmcFilter = window.cmcFilter;
@@ -382,6 +384,10 @@ function applyFilters() {
   const colorIdentityChecks = document.querySelectorAll('.color-checkboxes input:checked');
   const selectedColors = [...colorIdentityChecks].map(c => c.value);
   
+  // Count name occurrences for duplicate filter
+  const nameCounts = {};
+  collection.forEach(c => { nameCounts[c.name] = (nameCounts[c.name] || 0) + 1; });
+  
   filteredCollection = collection.filter(card => {
     const matchesType = !typeFilter || (card.type_line && card.type_line.includes(typeFilter));
     const matchesColor = !colorFilter || matchCardColor(card, colorFilter);
@@ -389,6 +395,7 @@ function applyFilters() {
     const matchesKeyword = !keywordFilter || (card.keywords && card.keywords.includes(keywordFilter));
     const matchesCmc = cmcFilter === undefined || (cmcFilter === 6 ? card.cmc >= 6 : card.cmc === cmcFilter);
     const matchesReserved = !reservedFilter || (reservedFilter === 'yes' ? card.reserved : !card.reserved);
+    const matchesDuplicates = !duplicatesFilter || (duplicatesFilter === 'yes' ? nameCounts[card.name] > 1 : nameCounts[card.name] === 1);
     
     return card.name.toLowerCase().includes(search) &&
       (!setFilter || card.setName.toLowerCase().includes(setFilter)) &&
@@ -400,6 +407,7 @@ function applyFilters() {
       matchesKeyword &&
       matchesCmc &&
       matchesReserved &&
+      matchesDuplicates &&
       getCardPrice(card) >= priceMin && getCardPrice(card) <= priceMax;
   });
   
@@ -471,6 +479,7 @@ document.getElementById('type-filter')?.addEventListener('change', applyFilters)
 document.getElementById('color-filter')?.addEventListener('change', applyFilters);
 document.getElementById('keyword-filter')?.addEventListener('change', applyFilters);
 document.getElementById('reserved-filter')?.addEventListener('change', applyFilters);
+document.getElementById('duplicates-filter')?.addEventListener('change', applyFilters);
 document.querySelectorAll('.color-checkboxes input').forEach(cb => cb.addEventListener('change', applyFilters));
 
 document.getElementById('clear-filters')?.addEventListener('click', () => {
@@ -482,6 +491,7 @@ document.getElementById('clear-filters')?.addEventListener('click', () => {
   document.getElementById('color-filter') && (document.getElementById('color-filter').value = '');
   document.getElementById('keyword-filter') && (document.getElementById('keyword-filter').value = '');
   document.getElementById('reserved-filter') && (document.getElementById('reserved-filter').value = '');
+  document.getElementById('duplicates-filter') && (document.getElementById('duplicates-filter').value = '');
   document.querySelectorAll('.color-checkboxes input').forEach(cb => cb.checked = false);
   if (priceSlider) priceSlider.set([0, maxPriceValue]);
   window.cmcFilter = undefined;
