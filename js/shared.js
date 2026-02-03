@@ -371,16 +371,16 @@ function setupPriceSlider() {
 }
 
 function applyFilters() {
-  const search = document.getElementById('search').value.toLowerCase();
-  const setFilter = document.getElementById('set-filter').value.toLowerCase();
-  const rarity = document.getElementById('rarity-filter').value;
-  const foil = document.getElementById('foil-filter').value;
+  const search = document.getElementById('search')?.value?.toLowerCase() || '';
+  const setFilter = document.getElementById('set-filter')?.value?.toLowerCase() || '';
+  const rarity = document.getElementById('rarity-filter')?.value || '';
+  const foil = document.getElementById('foil-filter')?.value || '';
   const typeFilter = document.getElementById('type-filter')?.value || '';
   const colorFilter = document.getElementById('color-filter')?.value || '';
   const keywordFilter = document.getElementById('keyword-filter')?.value || '';
   const reservedFilter = document.getElementById('reserved-filter')?.value || '';
   const duplicatesFilter = document.getElementById('duplicates-filter')?.value || '';
-  const sort = document.getElementById('sort').value;
+  const sort = document.getElementById('sort')?.value || 'price';
   const [priceMin, priceMax] = priceSlider ? priceSlider.get().map(Number) : [0, maxPriceValue];
   const cmcFilter = window.cmcFilter;
   
@@ -474,11 +474,11 @@ function setupAutocomplete(inputId, listId, getItems) {
 }
 
 // Event listeners
-document.getElementById('search').addEventListener('input', applyFilters);
-document.getElementById('set-filter').addEventListener('input', applyFilters);
-document.getElementById('rarity-filter').addEventListener('change', applyFilters);
-document.getElementById('foil-filter').addEventListener('change', applyFilters);
-document.getElementById('sort').addEventListener('change', applyFilters);
+document.getElementById('search')?.addEventListener('input', applyFilters);
+document.getElementById('set-filter')?.addEventListener('input', applyFilters);
+document.getElementById('rarity-filter')?.addEventListener('change', applyFilters);
+document.getElementById('foil-filter')?.addEventListener('change', applyFilters);
+document.getElementById('sort')?.addEventListener('change', applyFilters);
 document.getElementById('type-filter')?.addEventListener('change', applyFilters);
 document.getElementById('color-filter')?.addEventListener('change', applyFilters);
 document.getElementById('keyword-filter')?.addEventListener('change', applyFilters);
