@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guess the Card - MTG Collection Viewer</title>
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .guess-container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .guess-card { background: var(--bg-secondary); border-radius: 12px; padding: 30px; text-align: center; }
+    .guess-header { display: flex; justify-content: space-between; margin-bottom: 20px; color: var(--text-secondary); }
+    .hints-list { text-align: left; margin: 20px 0; }
+    .hint { padding: 12px 16px; background: var(--bg-tertiary); border-radius: 8px; margin-bottom: 10px; animation: fadeIn 0.5s; }
+    .hint-label { color: var(--accent); font-weight: bold; font-size: 0.85rem; text-transform: uppercase; }
+    .hint-value { color: var(--text-primary); font-size: 1.1rem; margin-top: 4px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .guess-input-area { margin: 25px 0; }
+    .guess-input { width: 100%; padding: 15px; font-size: 1.1rem; border: 2px solid var(--bg-tertiary); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); box-sizing: border-box; }
+    .guess-input:focus { border-color: var(--accent); outline: none; }
+    .guess-btn { padding: 15px 30px; background: var(--accent); color: var(--bg-primary); border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer; margin: 10px 5px; }
+    .guess-btn:hover { filter: brightness(1.1); }
+    .guess-btn.secondary { background: var(--bg-tertiary); color: var(--text-primary); }
+    .reveal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+    .reveal-card { text-align: center; animation: revealZoom 0.8s ease-out; }
+    .reveal-card img { width: 300px; border-radius: 12px; box-shadow: 0 0 60px rgba(255,215,0,0.5); }
+    .reveal-result { font-size: 2rem; margin-top: 20px; font-weight: bold; }
+    .reveal-result.correct { color: #4caf50; }
+    .reveal-result.wrong { color: #f44336; }
+    .reveal-name { font-size: 1.5rem; color: var(--text-primary); margin-top: 10px; }
+    @keyframes revealZoom { from { transform: scale(0) rotate(-10deg); opacity: 0; } to { transform: scale(1) rotate(0); opacity: 1; } }
+    .score-display { font-size: 1.2rem; color: var(--accent); }
+    .autocomplete-container { position: relative; }
+    .autocomplete-list { position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-secondary); border: 1px solid var(--bg-tertiary); border-radius: 8px; max-height: 200px; overflow-y: auto; z-index: 100; display: none; }
+    .autocomplete-item { padding: 10px 15px; cursor: pointer; text-align: left; }
+    .autocomplete-item:hover { background: var(--bg-tertiary); }
+  </style>
+</head>
+<body>
+  <div class="nav-menu">
+    <button type="button" class="menu-toggle" id="menu-toggle">☰</button>
+    <div class="menu-overlay" id="menu-overlay"></div>
+    <div class="menu-dropdown" id="menu-dropdown">
+      <div class="menu-header">MTG Collection</div>
+      <div class="menu-section">
+        <div class="menu-section-title">Views</div>
+        <a href="index.html" class="menu-item">⊞ Collection Explorer</a>
+        <a href="binder.html" class="menu-item">📖 Binder View</a>
+        <a href="carousel.html" class="menu-item">🎠 Carousel View</a>
+        <a href="timeline.html" class="menu-item">📅 Timeline View</a>
+      </div>
+      <div class="menu-section">
+        <div class="menu-section-title">Tools</div>
+        <a href="deck-checker.html" class="menu-item">🔍 Deck Checker</a>
+        <a href="trade-calculator.html" class="menu-item">⚖️ Trade Calculator</a>
+        <a href="trivia.html" class="menu-item">🎯 Collection Trivia</a>
+        <a href="guess-card.html" class="menu-item active">🎴 Guess the Card</a>
+      </div>
+      <div class="menu-section">
+        <div class="menu-section-title">Theme</div>
+        <select id="theme-select" class="menu-theme-select">
+          <option value="">Dark (Default)</option>
+          <option value="azorius">Azorius</option>
+          <option value="dimir">Dimir</option>
+          <option value="rakdos">Rakdos</option>
+          <option value="gruul">Gruul</option>
+          <option value="selesnya">Selesnya</option>
+          <option value="orzhov">Orzhov</option>
+          <option value="izzet">Izzet</option>
+          <option value="golgari">Golgari</option>
+          <option value="boros">Boros</option>
+          <option value="simic">Simic</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <h1>MTG Collection Viewer</h1>
+    <div class="stats"><span>Guess the Card</span></div>
+  </header>
+
+  <div class="guess-container">
+    <div class="guess-card">
+      <div class="guess-header">
+        <span>Round <span id="round">1</span></span>
+        <span class="score-display">Score: <span id="score">0</span></span>
+      </div>
+      <div id="hints-list" class="hints-list"></div>
+      <div class="guess-input-area">
+        <div class="autocomplete-container">
+          <input type="text" id="guess-input" class="guess-input" placeholder="Type your guess..." autocomplete="off">
+          <div id="autocomplete-list" class="autocomplete-list"></div>
+        </div>
+      </div>
+      <div>
+        <button type="button" id="hint-btn" class="guess-btn secondary">Next Hint</button>
+        <button type="button" id="submit-btn" class="guess-btn">Submit Guess</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Menu & Theme
+    document.getElementById('menu-toggle').addEventListener('click', () => {
+      document.getElementById('menu-dropdown').classList.toggle('show');
+      document.getElementById('menu-overlay').classList.toggle('show');
+    });
+    document.getElementById('menu-overlay').addEventListener('click', () => {
+      document.getElementById('menu-dropdown').classList.remove('show');
+      document.getElementById('menu-overlay').classList.remove('show');
+    });
+    const savedTheme = localStorage.getItem('mtg-theme') || '';
+    document.documentElement.dataset.theme = savedTheme;
+    const themeSelect = document.getElementById('theme-select');
+    themeSelect.value = savedTheme;
+    themeSelect.addEventListener('change', () => {
+      document.documentElement.dataset.theme = themeSelect.value;
+      localStorage.setItem('mtg-theme', themeSelect.value);
+    });
+
+    let collection = [];
+    let cardNames = [];
+    let currentCard = null;
+    let hints = [];
+    let hintIndex = 0;
+    let score = 0;
+    let round = 1;
+
+    async function loadCollection() {
+      const response = await fetch('data/Collection.csv');
+      const text = await response.text();
+      const lines = text.split('\n').slice(1);
+      collection = lines.filter(l => l.trim()).map(line => {
+        const parts = line.match(/(".*?"|[^,]+)/g)?.map(p => p.replace(/^"|"$/g, '').trim()) || [];
+        return {
+          name: parts[0], setCode: parts[1], setName: parts[2], collectorNumber: parts[3],
+          foil: parts[4]?.toLowerCase() || 'normal', rarity: parts[5]?.toLowerCase() || 'common',
+          quantity: parseInt(parts[6]) || 1, scryfallId: parts[8], price: parseFloat(parts[9]) || 0
+        };
+      });
+      // Load cached data for hints
+      const db = await openDB();
+      for (const card of collection) {
+        const cached = await getFromDB(db, 'cardData', card.scryfallId);
+        if (cached) Object.assign(card, cached);
+      }
+      cardNames = [...new Set(collection.map(c => c.name))];
+      startNewRound();
+    }
+
+    function openDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open('mtg-collection', 2);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function getFromDB(db, store, key) {
+      return new Promise(resolve => {
+        try {
+          const tx = db.transaction(store, 'readonly');
+          const req = tx.objectStore(store).get(key);
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => resolve(null);
+        } catch { resolve(null); }
+      });
+    }
+
+    function generateHints(card) {
+      const h = [];
+      // Easy hints last, hard hints first
+      if (card.cmc !== undefined) h.push({ label: 'Mana Value', value: card.cmc });
+      if (card.colors?.length) h.push({ label: 'Colors', value: card.colors.join(', ') || 'Colorless' });
+      else h.push({ label: 'Colors', value: 'Colorless' });
+      if (card.rarity) h.push({ label: 'Rarity', value: card.rarity.charAt(0).toUpperCase() + card.rarity.slice(1) });
+      if (card.type_line) {
+        const mainType = card.type_line.split('—')[0].trim();
+        h.push({ label: 'Type', value: mainType });
+      }
+      h.push({ label: 'Set', value: card.setName });
+      h.push({ label: 'Price', value: `$${card.price.toFixed(2)}` });
+      if (card.type_line?.includes('Creature') && card.power) {
+        h.push({ label: 'Power/Toughness', value: `${card.power}/${card.toughness}` });
+      }
+      if (card.keywords?.length) h.push({ label: 'Keywords', value: card.keywords.slice(0, 3).join(', ') });
+      if (card.type_line) {
+        const subtype = card.type_line.split('—')[1]?.trim();
+        if (subtype) h.push({ label: 'Subtype', value: subtype });
+      }
+      // First letter as final hint
+      h.push({ label: 'First Letter', value: `Starts with "${card.name[0].toUpperCase()}"` });
+      return h;
+    }
+
+    function startNewRound() {
+      currentCard = collection[Math.floor(Math.random() * collection.length)];
+      hints = generateHints(currentCard);
+      hintIndex = 0;
+      document.getElementById('hints-list').innerHTML = '';
+      document.getElementById('guess-input').value = '';
+      document.getElementById('round').textContent = round;
+      showNextHint();
+    }
+
+    function showNextHint() {
+      if (hintIndex >= hints.length) return;
+      const hint = hints[hintIndex];
+      const div = document.createElement('div');
+      div.className = 'hint';
+      div.innerHTML = `<div class="hint-label">${hint.label}</div><div class="hint-value">${hint.value}</div>`;
+      document.getElementById('hints-list').appendChild(div);
+      hintIndex++;
+      if (hintIndex >= hints.length) {
+        document.getElementById('hint-btn').textContent = 'No more hints!';
+        document.getElementById('hint-btn').disabled = true;
+      }
+    }
+
+    function showReveal(correct) {
+      const overlay = document.createElement('div');
+      overlay.className = 'reveal-overlay';
+      overlay.innerHTML = `
+        <div class="reveal-card">
+          <img src="https://cards.scryfall.io/normal/front/${currentCard.scryfallId[0]}/${currentCard.scryfallId[1]}/${currentCard.scryfallId}.jpg" 
+               onerror="this.src='images/back.png'">
+          <div class="reveal-result ${correct ? 'correct' : 'wrong'}">${correct ? '✓ Correct!' : '✗ Wrong!'}</div>
+          <div class="reveal-name">${currentCard.name}</div>
+          <button class="guess-btn" id="next-round">Next Card</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      overlay.querySelector('#next-round').onclick = () => {
+        overlay.remove();
+        round++;
+        document.getElementById('hint-btn').textContent = 'Next Hint';
+        document.getElementById('hint-btn').disabled = false;
+        startNewRound();
+      };
+    }
+
+    function submitGuess() {
+      const guess = document.getElementById('guess-input').value.trim().toLowerCase();
+      const correct = guess === currentCard.name.toLowerCase();
+      if (correct) {
+        // More points for fewer hints used
+        const points = Math.max(1, hints.length - hintIndex + 1);
+        score += points;
+        document.getElementById('score').textContent = score;
+      }
+      showReveal(correct);
+    }
+
+    // Autocomplete
+    const input = document.getElementById('guess-input');
+    const acList = document.getElementById('autocomplete-list');
+    input.addEventListener('input', () => {
+      const val = input.value.toLowerCase();
+      acList.innerHTML = '';
+      if (val.length < 2) { acList.style.display = 'none'; return; }
+      const matches = cardNames.filter(n => n.toLowerCase().includes(val)).slice(0, 8);
+      if (matches.length === 0) { acList.style.display = 'none'; return; }
+      matches.forEach(name => {
+        const div = document.createElement('div');
+        div.className = 'autocomplete-item';
+        div.textContent = name;
+        div.onclick = () => { input.value = name; acList.style.display = 'none'; };
+        acList.appendChild(div);
+      });
+      acList.style.display = 'block';
+    });
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.autocomplete-container')) acList.style.display = 'none';
+    });
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { acList.style.display = 'none'; submitGuess(); }
+    });
+
+    document.getElementById('hint-btn').onclick = showNextHint;
+    document.getElementById('submit-btn').onclick = submitGuess;
+
+    loadCollection();
+  </script>
+</body>
+</html>
