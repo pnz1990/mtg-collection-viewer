@@ -48,6 +48,17 @@ async function cacheCardData(scryfallId, data) {
   tx.objectStore('images').put({ id: `card_${scryfallId}`, data, timestamp: Date.now() });
 }
 
+async function cacheFullCardData(scryfallId, data) {
+  // Cache to detail page DB (mtg-detail-cache)
+  const req = indexedDB.open('mtg-detail-cache', 1);
+  req.onupgradeneeded = e => e.target.result.createObjectStore('cards', { keyPath: 'id' });
+  req.onsuccess = e => {
+    const db = e.target.result;
+    const tx = db.transaction('cards', 'readwrite');
+    tx.objectStore('cards').put({ id: scryfallId, data, cached: Date.now() });
+  };
+}
+
 async function loadFullCardData(onProgress, forceRefresh = false) {
   const uncachedIds = [];
   
@@ -99,6 +110,9 @@ async function loadFullCardData(onProgress, forceRefresh = false) {
         };
         
         await cacheCardData(cardData.id, extracted);
+        
+        // Also cache full data for detail page
+        await cacheFullCardData(cardData.id, cardData);
         
         // Apply to collection
         const card = collection.find(c => c.scryfallId === cardData.id);
