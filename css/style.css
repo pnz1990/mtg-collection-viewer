@@ -251,7 +251,7 @@ h1 {
   background: linear-gradient(135deg, #666, #555);
 }
 
-.theme-select {
+.theme-select, .price-source-select {
   background: var(--bg-secondary);
   color: var(--text-primary);
   border: 1px solid var(--accent);

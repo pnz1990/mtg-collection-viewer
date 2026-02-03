@@ -103,7 +103,7 @@ function renderCharts() {
     applyFilters();
   });
   
-  createChart('price-chart', countBy(collection, c => getPriceRange(c.price)), 'doughnut', v => {
+  createChart('price-chart', countBy(collection, c => getPriceRange(getCardPrice(c))), 'doughnut', v => {
     const ranges = { '<$5': [0,5], '$5-20': [5,20], '$20-50': [20,50], '$50-100': [50,100], '$100+': [100, maxPriceValue] };
     if (ranges[v] && priceSlider) { priceSlider.set(ranges[v]); applyFilters(); }
   });
@@ -111,7 +111,7 @@ function renderCharts() {
   // Value by set (bar chart)
   const setValues = {};
   collection.forEach(c => {
-    setValues[c.setName] = (setValues[c.setName] || 0) + c.price * c.quantity;
+    setValues[c.setName] = (setValues[c.setName] || 0) + getCardPrice(c) * c.quantity;
   });
   const topSetValues = Object.entries(setValues).sort((a, b) => b[1] - a[1]).slice(0, 6);
   createChart('set-value-chart', Object.fromEntries(topSetValues.map(([k, v]) => [k, Math.round(v)])), 'bar', v => {
@@ -120,10 +120,10 @@ function renderCharts() {
   });
   
   // Price stats
-  const prices = collection.map(c => c.price).sort((a, b) => a - b);
+  const prices = collection.map(c => getCardPrice(c)).sort((a, b) => a - b);
   const avg = prices.reduce((s, p) => s + p, 0) / prices.length;
   const median = prices.length % 2 ? prices[Math.floor(prices.length / 2)] : (prices[prices.length / 2 - 1] + prices[prices.length / 2]) / 2;
-  const currency = collection[0]?.currency || 'USD';
+  const currency = getPriceSource() === 'scryfall' ? 'USD' : (collection[0]?.currency || 'USD');
   
   document.getElementById('stat-avg').textContent = formatPrice(avg, currency);
   document.getElementById('stat-median').textContent = formatPrice(median, currency);
@@ -136,7 +136,7 @@ function renderCharts() {
   // Value by rarity (bar chart)
   const rarityValues = {};
   collection.forEach(c => {
-    rarityValues[c.rarity] = (rarityValues[c.rarity] || 0) + c.price * c.quantity;
+    rarityValues[c.rarity] = (rarityValues[c.rarity] || 0) + getCardPrice(c) * c.quantity;
   });
   const rarityOrder = ['mythic', 'rare', 'uncommon', 'common'];
   const sortedRarityValues = Object.fromEntries(
@@ -228,8 +228,8 @@ function renderCharts() {
       });
       
       // Reserved value vs non-reserved
-      const reservedValue = reservedCards.reduce((s, c) => s + c.price * c.quantity, 0);
-      const totalValue = collection.reduce((s, c) => s + c.price * c.quantity, 0);
+      const reservedValue = reservedCards.reduce((s, c) => s + getCardPrice(c) * c.quantity, 0);
+      const totalValue = collection.reduce((s, c) => s + getCardPrice(c) * c.quantity, 0);
       createChart('reserved-value-chart', {
         'Reserved': Math.round(reservedValue),
         'Non-Reserved': Math.round(totalValue - reservedValue)

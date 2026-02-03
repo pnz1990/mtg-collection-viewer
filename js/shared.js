@@ -106,7 +106,8 @@ async function loadFullCardData(onProgress, forceRefresh = false) {
           colors: cardData.colors || cardData.card_faces?.[0]?.colors || [],
           color_identity: cardData.color_identity || [],
           keywords: cardData.keywords || [],
-          reserved: cardData.reserved || false
+          reserved: cardData.reserved || false,
+          scryfallPrices: cardData.prices || null
         };
         
         await cacheCardData(cardData.id, extracted);
@@ -160,7 +161,7 @@ function renderCardHTML(card, nameCounts = {}) {
       </div>
       <div class="card-header">
         <div class="card-name">${card.name}</div>
-        <div class="card-value">${formatPrice(card.price * card.quantity, card.currency)}</div>
+        <div class="card-value">${formatPrice(getCardPrice(card) * card.quantity, getCardCurrency(card))}</div>
       </div>
       <div class="card-set clickable" data-filter="set" data-value="${card.setName}"><img src="${setIcon}" class="set-icon" alt="${card.setCode}" onerror="this.src='${fallbackIcon}'">${card.setName}</div>
       <div class="card-details">
@@ -269,15 +270,34 @@ function parseCSVLine(line) {
 }
 
 function formatPrice(price, currency = 'USD') {
+  if (!isFinite(price) || isNaN(price)) return '$0.00';
   const symbols = { USD: '$', CAD: 'CA$', EUR: '€', GBP: '£', AUD: 'A$', JPY: '¥' };
   const symbol = symbols[currency] || currency + ' ';
   return `${symbol}${price.toFixed(2)}`;
 }
 
+function getPriceSource() {
+  return localStorage.getItem('priceSource') || 'manabox';
+}
+
+function getCardPrice(card) {
+  if (getPriceSource() === 'scryfall' && card.scryfallPrices) {
+    const p = card.scryfallPrices;
+    if (card.foil === 'etched' && p.usd_etched) return parseFloat(p.usd_etched);
+    if (card.foil === 'foil' && p.usd_foil) return parseFloat(p.usd_foil);
+    if (p.usd) return parseFloat(p.usd);
+  }
+  return card.price;
+}
+
+function getCardCurrency(card) {
+  return getPriceSource() === 'scryfall' ? 'USD' : card.currency;
+}
+
 function updateStats() {
   const totalCards = filteredCollection.reduce((sum, c) => sum + c.quantity, 0);
-  const totalValue = filteredCollection.reduce((sum, c) => sum + c.price * c.quantity, 0);
-  const currency = collection[0]?.currency || 'USD';
+  const totalValue = filteredCollection.reduce((sum, c) => sum + getCardPrice(c) * c.quantity, 0);
+  const currency = getPriceSource() === 'scryfall' ? 'USD' : (collection[0]?.currency || 'USD');
   document.getElementById('total-cards').textContent = totalCards;
   document.getElementById('total-value').textContent = formatPrice(totalValue, currency);
 }
@@ -311,7 +331,7 @@ async function loadCollection() {
   setupPriceSlider();
   
   filteredCollection = [...collection];
-  filteredCollection.sort((a, b) => (b.price * b.quantity) - (a.price * a.quantity));
+  filteredCollection.sort((a, b) => (getCardPrice(b) * b.quantity) - (getCardPrice(a) * a.quantity));
   updateStats();
   
   // Load cached full data if available
@@ -379,7 +399,7 @@ function applyFilters() {
       matchesKeyword &&
       matchesCmc &&
       matchesReserved &&
-      card.price >= priceMin && card.price <= priceMax;
+      getCardPrice(card) >= priceMin && getCardPrice(card) <= priceMax;
   });
   
   if (sort !== 'recent') {
@@ -388,7 +408,7 @@ function applyFilters() {
         case 'name': return a.name.localeCompare(b.name);
         case 'rarity': return b.rarity.localeCompare(a.rarity);
         case 'set': return a.setName.localeCompare(b.setName);
-        default: return (b.price * b.quantity) - (a.price * a.quantity);
+        default: return (getCardPrice(b) * b.quantity) - (getCardPrice(a) * a.quantity);
       }
     });
   }
@@ -542,6 +562,17 @@ function populateKeywordFilter() {
 
 // Load noUiSlider then collection after DOM ready
 function initApp() {
+  // Setup price source toggle
+  const priceSourceSelect = document.getElementById('price-source');
+  if (priceSourceSelect) {
+    priceSourceSelect.value = getPriceSource();
+    priceSourceSelect.addEventListener('change', () => {
+      localStorage.setItem('priceSource', priceSourceSelect.value);
+      applyFilters();
+      if (typeof renderCharts === 'function') renderCharts();
+    });
+  }
+  
   const nouislider = document.createElement('script');
   nouislider.src = 'https://cdn.jsdelivr.net/npm/nouislider@15/dist/nouislider.min.js';
   nouislider.onload = () => {

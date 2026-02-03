@@ -30,7 +30,7 @@ function renderCarousel() {
         </a>
         <div class="carousel-card-info">
           <div class="carousel-card-name">${card.name}</div>
-          <div class="carousel-card-price">${formatPrice(card.price * card.quantity, card.currency)}</div>
+          <div class="carousel-card-price">${formatPrice(getCardPrice(card) * card.quantity, getCardCurrency(card))}</div>
         </div>
       </div>
     `;
