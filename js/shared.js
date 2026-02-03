@@ -337,13 +337,15 @@ async function loadCollection() {
   
   filteredCollection = [...collection];
   filteredCollection.sort((a, b) => (getCardPrice(b) * b.quantity) - (getCardPrice(a) * a.quantity));
-  updateStats();
   
   // Load cached full data if available
   for (const card of collection) {
     const cached = await getCardData(card.scryfallId);
     if (cached) Object.assign(card, cached);
   }
+  
+  // Update stats after cached data is loaded (for correct price source)
+  updateStats();
   
   // Update price source state after loading cached data
   if (typeof updatePriceSourceState === 'function') updatePriceSourceState();
