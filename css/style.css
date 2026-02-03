@@ -384,8 +384,14 @@ h1 {
 .search-hero {
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 15px;
   padding: 30px 20px;
   margin-bottom: 10px;
+}
+
+.search-hero .clear-filters-btn {
+  white-space: nowrap;
 }
 
 .search-hero .search-wrapper {
