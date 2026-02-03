@@ -148,7 +148,8 @@ async function fetchCardVersions(name) {
       name: c.name,
       set: c.set,
       setName: c.set_name,
-      imageUrl: c.image_uris?.small || c.card_faces?.[0]?.image_uris?.small,
+      imageUrl: c.image_uris?.normal || c.card_faces?.[0]?.image_uris?.normal,
+      imageSmall: c.image_uris?.small || c.card_faces?.[0]?.image_uris?.small,
       prices: c.prices,
       collectorNumber: c.collector_number
     }));
@@ -291,8 +292,7 @@ function openVersionModal(idx) {
           const isCurrentFoil = card.foil && v.scryfallId === card.scryfallId;
           return `
           <div class="version-option-card">
-            <img src="https://cards.scryfall.io/normal/front/${v.scryfallId[0]}/${v.scryfallId[1]}/${v.scryfallId}.jpg" 
-                 onerror="this.src='images/back.png'">
+            <img src="${v.imageUrl || 'images/back.png'}" onerror="this.src='images/back.png'">
             <div class="version-details">
               <div class="version-set-name">${v.setName}</div>
               <div class="version-set-code">${v.set.toUpperCase()} #${v.collectorNumber || '?'}</div>
