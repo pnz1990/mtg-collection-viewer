@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Game Tracker - MTG Collection Viewer</title>
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="css/game-tracker.css">
+</head>
+<body>
+  <!-- Setup Screen -->
+  <div id="setup-screen" class="setup-screen">
+    <div class="setup-card">
+      <h1>🎮 Game Setup</h1>
+      <div class="setup-section">
+        <label>Number of Players</label>
+        <div class="setup-options" id="player-count">
+          <button data-value="2" class="selected">2</button>
+          <button data-value="3">3</button>
+          <button data-value="4">4</button>
+        </div>
+      </div>
+      <div class="setup-section">
+        <label>Starting Life</label>
+        <div class="setup-options" id="starting-life">
+          <button data-value="20">20</button>
+          <button data-value="40" class="selected">40</button>
+          <button data-value="30">30</button>
+        </div>
+      </div>
+      <div class="setup-section">
+        <label>Layout</label>
+        <div class="setup-options" id="layout">
+          <button data-value="row" class="selected">Side by Side</button>
+          <button data-value="around">Around Table</button>
+        </div>
+      </div>
+      <button id="start-game" class="start-btn">Start Game</button>
+    </div>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="game-screen" class="game-screen hidden">
+    <div id="players-container" class="players-container"></div>
+    
+    <!-- Tools Bar -->
+    <div class="tools-bar">
+      <button id="btn-dice" class="tool-btn">🎲</button>
+      <button id="btn-coin" class="tool-btn">🪙</button>
+      <button id="btn-reset" class="tool-btn">🔄</button>
+      <button id="btn-menu" class="tool-btn">☰</button>
+    </div>
+  </div>
+
+  <!-- Dice Modal -->
+  <div id="dice-modal" class="modal hidden">
+    <div class="modal-content dice-modal">
+      <h2>Roll Dice</h2>
+      <div class="dice-options">
+        <button class="dice-type selected" data-sides="6">D6</button>
+        <button class="dice-type" data-sides="12">D12</button>
+        <button class="dice-type" data-sides="20">D20</button>
+      </div>
+      <div class="dice-count">
+        <button id="dice-minus">−</button>
+        <span id="dice-num">1</span>
+        <button id="dice-plus">+</button>
+      </div>
+      <div id="dice-results" class="dice-results"></div>
+      <button id="roll-dice" class="action-btn">Roll!</button>
+      <button class="close-modal">Close</button>
+    </div>
+  </div>
+
+  <!-- Coin Modal -->
+  <div id="coin-modal" class="modal hidden">
+    <div class="modal-content coin-modal">
+      <h2>Flip Coin</h2>
+      <div id="coin" class="coin">
+        <div class="coin-side heads">H</div>
+        <div class="coin-side tails">T</div>
+      </div>
+      <div id="coin-result" class="coin-result"></div>
+      <button id="flip-coin" class="action-btn">Flip!</button>
+      <button class="close-modal">Close</button>
+    </div>
+  </div>
+
+  <!-- Commander Damage Modal -->
+  <div id="cmdr-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Commander Damage</h2>
+      <div id="cmdr-grid" class="cmdr-grid"></div>
+      <button class="close-modal">Close</button>
+    </div>
+  </div>
+
+  <!-- Counters Modal -->
+  <div id="counters-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2 id="counters-title">Counters</h2>
+      <div id="counters-grid" class="counters-grid"></div>
+      <button class="close-modal">Close</button>
+    </div>
+  </div>
+
+  <!-- Mana Modal -->
+  <div id="mana-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Floating Mana</h2>
+      <div id="mana-grid" class="mana-grid"></div>
+      <div class="mana-actions">
+        <button id="clear-mana" class="action-btn secondary">Clear All</button>
+      </div>
+      <button class="close-modal">Close</button>
+    </div>
+  </div>
+
+  <script src="js/game-tracker.js"></script>
+</body>
+</html>
