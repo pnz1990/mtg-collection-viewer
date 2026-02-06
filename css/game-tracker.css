@@ -214,6 +214,13 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 /* Commander Damage */
 .cmdr-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 20px; }
 .cmdr-item { background: var(--bg); border-radius: 16px; padding: 16px; text-align: center; }
+.cmdr-item.partners { padding: 12px; }
+.cmdr-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; }
+.cmdr-row:first-child { border-bottom: 1px solid var(--bg3); }
+.cmdr-row .cmdr-from { flex: 1; text-align: left; font-size: 0.75rem; color: var(--text2); margin: 0; }
+.cmdr-row .cmdr-value { font-size: 1.4rem; font-weight: 600; margin: 0; min-width: 30px; }
+.cmdr-row .cmdr-controls { gap: 6px; }
+.cmdr-row .cmdr-controls button { width: 28px; height: 28px; font-size: 1rem; }
 .cmdr-from { font-size: 0.75rem; color: var(--text2); margin-bottom: 4px; }
 .cmdr-value { font-size: 2rem; font-weight: 600; margin: 8px 0; }
 .cmdr-controls { display: flex; justify-content: center; gap: 12px; }

@@ -347,41 +347,51 @@ function openCmdr(idx) {
   cmdrPlayer = idx;
   const p = state.players[idx];
   
-  // Build list of all commanders from other players
-  const commanders = [];
-  state.players.forEach((other, playerIdx) => {
-    if (playerIdx === idx) return;
-    other.commanders.forEach((cmd, cmdIdx) => {
-      if (cmd) {
-        const key = `${playerIdx}-${cmdIdx}`;
-        commanders.push({
-          key,
-          name: cmd.name.split(',')[0],
-          damage: p.cmdDamage[key] || 0
-        });
-      }
-    });
-    // If no commanders set, show player name
-    if (!other.commanders[0] && !other.commanders[1]) {
-      const key = `${playerIdx}-0`;
-      commanders.push({
-        key,
-        name: other.name,
-        damage: p.cmdDamage[key] || 0
-      });
+  // Build grouped by player
+  const html = state.players.map((other, playerIdx) => {
+    if (playerIdx === idx) return '';
+    const cmd1 = other.commanders[0];
+    const cmd2 = other.commanders[1];
+    const key1 = `${playerIdx}-0`;
+    const key2 = `${playerIdx}-1`;
+    const dmg1 = p.cmdDamage[key1] || 0;
+    const dmg2 = p.cmdDamage[key2] || 0;
+    
+    if (cmd1 && cmd2) {
+      // Partners - show both in one box
+      return `<div class="cmdr-item partners">
+        <div class="cmdr-row">
+          <div class="cmdr-from">${cmd1.name.split(',')[0]}</div>
+          <div class="cmdr-value">${dmg1}</div>
+          <div class="cmdr-controls">
+            <button onclick="changeCmdr('${key1}', -1)">−</button>
+            <button onclick="changeCmdr('${key1}', 1)">+</button>
+          </div>
+        </div>
+        <div class="cmdr-row">
+          <div class="cmdr-from">${cmd2.name.split(',')[0]}</div>
+          <div class="cmdr-value">${dmg2}</div>
+          <div class="cmdr-controls">
+            <button onclick="changeCmdr('${key2}', -1)">−</button>
+            <button onclick="changeCmdr('${key2}', 1)">+</button>
+          </div>
+        </div>
+      </div>`;
+    } else {
+      // Single commander or no commander
+      const name = cmd1 ? cmd1.name.split(',')[0] : other.name;
+      return `<div class="cmdr-item">
+        <div class="cmdr-from">${name}</div>
+        <div class="cmdr-value">${dmg1}</div>
+        <div class="cmdr-controls">
+          <button onclick="changeCmdr('${key1}', -1)">−</button>
+          <button onclick="changeCmdr('${key1}', 1)">+</button>
+        </div>
+      </div>`;
     }
-  });
+  }).join('');
   
-  document.getElementById('cmdr-grid').innerHTML = commanders.map(c => `
-    <div class="cmdr-item">
-      <div class="cmdr-from">${c.name}</div>
-      <div class="cmdr-value">${c.damage}</div>
-      <div class="cmdr-controls">
-        <button onclick="changeCmdr('${c.key}', -1)">−</button>
-        <button onclick="changeCmdr('${c.key}', 1)">+</button>
-      </div>
-    </div>
-  `).join('');
+  document.getElementById('cmdr-grid').innerHTML = html;
   openModal('cmdr-modal');
 }
 
