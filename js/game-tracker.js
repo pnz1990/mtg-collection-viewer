@@ -280,61 +280,58 @@ document.getElementById('roll-dice').onclick = () => {
     const wrapper = document.createElement('div');
     wrapper.className = 'dice-wrapper';
     
+    let svg = '';
     if (diceType === 6) {
-      wrapper.innerHTML = `
-        <div class="dice-cube rolling">
-          <div class="cube-face front">
-            <span class="dot"></span>
-          </div>
-          <div class="cube-face back">
-            <span class="dot"></span><span class="dot"></span>
-            <span class="dot"></span><span class="dot"></span>
-            <span class="dot"></span><span class="dot"></span>
-          </div>
-          <div class="cube-face top">
-            <span class="dot"></span><span class="dot"></span>
-            <span class="dot"></span>
-          </div>
-          <div class="cube-face bottom">
-            <span class="dot"></span><span class="dot"></span>
-            <span class="dot"></span><span class="dot"></span>
-          </div>
-          <div class="cube-face left">
-            <span class="dot"></span><span class="dot"></span>
-            <span class="dot"></span><span class="dot"></span>
-            <span class="dot"></span>
-          </div>
-          <div class="cube-face right">
-            <span class="dot"></span><span class="dot"></span>
-          </div>
-        </div>`;
+      // D6 - Cube wireframe
+      svg = `<svg viewBox="0 0 60 60">
+        <rect x="8" y="8" width="44" height="44" rx="6" stroke-width="2.5"/>
+        <line x1="8" y1="8" x2="20" y2="0" stroke-width="2"/>
+        <line x1="52" y1="8" x2="60" y2="0" stroke-width="2"/>
+        <line x1="52" y1="52" x2="60" y2="60" stroke-width="2"/>
+        <line x1="20" y1="0" x2="60" y2="0" stroke-width="2"/>
+        <line x1="60" y1="0" x2="60" y2="60" stroke-width="2"/>
+        <circle class="dot" cx="22" cy="22" r="4"/>
+        <circle class="dot" cx="38" cy="22" r="4"/>
+        <circle class="dot" cx="22" cy="38" r="4"/>
+        <circle class="dot" cx="38" cy="38" r="4"/>
+        <circle class="dot" cx="30" cy="30" r="4"/>
+      </svg>`;
+    } else if (diceType === 12) {
+      // D12 - Dodecahedron wireframe (pentagon-based)
+      svg = `<svg viewBox="0 0 60 60">
+        <polygon points="30,3 54,18 48,45 12,45 6,18" stroke-width="2.5"/>
+        <polygon points="30,12 45,22 40,40 20,40 15,22" stroke-width="1.5"/>
+        <line x1="30" y1="3" x2="30" y2="12" stroke-width="1.5"/>
+        <line x1="54" y1="18" x2="45" y2="22" stroke-width="1.5"/>
+        <line x1="48" y1="45" x2="40" y2="40" stroke-width="1.5"/>
+        <line x1="12" y1="45" x2="20" y2="40" stroke-width="1.5"/>
+        <line x1="6" y1="18" x2="15" y2="22" stroke-width="1.5"/>
+        <text x="30" y="34" text-anchor="middle" font-size="14" font-weight="bold">12</text>
+      </svg>`;
     } else {
-      wrapper.innerHTML = `
-        <div class="d20-spin rolling">
-          <svg viewBox="0 0 100 100" class="d20-svg">
-            <defs>
-              <linearGradient id="d20grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#e63946"/>
-                <stop offset="100%" style="stop-color:#9d0208"/>
-              </linearGradient>
-            </defs>
-            <!-- Icosahedron faces -->
-            <polygon points="50,8 85,30 75,75" fill="url(#d20grad)" stroke="#fff" stroke-width="1"/>
-            <polygon points="50,8 15,30 25,75" fill="url(#d20grad)" stroke="#fff" stroke-width="1"/>
-            <polygon points="50,8 85,30 15,30" fill="url(#d20grad)" stroke="#fff" stroke-width="1"/>
-            <polygon points="25,75 75,75 50,92" fill="url(#d20grad)" stroke="#fff" stroke-width="1"/>
-            <polygon points="15,30 25,75 5,55" fill="url(#d20grad)" stroke="#fff" stroke-width="1"/>
-            <polygon points="85,30 75,75 95,55" fill="url(#d20grad)" stroke="#fff" stroke-width="1"/>
-            <text x="50" y="52" text-anchor="middle" font-size="18" font-weight="bold" fill="#fff">20</text>
-          </svg>
-        </div>`;
+      // D20 - Icosahedron wireframe
+      svg = `<svg viewBox="0 0 60 60">
+        <polygon points="30,2 55,20 48,52 12,52 5,20" stroke-width="2.5"/>
+        <polygon points="30,15 45,25 40,45 20,45 15,25" stroke-width="1.5"/>
+        <line x1="30" y1="2" x2="30" y2="15" stroke-width="1.5"/>
+        <line x1="55" y1="20" x2="45" y2="25" stroke-width="1.5"/>
+        <line x1="48" y1="52" x2="40" y2="45" stroke-width="1.5"/>
+        <line x1="12" y1="52" x2="20" y2="45" stroke-width="1.5"/>
+        <line x1="5" y1="20" x2="15" y2="25" stroke-width="1.5"/>
+        <line x1="30" y1="2" x2="5" y2="20" stroke-width="1.5"/>
+        <line x1="30" y1="2" x2="55" y2="20" stroke-width="1.5"/>
+        <line x1="30" y1="58" x2="12" y2="52" stroke-width="1.5"/>
+        <line x1="30" y1="58" x2="48" y2="52" stroke-width="1.5"/>
+        <text x="30" y="38" text-anchor="middle" font-size="12" font-weight="bold">20</text>
+      </svg>`;
     }
     
+    wrapper.innerHTML = `<div class="neon-dice rolling">${svg}</div>`;
     stage.appendChild(wrapper);
     
     setTimeout(() => {
       wrapper.innerHTML = `<div class="dice-result-num">${result}</div>`;
-    }, 800 + i * 100);
+    }, 800 + i * 150);
   }
 };
 
