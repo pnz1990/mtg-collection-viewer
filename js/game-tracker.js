@@ -659,18 +659,19 @@ function renderStack() {
   if (state.stack.length === 0) {
     container.innerHTML = '<div class="stack-empty">Stack is empty</div>';
   } else {
-    container.innerHTML = state.stack.map((item, idx) => {
+    container.innerHTML = state.stack.slice().reverse().map((item, idx) => {
+      const actualIdx = state.stack.length - 1 - idx;
       const playerName = getPlayerName(item.playerIdx);
       return `
-      <div class="stack-card" data-idx="${idx}" style="--stack-index: ${idx}">
+      <div class="stack-card" data-idx="${actualIdx}" style="--stack-index: ${idx}">
         <img src="${item.image}" alt="${item.name}" class="stack-card-img">
         <div class="stack-card-overlay">
           <div class="stack-card-player">${playerName}</div>
           <div class="stack-card-actions">
-            <button class="stack-action-btn duplicate" onclick="duplicateInStack(${idx})" title="Duplicate">
+            <button class="stack-action-btn duplicate" onclick="duplicateInStack(${actualIdx})" title="Duplicate">
               <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" fill="currentColor"/></svg>
             </button>
-            <button class="stack-action-btn remove" onclick="removeFromStack(${idx})" title="Remove">
+            <button class="stack-action-btn remove" onclick="removeFromStack(${actualIdx})" title="Remove">
               <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="currentColor"/></svg>
             </button>
           </div>
