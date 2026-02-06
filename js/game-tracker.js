@@ -335,8 +335,9 @@ async function searchCards(query) {
       const art = card.image_uris?.art_crop || card.card_faces?.[0]?.image_uris?.art_crop || card.image_uris?.normal || card.card_faces?.[0]?.image_uris?.normal || '';
       const thumb = card.image_uris?.small || card.card_faces?.[0]?.image_uris?.small || '';
       const hasPartner = card.keywords?.includes('Partner') || card.oracle_text?.includes('Partner with') || false;
+      const colorIdentity = (card.color_identity || []).join(',');
       return `
-      <div class="search-result" data-name="${card.name}" data-art="${art}" data-partner="${hasPartner}">
+      <div class="search-result" data-name="${card.name}" data-art="${art}" data-partner="${hasPartner}" data-colors="${colorIdentity}">
         <img src="${thumb}" onerror="this.style.display='none'">
         <span>${card.name}${hasPartner ? ' <small style="color:var(--accent)">(Partner)</small>' : ''}</span>
       </div>`;
@@ -356,61 +357,32 @@ document.getElementById('search-results')?.addEventListener('click', e => {
   if (result) {
     const p = state.players[searchPlayer];
     const hasPartner = result.dataset.partner === 'true';
+    const colorIdentity = result.dataset.colors ? result.dataset.colors.split(',') : [];
     
-    // Fetch full card data for color identity
-    fetch(`https://api.scryfall.com/cards/named?exact=${encodeURIComponent(result.dataset.name)}`)
-      .then(res => res.json())
-      .then(card => {
-        p.commanders[activeSlot] = {
-          name: result.dataset.name,
-          artUrl: result.dataset.art,
-          hasPartner: hasPartner,
-          colorIdentity: card.color_identity || []
-        };
-        
-        updateSlotDisplay(p);
-        
-        // If this commander has partner and we just set first slot, show second slot and move to it
-        if (hasPartner && activeSlot === 0) {
-          document.getElementById('commander-slots').querySelector('[data-slot="1"]').classList.remove('hidden');
-          setActiveSlot(1);
-          document.getElementById('search-input').value = '';
-          document.getElementById('search-results').innerHTML = '';
-          document.getElementById('search-input').focus();
-        } else {
-          // Clear second commander if first doesn't have partner
-          if (activeSlot === 0 && !hasPartner) {
-            p.commanders[1] = null;
-          }
-          closeModal('search-modal');
-          render();
-        }
-      })
-      .catch(() => {
-        // Fallback without color identity
-        p.commanders[activeSlot] = {
-          name: result.dataset.name,
-          artUrl: result.dataset.art,
-          hasPartner: hasPartner,
-          colorIdentity: []
-        };
-        
-        updateSlotDisplay(p);
-        
-        if (hasPartner && activeSlot === 0) {
-          document.getElementById('commander-slots').querySelector('[data-slot="1"]').classList.remove('hidden');
-          setActiveSlot(1);
-          document.getElementById('search-input').value = '';
-          document.getElementById('search-results').innerHTML = '';
-          document.getElementById('search-input').focus();
-        } else {
-          if (activeSlot === 0 && !hasPartner) {
-            p.commanders[1] = null;
-          }
-          closeModal('search-modal');
-          render();
-        }
-      });
+    p.commanders[activeSlot] = {
+      name: result.dataset.name,
+      artUrl: result.dataset.art,
+      hasPartner: hasPartner,
+      colorIdentity: colorIdentity
+    };
+    
+    updateSlotDisplay(p);
+    
+    // If this commander has partner and we just set first slot, show second slot and move to it
+    if (hasPartner && activeSlot === 0) {
+      document.getElementById('commander-slots').querySelector('[data-slot="1"]').classList.remove('hidden');
+      setActiveSlot(1);
+      document.getElementById('search-input').value = '';
+      document.getElementById('search-results').innerHTML = '';
+      document.getElementById('search-input').focus();
+    } else {
+      // Clear second commander if first doesn't have partner
+      if (activeSlot === 0 && !hasPartner) {
+        p.commanders[1] = null;
+      }
+      closeModal('search-modal');
+      render();
+    }
   }
 });
 
