@@ -25,6 +25,10 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 .setup-section { margin-bottom: 30px; }
 .setup-section label { display: block; font-size: 0.85rem; color: var(--text2); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
 
+.format-select { display: flex; gap: 8px; flex-wrap: wrap; }
+.format-select button { flex: 1; min-width: 80px; padding: 12px; background: var(--bg); border: 2px solid var(--bg3); border-radius: 12px; color: var(--text2); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: capitalize; }
+.format-select button.selected { border-color: var(--accent); background: rgba(230,57,70,0.15); color: var(--accent); }
+
 .player-select { display: flex; gap: 12px; }
 .player-select button { flex: 1; aspect-ratio: 1; background: var(--bg); border: 2px solid var(--bg3); border-radius: 16px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
 .player-select button svg { width: 50px; height: 50px; fill: var(--text2); }

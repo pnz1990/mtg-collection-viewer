@@ -9,7 +9,8 @@ const state = {
   log: [],
   gameStartTime: null,
   turnStartTime: null,
-  stack: []
+  stack: [],
+  format: 'commander'
 };
 
 let clockInterval = null;
@@ -26,6 +27,44 @@ function getPlayerName(idx) {
 }
 
 // Setup
+async function loadFormats() {
+  try {
+    const res = await fetch('https://api.scryfall.com/catalog/game-formats');
+    const data = await res.json();
+    const formats = data.data.filter(f => ['commander', 'standard', 'modern', 'legacy', 'vintage', 'pioneer', 'pauper'].includes(f));
+    const container = document.getElementById('format-select');
+    container.innerHTML = formats.map(f => 
+      `<button data-value="${f}" ${f === 'commander' ? 'class="selected"' : ''}>${f.charAt(0).toUpperCase() + f.slice(1)}</button>`
+    ).join('');
+  } catch {
+    document.getElementById('format-select').innerHTML = `
+      <button data-value="commander" class="selected">Commander</button>
+      <button data-value="standard">Standard</button>
+      <button data-value="modern">Modern</button>
+    `;
+  }
+}
+
+loadFormats();
+
+document.addEventListener('click', e => {
+  if (e.target.closest('#format-select button')) {
+    const btn = e.target.closest('button');
+    document.querySelectorAll('#format-select button').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    const format = btn.dataset.value;
+    
+    // Auto-select defaults based on format
+    if (format === 'commander') {
+      document.querySelector('#player-count [data-value="4"]')?.click();
+      document.querySelector('#starting-life [data-value="40"]')?.click();
+    } else {
+      document.querySelector('#player-count [data-value="2"]')?.click();
+      document.querySelector('#starting-life [data-value="20"]')?.click();
+    }
+  }
+});
+
 document.querySelectorAll('#player-count button, #starting-life button').forEach(btn => {
   btn.onclick = () => {
     btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
@@ -34,6 +73,7 @@ document.querySelectorAll('#player-count button, #starting-life button').forEach
 });
 
 document.getElementById('start-game').onclick = () => {
+  state.format = document.querySelector('#format-select .selected').dataset.value;
   state.numPlayers = parseInt(document.querySelector('#player-count .selected').dataset.value);
   state.startingLife = parseInt(document.querySelector('#starting-life .selected').dataset.value);
   initGame();
@@ -81,6 +121,8 @@ function render() {
   const c = document.getElementById('players-container');
   c.className = `players-container p${state.numPlayers}`;
   document.getElementById('turn-counter').textContent = `Turn ${state.turnCount}`;
+  const isCommander = state.format === 'commander';
+  
   c.innerHTML = state.players.map((p, i) => {
     const badges = [];
     if (p.poison > 0) badges.push(`<span class="badge poison"><i class="ms ms-p"></i>${p.poison}</span>`);
@@ -92,32 +134,33 @@ function render() {
     // Handle commander art backgrounds
     const cmd1 = p.commanders[0];
     const cmd2 = p.commanders[1];
-    let bgStyle = '';
     let artClass = '';
     
-    if (cmd1 && cmd2) {
-      artClass = 'has-dual-art';
-    } else if (cmd1) {
-      artClass = 'has-art';
+    if (isCommander) {
+      if (cmd1 && cmd2) {
+        artClass = 'has-dual-art';
+      } else if (cmd1) {
+        artClass = 'has-art';
+      }
     }
     
     // Display name
     let displayName = p.name;
-    if (cmd1 && cmd2) {
+    if (isCommander && cmd1 && cmd2) {
       displayName = `${cmd1.name.split(',')[0]} & ${cmd2.name.split(',')[0]}`;
-    } else if (cmd1) {
+    } else if (isCommander && cmd1) {
       displayName = cmd1.name;
     }
     
     // Background style for single commander
-    const singleBgStyle = cmd1 && !cmd2 ? `background-image: url('${cmd1.artUrl}')` : '';
+    const singleBgStyle = isCommander && cmd1 && !cmd2 ? `background-image: url('${cmd1.artUrl}')` : '';
     const isActive = state.activePlayer === i;
     
     return `
     <div class="player p${i} ${p.rotated ? 'rotate180' : ''} ${artClass} ${isActive ? 'active' : ''}" data-idx="${i}" style="${singleBgStyle}">
-      ${cmd1 && cmd2 ? `<div class="dual-art-bg" style="background-image: url('${cmd1.artUrl}')"></div><div class="dual-art-bg right" style="background-image: url('${cmd2.artUrl}')"></div>` : ''}
+      ${isCommander && cmd1 && cmd2 ? `<div class="dual-art-bg" style="background-image: url('${cmd1.artUrl}')"></div><div class="dual-art-bg right" style="background-image: url('${cmd2.artUrl}')"></div>` : ''}
       <div class="player-main">
-        <div class="player-name" data-action="name">${displayName}</div>
+        <div class="player-name" data-action="${isCommander ? 'name' : 'edit-name'}">${displayName}</div>
         <div class="life-area">
           <button class="life-btn minus" data-action="life" data-delta="-1">−</button>
           <div class="life-total">${p.life}</div>
@@ -127,7 +170,7 @@ function render() {
         <div class="player-actions">
           <button class="action-pill mana-btn" data-action="mana">Mana</button>
           <button class="action-pill" data-action="counters">Counters</button>
-          <button class="action-pill" data-action="cmdr">Commander Damage</button>
+          ${isCommander ? '<button class="action-pill" data-action="cmdr">Commander Damage</button>' : ''}
         </div>
       </div>
       <div class="mana-bar">
@@ -156,6 +199,8 @@ function render() {
       render();
     } else if (action === 'name') {
       openCardSearch(idx);
+    } else if (action === 'edit-name') {
+      editPlayerName(idx);
     } else if (action === 'counters') openCounters(idx);
     else if (action === 'cmdr') openCmdr(idx);
     else if (action === 'mana') openMana(idx);
@@ -198,6 +243,14 @@ function render() {
   c.addEventListener('pointerleave', () => {
     if (pressTimer) clearTimeout(pressTimer);
   });
+}
+
+function editPlayerName(idx) {
+  const newName = prompt('Enter player name:', state.players[idx].name);
+  if (newName && newName.trim()) {
+    state.players[idx].name = newName.trim();
+    render();
+  }
 }
 
 // Card Search
