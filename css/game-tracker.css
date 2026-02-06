@@ -27,7 +27,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .life-select button { flex: 1; padding: 16px; background: var(--bg); border: 2px solid var(--bg3); border-radius: 12px; color: var(--text2); font-size: 1.3rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
 .life-select button.selected { border-color: var(--accent); background: rgba(230,57,70,0.15); color: var(--accent); }
 
-.start-btn { width: 100%; padding: 18px; background: var(--accent); border: none; border-radius: 14px; color: white; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 10px; transition: transform 0.1s; }
+.start-btn { width: 100%; padding: 18px; background: transparent; border: 2px solid var(--accent); border-radius: 14px; color: var(--accent); font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 10px; transition: all 0.2s; box-shadow: 0 0 15px rgba(230,57,70,0.3); }
+.start-btn:hover { background: rgba(230,57,70,0.15); box-shadow: 0 0 25px rgba(230,57,70,0.5); }
 .start-btn:active { transform: scale(0.98); }
 
 /* Game Screen */
@@ -60,11 +61,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .player-name:active { background: rgba(255,255,255,0.1); }
 
 .life-area { display: flex; align-items: center; gap: 8px; width: 100%; max-width: 280px; justify-content: center; }
-.life-btn { width: 64px; height: 64px; border-radius: 50%; border: none; background: rgba(255,255,255,0.1); color: white; font-size: 2rem; font-weight: 300; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
-.life-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
-.life-btn.minus { background: rgba(255,80,80,0.25); }
-.life-btn.plus { background: rgba(80,255,80,0.25); }
-.life-total { font-size: 4.5rem; font-weight: 200; min-width: 110px; text-align: center; line-height: 1; }
+.life-btn { width: 64px; height: 64px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); background: transparent; color: white; font-size: 2rem; font-weight: 300; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
+.life-btn:active { transform: scale(0.9); }
+.life-btn.minus { border-color: rgba(255,100,100,0.6); color: rgba(255,100,100,0.9); }
+.life-btn.minus:active { box-shadow: 0 0 20px rgba(255,100,100,0.5); }
+.life-btn.plus { border-color: rgba(100,255,100,0.6); color: rgba(100,255,100,0.9); }
+.life-btn.plus:active { box-shadow: 0 0 20px rgba(100,255,100,0.5); }
+.life-total { font-size: 4.5rem; font-weight: 200; min-width: 110px; text-align: center; line-height: 1; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
 
 .player-badges { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; justify-content: center; }
 .badge { display: flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(0,0,0,0.4); border-radius: 20px; font-size: 0.8rem; }
@@ -80,8 +83,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .counter-icon .card-symbol-E { width: 28px; height: 28px; }
 
 .player-actions { display: flex; gap: 6px; margin-top: 10px; }
-.action-pill { padding: 8px 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; color: rgba(255,255,255,0.8); font-size: 0.75rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-.action-pill:active { background: rgba(255,255,255,0.15); transform: scale(0.95); }
+.action-pill { padding: 8px 14px; background: transparent; border: 1px solid rgba(255,255,255,0.25); border-radius: 20px; color: rgba(255,255,255,0.8); font-size: 0.75rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.action-pill:hover { border-color: var(--accent); color: var(--accent); }
+.action-pill:active { transform: scale(0.95); box-shadow: 0 0 10px rgba(230,57,70,0.4); }
 
 /* Mana Bar */
 .mana-bar { display: flex; align-items: center; justify-content: center; gap: 4px; padding: 8px; background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.1); }
@@ -94,16 +98,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 
 /* Tools Bar */
 .tools-bar { display: flex; justify-content: center; gap: 20px; padding: 14px 20px; background: var(--bg2); border-top: 1px solid var(--bg3); }
-.tool-btn { width: 48px; height: 48px; border-radius: 50%; border: none; background: var(--bg3); color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.tool-btn { width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--text2); background: transparent; color: var(--text2); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
 .tool-btn svg { width: 24px; height: 24px; }
-.tool-btn:active { transform: scale(0.9); background: var(--accent); }
+.tool-btn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px rgba(230,57,70,0.4); }
+.tool-btn:active { transform: scale(0.9); }
 
 /* Modal */
 .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; backdrop-filter: blur(4px); }
 .modal-content { background: var(--bg2); border-radius: 20px; width: 100%; max-width: 360px; max-height: 85vh; overflow-y: auto; }
 .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid var(--bg3); }
 .modal-header h2 { font-size: 1.2rem; font-weight: 600; }
-.close-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--bg3); color: var(--text); font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.close-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--text2); background: transparent; color: var(--text); font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.close-btn:hover { border-color: var(--accent); color: var(--accent); }
 
 /* Search Modal */
 .search-content { max-height: 85vh; }
@@ -126,8 +132,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .search-result span { flex: 1; font-size: 0.95rem; }
 .search-loading, .search-empty { text-align: center; padding: 30px; color: var(--text2); }
 
-.action-btn { display: block; width: calc(100% - 40px); margin: 20px; padding: 16px; background: var(--accent); border: none; border-radius: 12px; color: white; font-size: 1rem; font-weight: 600; cursor: pointer; }
-.action-btn.secondary { background: var(--bg3); }
+.action-btn { display: block; width: calc(100% - 40px); margin: 20px; padding: 16px; background: transparent; border: 2px solid var(--accent); border-radius: 12px; color: var(--accent); font-size: 1rem; font-weight: 600; cursor: pointer; box-shadow: 0 0 10px rgba(230,57,70,0.3); transition: all 0.2s; }
+.action-btn:hover { background: rgba(230,57,70,0.15); box-shadow: 0 0 20px rgba(230,57,70,0.5); }
+.action-btn.secondary { border-color: var(--text2); color: var(--text2); box-shadow: none; }
+.action-btn.secondary:hover { background: rgba(255,255,255,0.05); }
 .action-btn:active { transform: scale(0.98); }
 
 /* Dice */
@@ -140,8 +148,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .dice-type-btn.selected .dice-icon-svg { color: var(--accent); filter: drop-shadow(0 0 4px var(--accent)); }
 
 .dice-count-select { display: flex; align-items: center; justify-content: center; gap: 24px; padding: 10px 20px 20px; }
-.count-btn { width: 44px; height: 44px; border-radius: 50%; border: none; background: var(--bg3); color: var(--text); font-size: 1.5rem; cursor: pointer; }
-.dice-count-select span { font-size: 2rem; font-weight: 600; min-width: 40px; text-align: center; }
+.count-btn { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--text2); background: transparent; color: var(--text); font-size: 1.5rem; cursor: pointer; transition: all 0.2s; }
+.count-btn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px rgba(230,57,70,0.4); }
+.dice-count-select span { font-size: 2rem; font-weight: 600; min-width: 40px; text-align: center; color: var(--accent); text-shadow: 0 0 10px rgba(230,57,70,0.5); }
 
 .dice-stage { min-height: 120px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: center; padding: 10px 20px; }
 
@@ -163,23 +172,23 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .dice-result-num { font-size: 2rem; font-weight: bold; color: var(--accent); background: var(--bg); width: 70px; height: 70px; border-radius: 12px; display: flex; align-items: center; justify-content: center; animation: popIn 0.3s ease-out; box-shadow: 0 0 20px rgba(230,57,70,0.5), inset 0 0 20px rgba(230,57,70,0.1); border: 2px solid var(--accent); }
 @keyframes popIn { from { transform: scale(0) rotate(-180deg); } to { transform: scale(1) rotate(0); } }
 
-/* Coin */
+/* Coin - Neon style */
 .coin-content .modal-header { border: none; }
 .coin-stage { height: 180px; display: flex; align-items: center; justify-content: center; perspective: 800px; }
-.coin-3d { width: 120px; height: 120px; position: relative; transform-style: preserve-3d; }
+.coin-3d { width: 100px; height: 100px; position: relative; transform-style: preserve-3d; }
 .coin-3d.flipping { animation: coinFlip3d 1s ease-out; }
 @keyframes coinFlip3d {
-  0% { transform: rotateY(0) translateY(0); }
-  50% { transform: rotateY(900deg) translateY(-60px); }
-  100% { transform: rotateY(1800deg) translateY(0); }
+  0% { transform: rotateY(0) translateY(0) scale(0.5); }
+  50% { transform: rotateY(900deg) translateY(-50px) scale(1.1); }
+  100% { transform: rotateY(1800deg) translateY(0) scale(1); }
 }
 .coin-3d.show-tails { transform: rotateY(180deg); }
-.coin-face { position: absolute; width: 100%; height: 100%; border-radius: 50%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: bold; }
-.coin-face.heads { background: linear-gradient(145deg, #ffd700 0%, #b8860b 50%, #ffd700 100%); color: #5c4a00; box-shadow: inset 0 0 30px rgba(0,0,0,0.2), 0 4px 15px rgba(0,0,0,0.3); }
-.coin-face.heads::before { content: '☀'; }
-.coin-face.tails { background: linear-gradient(145deg, #c0c0c0 0%, #808080 50%, #c0c0c0 100%); color: #333; transform: rotateY(180deg); box-shadow: inset 0 0 30px rgba(0,0,0,0.2), 0 4px 15px rgba(0,0,0,0.3); }
-.coin-face.tails::before { content: '☽'; }
-.coin-result { text-align: center; font-size: 1.4rem; font-weight: 600; min-height: 30px; padding: 10px; }
+.coin-face { position: absolute; width: 100%; height: 100%; border-radius: 50%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; background: transparent; border: 3px solid var(--accent); box-shadow: 0 0 15px var(--accent), inset 0 0 15px rgba(230,57,70,0.2); }
+.coin-face.heads { color: var(--accent); }
+.coin-face.heads::before { content: '☀'; filter: drop-shadow(0 0 8px var(--accent)); }
+.coin-face.tails { transform: rotateY(180deg); color: var(--accent); }
+.coin-face.tails::before { content: '☽'; filter: drop-shadow(0 0 8px var(--accent)); }
+.coin-result { text-align: center; font-size: 1.4rem; font-weight: 600; min-height: 30px; padding: 10px; color: var(--accent); text-shadow: 0 0 10px var(--accent); }
 
 /* Counters */
 .counters-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 20px; }
@@ -189,7 +198,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .counter-label { font-size: 0.7rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
 .counter-value { font-size: 2rem; font-weight: 600; margin: 6px 0; }
 .counter-controls { display: flex; justify-content: center; gap: 12px; }
-.counter-controls button { width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--bg3); color: var(--text); font-size: 1.2rem; cursor: pointer; }
+.counter-controls button { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--text2); background: transparent; color: var(--text); font-size: 1.2rem; cursor: pointer; transition: all 0.2s; }
+.counter-controls button:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px rgba(230,57,70,0.4); }
 
 /* Commander Damage */
 .cmdr-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 20px; }
@@ -197,7 +207,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .cmdr-from { font-size: 0.75rem; color: var(--text2); margin-bottom: 4px; }
 .cmdr-value { font-size: 2rem; font-weight: 600; margin: 8px 0; }
 .cmdr-controls { display: flex; justify-content: center; gap: 12px; }
-.cmdr-controls button { width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--bg3); color: var(--text); font-size: 1.2rem; cursor: pointer; }
+.cmdr-controls button { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--text2); background: transparent; color: var(--text); font-size: 1.2rem; cursor: pointer; transition: all 0.2s; }
+.cmdr-controls button:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px rgba(230,57,70,0.4); }
 
 /* Mana */
 .mana-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 20px; }
@@ -206,7 +217,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .mana-symbol i { font-size: 2rem; }
 .mana-value { font-size: 1.6rem; font-weight: 600; margin: 6px 0; }
 .mana-controls { display: flex; justify-content: center; gap: 10px; }
-.mana-controls button { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--bg3); color: var(--text); font-size: 1.1rem; cursor: pointer; }
+.mana-controls button { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--text2); background: transparent; color: var(--text); font-size: 1.1rem; cursor: pointer; transition: all 0.2s; }
+.mana-controls button:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px rgba(230,57,70,0.4); }
 
 /* Responsive */
 @media (max-width: 400px) {
