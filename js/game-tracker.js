@@ -344,9 +344,28 @@ function render() {
     }
   };
   
-  // Long press for mana subtract
-  let pressTimer = null;
+  // Long press for life buttons - increment by 10
+  let lifeHoldTimer = null;
+  let lifeHoldInterval = null;
+  
   c.addEventListener('pointerdown', e => {
+    const lifeBtn = e.target.closest('.life-btn');
+    if (lifeBtn) {
+      const player = lifeBtn.closest('.player');
+      const idx = parseInt(player.dataset.idx);
+      const delta = parseInt(lifeBtn.dataset.delta) * 10;
+      
+      lifeHoldTimer = setTimeout(() => {
+        lifeHoldInterval = setInterval(() => {
+          state.players[idx].life += delta;
+          logAction(`${getPlayerName(idx)} ${delta > 0 ? 'gained' : 'lost'} ${Math.abs(delta)} life`);
+          render();
+        }, 200);
+      }, 500);
+      return;
+    }
+    
+    // Long press for mana subtract
     const pip = e.target.closest('.mana-pip');
     if (!pip) return;
     const player = pip.closest('.player');
@@ -363,10 +382,18 @@ function render() {
   });
   
   c.addEventListener('pointerup', () => {
+    if (lifeHoldTimer) clearTimeout(lifeHoldTimer);
+    if (lifeHoldInterval) clearInterval(lifeHoldInterval);
+    lifeHoldTimer = null;
+    lifeHoldInterval = null;
     if (pressTimer) clearTimeout(pressTimer);
   });
   
   c.addEventListener('pointerleave', () => {
+    if (lifeHoldTimer) clearTimeout(lifeHoldTimer);
+    if (lifeHoldInterval) clearInterval(lifeHoldInterval);
+    lifeHoldTimer = null;
+    lifeHoldInterval = null;
     if (pressTimer) clearTimeout(pressTimer);
   });
 }
