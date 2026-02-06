@@ -53,11 +53,29 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 .dashboard-content { max-width: 900px; margin: 0 auto; }
 .dashboard-content h1 { text-align: center; font-size: 2rem; margin-bottom: 30px; color: var(--accent); }
 .dashboard-content h2 { font-size: 1.3rem; margin: 30px 0 20px; color: var(--text); }
+.dashboard-content h3 { font-size: 1.1rem; margin: 20px 0 10px; color: var(--text); }
 .dashboard-overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 30px; }
 .dashboard-stat-box { background: var(--bg2); padding: 20px; border-radius: 12px; text-align: center; }
 .dashboard-stat-box .stat-label { font-size: 0.75rem; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
 .dashboard-stat-box .stat-value { font-size: 1.5rem; font-weight: 600; color: var(--accent); }
+.dashboard-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px; }
+.dashboard-chart-box { background: var(--bg2); padding: 20px; border-radius: 12px; }
+.dashboard-chart-box h3 { margin: 0 0 15px; font-size: 1rem; }
+.dashboard-chart-box canvas { height: 200px !important; }
+.heatmap-grid { display: grid; gap: 4px; }
+.heatmap-row { display: flex; gap: 4px; align-items: center; }
+.heatmap-label { font-size: 0.75rem; width: 80px; text-align: right; padding-right: 8px; color: var(--text2); }
+.heatmap-cell { flex: 1; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 0.85rem; font-weight: 600; }
+.heatmap-cell.self { background: var(--bg3); color: var(--text2); }
+.dashboard-highlights { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 30px; }
+.highlight-box { background: var(--bg2); padding: 15px; border-radius: 12px; border-left: 4px solid var(--accent); }
+.highlight-box h4 { margin: 0 0 8px; font-size: 0.95rem; }
+.highlight-box p { margin: 0; color: var(--text2); font-size: 0.9rem; }
 .dashboard-players { display: flex; flex-direction: column; gap: 16px; margin-bottom: 30px; }
+.leaderboard { display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; }
+.leaderboard-item { background: var(--bg2); padding: 15px; border-radius: 10px; display: flex; gap: 10px; align-items: center; }
+.leaderboard-item span { font-weight: 600; color: var(--accent); }
+.dashboard-actions { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
 .dashboard-player { background: var(--bg2); border-radius: 16px; padding: 20px; display: flex; gap: 20px; align-items: center; border: 2px solid var(--bg3); }
 .dashboard-player.winner { border-color: var(--accent); background: rgba(230,57,70,0.1); }
 .dashboard-rank { font-size: 2rem; font-weight: 700; min-width: 60px; text-align: center; color: var(--text2); }

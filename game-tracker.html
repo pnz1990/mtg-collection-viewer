@@ -172,9 +172,33 @@
           <div class="stat-value" id="dashboard-longest-turn">N/A</div>
         </div>
       </div>
+      
+      <div class="dashboard-charts">
+        <div class="dashboard-chart-box">
+          <h3>Life History</h3>
+          <canvas id="life-chart"></canvas>
+        </div>
+        <div class="dashboard-chart-box">
+          <h3>Damage Heatmap</h3>
+          <div id="damage-heatmap"></div>
+        </div>
+      </div>
+      
+      <div class="dashboard-highlights">
+        <div class="highlight-box" id="first-blood"></div>
+        <div class="highlight-box" id="kingmaker"></div>
+      </div>
+      
       <h2>Player Rankings</h2>
       <div id="dashboard-players" class="dashboard-players"></div>
-      <button id="dashboard-new-game" class="start-btn">New Game</button>
+      
+      <h3>Turn Time Leaderboard</h3>
+      <div id="turn-time-leaderboard"></div>
+      
+      <div class="dashboard-actions">
+        <button id="share-summary" class="action-btn secondary">Share Summary</button>
+        <button id="dashboard-new-game" class="start-btn">New Game</button>
+      </div>
     </div>
   </div>
 
@@ -433,6 +457,7 @@
   </div>
 
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="js/game-tracker.js"></script>
 </body>
 </html>

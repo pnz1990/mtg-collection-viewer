@@ -24,7 +24,9 @@ const state = {
   initiative: -1,
   ringBearer: -1,
   ringTemptation: 0,
-  currentPlane: null
+  currentPlane: null,
+  lifeHistory: [],
+  firstBlood: null
 };
 
 let clockInterval = null;
@@ -118,6 +120,8 @@ function initGame() {
   state.damageDealt = {};
   state.commanderDamageDealt = {};
   state.knockouts = [];
+  state.lifeHistory = [];
+  state.firstBlood = null;
   for (let i = 0; i < state.numPlayers; i++) {
     state.damageDealt[i] = 0;
     state.commanderDamageDealt[i] = 0;
@@ -282,14 +286,20 @@ function render() {
       
       state.players[idx].life = newLife;
       
-      // Track damage dealt
+      // Track damage dealt and first blood
       if (delta < 0 && state.activePlayer >= 0 && state.activePlayer !== idx) {
         state.damageDealt[state.activePlayer] = (state.damageDealt[state.activePlayer] || 0) + Math.abs(delta);
+        if (!state.firstBlood) {
+          state.firstBlood = { attacker: state.activePlayer, victim: idx, turn: state.turnCount };
+        }
       }
+      
+      // Track life history
+      state.lifeHistory.push({ turn: state.turnCount, lives: state.players.map(p => p.life) });
       
       // Track knockouts
       if (oldLife > 0 && newLife <= 0) {
-        state.knockouts.push({ player: idx, turn: state.turnCount, time: Date.now() });
+        state.knockouts.push({ player: idx, killer: state.activePlayer, turn: state.turnCount, time: Date.now() });
         logAction(`${getPlayerName(idx)} was knocked out`);
       } else {
         logAction(`${getPlayerName(idx)} ${delta > 0 ? 'gained' : 'lost'} ${Math.abs(delta)} life`);
@@ -319,7 +329,7 @@ function render() {
       if (confirm(`${getPlayerName(idx)} resign?`)) {
         if (state.players[idx].life > 0) {
           state.players[idx].life = 0;
-          state.knockouts.push({ player: idx, turn: state.turnCount, time: Date.now() });
+          state.knockouts.push({ player: idx, killer: null, turn: state.turnCount, time: Date.now() });
           logAction(`${getPlayerName(idx)} resigned`);
           render();
         }
@@ -366,7 +376,12 @@ function render() {
       
       lifeHoldTimer = setTimeout(() => {
         lifeHoldInterval = setInterval(() => {
+          const oldLife = state.players[idx].life;
           state.players[idx].life += delta;
+          if (delta < 0 && !state.firstBlood && oldLife > state.players[idx].life) {
+            state.firstBlood = { attacker: state.activePlayer, victim: idx, turn: state.turnCount };
+          }
+          state.lifeHistory.push({ turn: state.turnCount, lives: state.players.map(p => p.life) });
           logAction(`${getPlayerName(idx)} ${delta > 0 ? 'gained' : 'lost'} ${Math.abs(delta)} life`);
           render();
         }, 200);
@@ -677,7 +692,7 @@ function changeCmdr(key, delta) {
       return;
     }
     p.life = 0;
-    state.knockouts.push({ player: cmdrPlayer, turn: state.turnCount, time: Date.now() });
+    state.knockouts.push({ player: cmdrPlayer, killer: playerIdx, turn: state.turnCount, time: Date.now() });
   }
   
   p.cmdDamage[key] = newVal;
@@ -1093,7 +1108,6 @@ function showDashboard(winner) {
     return h > 0 ? `${h}h ${m}m ${sec}s` : `${m}m ${sec}s`;
   };
   
-  // Calculate stats
   const avgTurnTime = state.turnTimes.length > 0 
     ? state.turnTimes.reduce((sum, t) => sum + t.duration, 0) / state.turnTimes.length 
     : 0;
@@ -1106,6 +1120,9 @@ function showDashboard(winner) {
     const lifeChange = p.life - state.startingLife;
     const totalCmdrDmg = Object.values(p.cmdDamage).reduce((sum, v) => sum + v, 0);
     const knockout = state.knockouts.find(k => k.player === idx);
+    const playerTurns = state.turnTimes.filter(t => t.player === idx);
+    const avgPlayerTurn = playerTurns.length > 0 ? playerTurns.reduce((s, t) => s + t.duration, 0) / playerTurns.length : 0;
+    const drawEfficiency = state.turnCount > 0 ? (p.cardsDrawn / state.turnCount).toFixed(1) : 0;
     
     return {
       idx,
@@ -1120,11 +1137,12 @@ function showDashboard(winner) {
       mulligans: p.mulligans,
       cardsInHand: p.cardsInHand,
       cardsDrawn: p.cardsDrawn,
-      cardsDiscarded: p.cardsDiscarded
+      cardsDiscarded: p.cardsDiscarded,
+      avgTurnTime: avgPlayerTurn,
+      drawEfficiency
     };
   });
   
-  // Sort by placement (winner first, then by knockout order reversed, then by life)
   playerStats.sort((a, b) => {
     if (a.isWinner) return -1;
     if (b.isWinner) return 1;
@@ -1136,9 +1154,8 @@ function showDashboard(winner) {
   
   const maxDamage = Math.max(...playerStats.map(p => p.damageDealt));
   const maxCmdrDamage = Math.max(...playerStats.map(p => p.cmdrDamageDealt));
-  const biggestSwing = Math.max(...playerStats.map(p => Math.abs(p.lifeChange)));
   
-  // Render dashboard
+  // Render basic stats
   document.getElementById('dashboard-game-time').textContent = formatTime(gameTime);
   document.getElementById('dashboard-turns').textContent = state.turnCount;
   document.getElementById('dashboard-avg-turn').textContent = formatTime(Math.floor(avgTurnTime));
@@ -1146,6 +1163,60 @@ function showDashboard(winner) {
     ? `${getPlayerName(longestTurn.player)} (${formatTime(Math.floor(longestTurn.duration))})`
     : 'N/A';
   
+  // Life history chart
+  if (state.lifeHistory.length > 0) {
+    const ctx = document.getElementById('life-chart').getContext('2d');
+    const colors = ['#e63946', '#457b9d', '#2a9d8f', '#e9c46a', '#f4a261', '#264653'];
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [...new Set(state.lifeHistory.map(h => h.turn))],
+        datasets: state.players.map((p, i) => ({
+          label: getPlayerName(i),
+          data: state.lifeHistory.filter(h => h.lives[i] !== undefined).map(h => ({ x: h.turn, y: h.lives[i] })),
+          borderColor: colors[i],
+          backgroundColor: colors[i] + '20',
+          tension: 0.3
+        }))
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+  
+  // Damage heatmap
+  const heatmap = document.getElementById('damage-heatmap');
+  heatmap.innerHTML = `<div class="heatmap-grid">${state.players.map((_, i) => 
+    `<div class="heatmap-row"><span class="heatmap-label">${getPlayerName(i)}</span>${state.players.map((_, j) => {
+      if (i === j) return '<div class="heatmap-cell self">-</div>';
+      const dmg = state.damageDealt[i] || 0;
+      const intensity = dmg > 0 ? Math.min(dmg / maxDamage, 1) : 0;
+      return `<div class="heatmap-cell" style="background: rgba(230,57,70,${intensity})">${dmg}</div>`;
+    }).join('')}</div>`
+  ).join('')}</div>`;
+  
+  // First blood
+  if (state.firstBlood) {
+    document.getElementById('first-blood').innerHTML = `
+      <h4>🩸 First Blood</h4>
+      <p>${getPlayerName(state.firstBlood.attacker)} dealt first damage to ${getPlayerName(state.firstBlood.victim)} on turn ${state.firstBlood.turn}</p>
+    `;
+  }
+  
+  // Kingmaker (who knocked out the most)
+  const knockoutCounts = {};
+  state.knockouts.forEach(k => {
+    const killer = k.killer !== undefined ? k.killer : -1;
+    knockoutCounts[killer] = (knockoutCounts[killer] || 0) + 1;
+  });
+  const kingmaker = Object.entries(knockoutCounts).sort((a, b) => b[1] - a[1])[0];
+  if (kingmaker && kingmaker[0] !== '-1') {
+    document.getElementById('kingmaker').innerHTML = `
+      <h4>👑 Kingmaker</h4>
+      <p>${getPlayerName(parseInt(kingmaker[0]))} knocked out ${kingmaker[1]} player${kingmaker[1] > 1 ? 's' : ''}</p>
+    `;
+  }
+  
+  // Player rankings
   const playersContainer = document.getElementById('dashboard-players');
   playersContainer.innerHTML = playerStats.map((p, rank) => `
     <div class="dashboard-player ${p.isWinner ? 'winner' : ''}">
@@ -1172,29 +1243,43 @@ function showDashboard(winner) {
           </div>
           ` : ''}
           <div class="dashboard-stat">
-            <span class="stat-label">Knocked Out</span>
-            <span class="stat-value">${p.knockedOut ? `Turn ${p.knockedOut}` : 'Survived'}</span>
+            <span class="stat-label">Draw Efficiency</span>
+            <span class="stat-value">${p.drawEfficiency} cards/turn</span>
           </div>
           <div class="dashboard-stat">
             <span class="stat-label">Starting Hand</span>
             <span class="stat-value">${p.cardsInHand} cards${p.mulligans > 0 ? ` (${p.mulligans}x)` : ''}</span>
-          </div>
-          <div class="dashboard-stat">
-            <span class="stat-label">Cards Drawn</span>
-            <span class="stat-value">${p.cardsDrawn}</span>
-          </div>
-          <div class="dashboard-stat">
-            <span class="stat-label">Cards Discarded</span>
-            <span class="stat-value">${p.cardsDiscarded}</span>
           </div>
         </div>
       </div>
     </div>
   `).join('');
   
+  // Turn time leaderboard
+  const turnLeaderboard = document.getElementById('turn-time-leaderboard');
+  const sortedBySpeed = [...playerStats].sort((a, b) => a.avgTurnTime - b.avgTurnTime);
+  turnLeaderboard.innerHTML = `
+    <div class="leaderboard">
+      <div class="leaderboard-item fastest"><span>⚡ Fastest:</span> ${sortedBySpeed[0].name} (${formatTime(Math.floor(sortedBySpeed[0].avgTurnTime))})</div>
+      <div class="leaderboard-item slowest"><span>🐌 Slowest:</span> ${sortedBySpeed[sortedBySpeed.length - 1].name} (${formatTime(Math.floor(sortedBySpeed[sortedBySpeed.length - 1].avgTurnTime))})</div>
+    </div>
+  `;
+  
   document.getElementById('game-screen').classList.add('hidden');
   document.getElementById('dashboard-screen').classList.remove('hidden');
 }
+
+document.getElementById('share-summary')?.addEventListener('click', () => {
+  const summary = {
+    format: state.format,
+    players: state.players.map((p, i) => ({ name: getPlayerName(i), life: p.life })),
+    turns: state.turnCount,
+    time: Math.floor((Date.now() - state.gameStartTime) / 1000)
+  };
+  const encoded = btoa(JSON.stringify(summary));
+  const url = `${window.location.origin}${window.location.pathname}?game=${encoded}`;
+  navigator.clipboard.writeText(url).then(() => alert('Summary link copied!'));
+});
 
 document.getElementById('dashboard-new-game')?.addEventListener('click', () => {
   document.getElementById('dashboard-screen').classList.add('hidden');
