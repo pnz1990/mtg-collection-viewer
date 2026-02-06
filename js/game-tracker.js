@@ -771,7 +771,7 @@ function createPlayerParticles(container, colors) {
     const particle = document.createElement('div');
     particle.className = 'particle';
     const color = particleColors[Math.floor(Math.random() * particleColors.length)];
-    const size = 2 + Math.random() * 4;
+    const size = 4 + Math.random() * 6;
     const x = Math.random() * 100;
     const duration = 6 + Math.random() * 8;
     
@@ -781,7 +781,7 @@ function createPlayerParticles(container, colors) {
       height: ${size}px;
       background: ${color};
       animation-duration: ${duration}s;
-      opacity: ${0.2 + Math.random() * 0.3};
+      opacity: ${0.4 + Math.random() * 0.4};
     `;
     
     container.appendChild(particle);
@@ -789,12 +789,12 @@ function createPlayerParticles(container, colors) {
   }
   
   // Spawn initial particles
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 12; i++) {
     setTimeout(() => spawnParticle(), i * 150);
   }
   
   // Continue spawning
-  setInterval(() => spawnParticle(), 800);
+  setInterval(() => spawnParticle(), 600);
 }
 
 // Stack Tracker
