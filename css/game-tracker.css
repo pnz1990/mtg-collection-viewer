@@ -75,7 +75,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 
 /* Mana Bar */
 .mana-bar { display: flex; align-items: center; justify-content: center; gap: 4px; padding: 8px; background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.1); }
-.mana-pip { display: flex; align-items: center; gap: 2px; padding: 6px 8px; background: rgba(255,255,255,0.05); border-radius: 16px; cursor: pointer; transition: all 0.15s; min-width: 36px; justify-content: center; }
+.mana-pip { display: flex; align-items: center; gap: 2px; padding: 6px 8px; background: rgba(255,255,255,0.05); border-radius: 16px; cursor: pointer; transition: all 0.15s; min-width: 36px; justify-content: center; user-select: none; -webkit-user-select: none; }
 .mana-pip:active { transform: scale(0.9); background: rgba(255,255,255,0.15); }
 .mana-pip i { font-size: 16px; }
 .mana-count { font-size: 0.85rem; font-weight: 600; min-width: 8px; }
@@ -131,21 +131,39 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .count-btn { width: 44px; height: 44px; border-radius: 50%; border: none; background: var(--bg3); color: var(--text); font-size: 1.5rem; cursor: pointer; }
 .dice-count-select span { font-size: 2rem; font-weight: 600; min-width: 40px; text-align: center; }
 
-.dice-stage { min-height: 100px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; padding: 0 20px; }
-.dice-3d { width: 60px; height: 60px; position: relative; transform-style: preserve-3d; }
-.dice-3d.rolling { animation: diceRoll3d 0.8s ease-out; }
-@keyframes diceRoll3d {
+.dice-stage { min-height: 100px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; padding: 0 20px; perspective: 400px; }
+
+.dice-wrapper { width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; }
+
+/* D6 Cube */
+.dice-cube { width: 50px; height: 50px; position: relative; transform-style: preserve-3d; }
+.dice-cube.rolling { animation: cubeRoll 0.8s ease-out; }
+@keyframes cubeRoll {
   0% { transform: rotateX(0) rotateY(0) rotateZ(0); }
   100% { transform: rotateX(720deg) rotateY(540deg) rotateZ(360deg); }
 }
-.dice-face { position: absolute; width: 60px; height: 60px; background: linear-gradient(135deg, #fff 0%, #ddd 100%); border: 2px solid #bbb; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: #333; backface-visibility: hidden; }
-.dice-face.front { transform: translateZ(30px); }
-.dice-face.back { transform: rotateY(180deg) translateZ(30px); }
-.dice-face.top { transform: rotateX(90deg) translateZ(30px); }
-.dice-face.bottom { transform: rotateX(-90deg) translateZ(30px); }
-.dice-face.left { transform: rotateY(-90deg) translateZ(30px); }
-.dice-face.right { transform: rotateY(90deg) translateZ(30px); }
-.dice-result-num { font-size: 2.5rem; font-weight: bold; color: var(--accent); background: var(--bg); width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; animation: popIn 0.3s ease-out; }
+.cube-face { position: absolute; width: 50px; height: 50px; background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%); border: 2px solid #bbb; border-radius: 6px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px; padding: 6px; box-sizing: border-box; }
+.cube-face .dot { width: 8px; height: 8px; background: #333; border-radius: 50%; }
+.cube-face.front { transform: translateZ(25px); }
+.cube-face.back { transform: rotateY(180deg) translateZ(25px); }
+.cube-face.top { transform: rotateX(90deg) translateZ(25px); }
+.cube-face.bottom { transform: rotateX(-90deg) translateZ(25px); }
+.cube-face.left { transform: rotateY(-90deg) translateZ(25px); }
+.cube-face.right { transform: rotateY(90deg) translateZ(25px); }
+
+/* D20 */
+.d20-spin { width: 60px; height: 60px; }
+.d20-spin.rolling { animation: d20Roll 0.8s ease-out; }
+@keyframes d20Roll {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(180deg) scale(1.2); }
+  50% { transform: rotate(360deg) scale(0.9); }
+  75% { transform: rotate(540deg) scale(1.1); }
+  100% { transform: rotate(720deg) scale(1); }
+}
+.d20-svg { width: 100%; height: 100%; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3)); }
+
+.dice-result-num { font-size: 2rem; font-weight: bold; color: var(--accent); background: var(--bg); width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; animation: popIn 0.3s ease-out; }
 @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
 
 /* Coin */

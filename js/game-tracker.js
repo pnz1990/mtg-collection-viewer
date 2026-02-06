@@ -95,7 +95,7 @@ function render() {
       render();
     }
     
-    // Mana pip click
+    // Mana pip - tap to add, long press to subtract
     const pip = e.target.closest('.mana-pip');
     if (pip) {
       const color = pip.dataset.color;
@@ -103,6 +103,32 @@ function render() {
       render();
     }
   };
+  
+  // Long press for mana subtract
+  let pressTimer = null;
+  c.addEventListener('pointerdown', e => {
+    const pip = e.target.closest('.mana-pip');
+    if (!pip) return;
+    const player = pip.closest('.player');
+    const idx = parseInt(player.dataset.idx);
+    const color = pip.dataset.color;
+    
+    pressTimer = setTimeout(() => {
+      if (state.players[idx].mana[color] > 0) {
+        state.players[idx].mana[color]--;
+        render();
+      }
+      pressTimer = null;
+    }, 400);
+  });
+  
+  c.addEventListener('pointerup', () => {
+    if (pressTimer) clearTimeout(pressTimer);
+  });
+  
+  c.addEventListener('pointerleave', () => {
+    if (pressTimer) clearTimeout(pressTimer);
+  });
 }
 
 // Card Search
@@ -251,31 +277,63 @@ document.getElementById('roll-dice').onclick = () => {
   
   for (let i = 0; i < diceCount; i++) {
     const result = Math.floor(Math.random() * diceType) + 1;
-    const dice = document.createElement('div');
-    dice.className = 'dice-3d rolling';
+    const wrapper = document.createElement('div');
+    wrapper.className = 'dice-wrapper';
     
     if (diceType === 6) {
-      dice.innerHTML = `
-        <div class="dice-face front">●</div>
-        <div class="dice-face back">●●</div>
-        <div class="dice-face top">●●●</div>
-        <div class="dice-face bottom">●●●●</div>
-        <div class="dice-face left">●●●●●</div>
-        <div class="dice-face right">●●●●●●</div>
-      `;
+      wrapper.innerHTML = `
+        <div class="dice-cube rolling">
+          <div class="cube-face front">
+            <span class="dot"></span>
+          </div>
+          <div class="cube-face back">
+            <span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span><span class="dot"></span>
+          </div>
+          <div class="cube-face top">
+            <span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+          <div class="cube-face bottom">
+            <span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span><span class="dot"></span>
+          </div>
+          <div class="cube-face left">
+            <span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span><span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+          <div class="cube-face right">
+            <span class="dot"></span><span class="dot"></span>
+          </div>
+        </div>`;
     } else {
-      dice.innerHTML = `<div class="dice-face front">${result}</div>`;
+      wrapper.innerHTML = `
+        <div class="d20-spin rolling">
+          <svg viewBox="0 0 100 100" class="d20-svg">
+            <defs>
+              <linearGradient id="d20grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#e63946"/>
+                <stop offset="100%" style="stop-color:#9d0208"/>
+              </linearGradient>
+            </defs>
+            <!-- Icosahedron faces -->
+            <polygon points="50,8 85,30 75,75" fill="url(#d20grad)" stroke="#fff" stroke-width="1"/>
+            <polygon points="50,8 15,30 25,75" fill="url(#d20grad)" stroke="#fff" stroke-width="1"/>
+            <polygon points="50,8 85,30 15,30" fill="url(#d20grad)" stroke="#fff" stroke-width="1"/>
+            <polygon points="25,75 75,75 50,92" fill="url(#d20grad)" stroke="#fff" stroke-width="1"/>
+            <polygon points="15,30 25,75 5,55" fill="url(#d20grad)" stroke="#fff" stroke-width="1"/>
+            <polygon points="85,30 75,75 95,55" fill="url(#d20grad)" stroke="#fff" stroke-width="1"/>
+            <text x="50" y="52" text-anchor="middle" font-size="18" font-weight="bold" fill="#fff">20</text>
+          </svg>
+        </div>`;
     }
     
-    stage.appendChild(dice);
+    stage.appendChild(wrapper);
     
     setTimeout(() => {
-      dice.classList.remove('rolling');
-      dice.innerHTML = '';
-      const num = document.createElement('div');
-      num.className = 'dice-result-num';
-      num.textContent = result;
-      dice.appendChild(num);
+      wrapper.innerHTML = `<div class="dice-result-num">${result}</div>`;
     }, 800 + i * 100);
   }
 };
