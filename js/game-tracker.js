@@ -661,10 +661,9 @@ function renderStack() {
   } else {
     container.innerHTML = state.stack.map((item, idx) => {
       const playerName = getPlayerName(item.playerIdx);
-      const fullImg = item.image.replace('/small/', '/normal/');
       return `
       <div class="stack-card" data-idx="${idx}" style="--stack-index: ${idx}">
-        <img src="${fullImg}" alt="${item.name}" class="stack-card-img">
+        <img src="${item.image}" alt="${item.name}" class="stack-card-img">
         <div class="stack-card-overlay">
           <div class="stack-card-player">${playerName}</div>
           <div class="stack-card-actions">
