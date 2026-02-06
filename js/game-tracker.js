@@ -8,7 +8,8 @@ const state = {
   firstPlayer: -1,
   log: [],
   gameStartTime: null,
-  turnStartTime: null
+  turnStartTime: null,
+  stack: []
 };
 
 let clockInterval = null;
@@ -616,6 +617,7 @@ document.getElementById('btn-log').onclick = () => {
 
 document.getElementById('btn-dice').onclick = () => openModal('dice-modal');
 document.getElementById('btn-coin').onclick = () => openModal('coin-modal');
+document.getElementById('btn-stack').onclick = () => openStack();
 document.getElementById('btn-reset').onclick = () => {
   if (confirm('Reset game?')) {
     if (clockInterval) clearInterval(clockInterval);
@@ -641,3 +643,90 @@ document.querySelectorAll('.close-btn').forEach(btn => {
 document.querySelectorAll('.modal').forEach(modal => {
   modal.onclick = e => { if (e.target === modal) modal.classList.add('hidden'); };
 });
+
+// Stack Tracker
+let stackSearchTimeout = null;
+
+function openStack() {
+  renderStack();
+  document.getElementById('stack-search-input').value = '';
+  document.getElementById('stack-search-results').innerHTML = '';
+  openModal('stack-modal');
+}
+
+function renderStack() {
+  const container = document.getElementById('stack-container');
+  if (state.stack.length === 0) {
+    container.innerHTML = '<div class="stack-empty">Stack is empty</div>';
+  } else {
+    container.innerHTML = state.stack.map((item, idx) => {
+      const playerName = getPlayerName(item.playerIdx);
+      return `
+      <div class="stack-item" data-idx="${idx}">
+        <img src="${item.image}" alt="${item.name}">
+        <div class="stack-item-info">
+          <div class="stack-item-name">${item.name}</div>
+          <div class="stack-item-player">${playerName}</div>
+        </div>
+        <button class="stack-remove" onclick="removeFromStack(${idx})">✕</button>
+      </div>`;
+    }).join('');
+  }
+}
+
+function removeFromStack(idx) {
+  state.stack.splice(idx, 1);
+  renderStack();
+}
+
+async function searchStackCards(query) {
+  if (query.length < 2) {
+    document.getElementById('stack-search-results').innerHTML = '';
+    return;
+  }
+  document.getElementById('stack-search-results').innerHTML = '<div class="search-loading">Searching...</div>';
+  try {
+    const res = await fetch(`https://api.scryfall.com/cards/search?q=${encodeURIComponent(query)}&unique=cards&order=name`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const cards = data.data.slice(0, 8);
+    document.getElementById('stack-search-results').innerHTML = cards.map(card => {
+      const img = card.image_uris?.small || card.card_faces?.[0]?.image_uris?.small || '';
+      return `
+      <div class="stack-search-result" data-name="${card.name}" data-img="${img}">
+        <img src="${img}" onerror="this.style.display='none'">
+        <span>${card.name}</span>
+      </div>`;
+    }).join('') || '<div class="search-empty">No cards found</div>';
+  } catch {
+    document.getElementById('stack-search-results').innerHTML = '<div class="search-empty">No cards found</div>';
+  }
+}
+
+document.getElementById('stack-search-input')?.addEventListener('input', e => {
+  clearTimeout(stackSearchTimeout);
+  stackSearchTimeout = setTimeout(() => searchStackCards(e.target.value), 300);
+});
+
+document.getElementById('stack-search-results')?.addEventListener('click', e => {
+  const result = e.target.closest('.stack-search-result');
+  if (result && state.stack.length < 50) {
+    const name = result.dataset.name;
+    const img = result.dataset.img;
+    
+    // Show player selector
+    const selector = document.getElementById('stack-player-selector');
+    selector.innerHTML = state.players.map((p, i) => 
+      `<button class="stack-player-btn" onclick="addToStack('${name.replace(/'/g, "\\'")}', '${img}', ${i})">${getPlayerName(i)}</button>`
+    ).join('');
+    selector.classList.remove('hidden');
+  }
+});
+
+function addToStack(name, img, playerIdx) {
+  state.stack.unshift({ name, image: img, playerIdx });
+  renderStack();
+  document.getElementById('stack-player-selector').classList.add('hidden');
+  document.getElementById('stack-search-input').value = '';
+  document.getElementById('stack-search-results').innerHTML = '';
+}
