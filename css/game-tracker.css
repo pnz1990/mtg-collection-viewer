@@ -285,11 +285,12 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 /* Responsive */
 /* Mobile - hide mana bar, smaller controls */
 @media (max-width: 767px) {
-  .mana-bar { display: none; }
-  .life-total { font-size: 3rem; min-width: 80px; }
-  .life-btn { width: 48px; height: 48px; font-size: 1.4rem; }
-  .player-actions { gap: 4px; }
-  .action-pill { padding: 6px 10px; font-size: 0.7rem; }
+  .mana-bar { display: none !important; }
+  .life-total { font-size: 2.5rem; min-width: 70px; }
+  .life-btn { width: 42px; height: 42px; font-size: 1.2rem; }
+  .player-actions { gap: 3px; flex-wrap: wrap; justify-content: center; }
+  .action-pill { padding: 5px 8px; font-size: 0.65rem; }
+  .player-name { font-size: 0.8rem; }
   .setup-card { padding: 30px 20px; }
   .setup-card h1 { font-size: 1.4rem; margin-bottom: 25px; }
   .stack-content { max-width: 100%; }
