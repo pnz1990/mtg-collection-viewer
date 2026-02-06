@@ -1,12 +1,51 @@
 # MTG Collection Viewer
 
-An immersive, interactive web application for viewing and exploring your Magic: The Gathering card collection. Features stunning visual effects, multiple view modes, comprehensive filtering, and detailed analytics.
+An immersive, interactive web application for viewing and exploring your Magic: The Gathering card collection. Features stunning visual effects, multiple view modes, comprehensive filtering, detailed analytics, and a full-featured game tracker.
 
 🔗 **Live Demo:** [https://pnz1990.github.io/mtg-collection-viewer/](https://pnz1990.github.io/mtg-collection-viewer/index.html)
 
 ![MTG Collection Viewer](https://img.shields.io/badge/MTG-Collection%20Viewer-blue)
 
 ## Features
+
+### 🎮 Game Tracker
+
+A comprehensive game state tracker for MTG games with support for multiple formats:
+
+**Format Support:**
+- Commander (4 players, 40 life)
+- Standard, Modern, Legacy, Vintage, Pioneer, Pauper (2 players, 20 life)
+- Auto-configures player count and starting life based on format
+
+**Life & Counters:**
+- Life total tracking with +/- buttons
+- Poison, Energy, Experience, Storm, and Commander Tax counters
+- Mana pool tracking (W/U/B/R/G/C)
+- Player badges for active counters
+
+**Commander Features (Commander format only):**
+- Commander search with Scryfall integration
+- Partner commander support
+- Commander damage tracking per opponent
+- Commander art backgrounds
+- Color identity particles (floating mana symbols in commander colors)
+- Rotate player panels 180° for opposite-side players
+
+**Game Tools:**
+- **Turn Tracker** - Pass turn with clockwise rotation, "Who Goes First" randomizer
+- **Game Clock** - Tracks total game time
+- **Turn Clock** - Resets each turn
+- **Stack Tracker** - Visual card stack with player assignment, duplicate cards for storm
+- **Turn Phases** - Step-by-step phase tracker with all substeps
+- **Dice Roller** - D6, D12, D20 with animated 3D dice
+- **Coin Flipper** - Animated 3D coin flip
+- **Game Log** - Timestamped action history
+
+**Additional Features:**
+- Player name customization (non-Commander formats)
+- Toggle particles on/off
+- Mobile-optimized layout
+- Responsive design for all screen sizes
 
 ### 🎴 Multiple View Modes
 
