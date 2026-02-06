@@ -65,9 +65,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .badge { display: flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(0,0,0,0.4); border-radius: 20px; font-size: 0.8rem; }
 .badge svg, .badge i { width: 14px; height: 14px; font-size: 14px; }
 .badge.poison { color: #7cb342; }
+.badge.poison .ms-p { color: #7cb342; }
 .badge.energy { color: #ffb300; }
 .badge.experience { color: #ab47bc; }
 .badge.cmdr { color: #ef5350; }
+
+/* Scryfall energy symbol */
+.card-symbol-E { display: inline-block; width: 14px; height: 14px; background: url('https://svgs.scryfall.io/card-symbols/E.svg') center/contain no-repeat; vertical-align: middle; }
+.counter-icon .card-symbol-E { width: 28px; height: 28px; }
 
 .player-actions { display: flex; gap: 6px; margin-top: 10px; }
 .action-pill { padding: 8px 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; color: rgba(255,255,255,0.8); font-size: 0.75rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; }

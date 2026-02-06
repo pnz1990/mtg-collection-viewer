@@ -40,8 +40,8 @@ function render() {
   c.innerHTML = state.players.map((p, i) => {
     const rotate = state.numPlayers === 2 && i === 0;
     const badges = [];
-    if (p.poison > 0) badges.push(`<span class="badge poison"><i class="ms ms-counter-poison"></i>${p.poison}</span>`);
-    if (p.energy > 0) badges.push(`<span class="badge energy"><i class="ms ms-counter-energy"></i>${p.energy}</span>`);
+    if (p.poison > 0) badges.push(`<span class="badge poison"><i class="ms ms-p"></i>${p.poison}</span>`);
+    if (p.energy > 0) badges.push(`<span class="badge energy"><span class="card-symbol card-symbol-E"></span>${p.energy}</span>`);
     if (p.experience > 0) badges.push(`<span class="badge experience">✧ ${p.experience}</span>`);
     const totalCmd = p.cmdDamage.reduce((a, b) => a + b, 0);
     if (totalCmd > 0) badges.push(`<span class="badge cmdr">⚔ ${totalCmd}</span>`);
@@ -201,8 +201,8 @@ function openCounters(idx) {
   const p = state.players[idx];
   document.getElementById('counters-title').textContent = `${p.name} - Counters`;
   const counters = [
-    { key: 'poison', icon: '<i class="ms ms-counter-poison"></i>', label: 'Poison', step: 1 },
-    { key: 'energy', icon: '<i class="ms ms-counter-energy"></i>', label: 'Energy', step: 1 },
+    { key: 'poison', icon: '<i class="ms ms-p"></i>', label: 'Poison', step: 1 },
+    { key: 'energy', icon: '<span class="card-symbol card-symbol-E"></span>', label: 'Energy', step: 1 },
     { key: 'experience', icon: '✧', label: 'Experience', step: 1 },
     { key: 'storm', icon: '🌀', label: 'Storm', step: 1 },
     { key: 'cmdTax', icon: '<i class="ms ms-commander"></i>', label: 'Cmdr Tax', step: 2 }
