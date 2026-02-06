@@ -78,7 +78,19 @@
           <span>D6</span>
         </button>
         <button class="dice-type-btn" data-sides="20">
-          <div class="dice-shape d20"></div>
+          <div class="dice-shape d20">
+            <svg viewBox="0 0 100 100">
+              <!-- Icosahedron 2D projection -->
+              <polygon points="50,5 95,30 95,70 50,95 5,70 5,30"/>
+              <line x1="50" y1="5" x2="50" y2="95" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="5" y1="30" x2="95" y2="70" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="95" y1="30" x2="5" y2="70" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="50" y1="5" x2="5" y2="70" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="50" y1="5" x2="95" y2="70" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="50" y1="95" x2="5" y2="30" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="50" y1="95" x2="95" y2="30" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
           <span>D20</span>
         </button>
       </div>

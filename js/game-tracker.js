@@ -232,19 +232,17 @@ document.getElementById('roll-dice').onclick = () => {
 document.getElementById('flip-coin').onclick = () => {
   const coin = document.getElementById('coin');
   const result = Math.random() < 0.5 ? 'heads' : 'tails';
-  const endRotation = result === 'heads' ? '1800deg' : '1980deg';
   
-  coin.style.setProperty('--end-rotation', endRotation);
-  coin.classList.remove('show-heads', 'show-tails', 'flipping');
-  void coin.offsetWidth; // Force reflow
+  coin.classList.remove('show-tails', 'flipping');
+  void coin.offsetWidth;
   coin.classList.add('flipping');
   document.getElementById('coin-result').textContent = '';
   
   setTimeout(() => {
     coin.classList.remove('flipping');
-    coin.classList.add(result === 'heads' ? 'show-heads' : 'show-tails');
+    if (result === 'tails') coin.classList.add('show-tails');
     document.getElementById('coin-result').textContent = result === 'heads' ? 'Heads!' : 'Tails!';
-  }, 1200);
+  }, 1000);
 };
 
 // Tools
