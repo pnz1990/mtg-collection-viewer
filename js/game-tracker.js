@@ -158,9 +158,19 @@ function render() {
     const singleBgStyle = isCommander && cmd1 && !cmd2 ? `background-image: url('${cmd1.artUrl}')` : '';
     const isActive = state.activePlayer === i;
     
+    // Get combined color identity for particles
+    let colorIdentity = [];
+    if (isCommander && cmd1) {
+      colorIdentity = [...(cmd1.colorIdentity || [])];
+      if (cmd2) {
+        colorIdentity = [...new Set([...colorIdentity, ...(cmd2.colorIdentity || [])])];
+      }
+    }
+    
     return `
     <div class="player p${i} ${p.rotated ? 'rotate180' : ''} ${artClass} ${isActive ? 'active' : ''}" data-idx="${i}" style="${singleBgStyle}">
       ${isCommander && cmd1 && cmd2 ? `<div class="dual-art-bg" style="background-image: url('${cmd1.artUrl}')"></div><div class="dual-art-bg right" style="background-image: url('${cmd2.artUrl}')"></div>` : ''}
+      ${colorIdentity.length > 0 ? `<div class="player-particles" data-colors="${colorIdentity.join(',')}"></div>` : ''}
       <div class="player-main">
         <div class="player-name" data-action="${isCommander ? 'name' : 'edit-name'}">${displayName}</div>
         <div class="life-area">
@@ -186,6 +196,12 @@ function render() {
       </div>
     </div>`;
   }).join('');
+  
+  // Initialize particles for each player with commanders
+  document.querySelectorAll('.player-particles').forEach(container => {
+    const colors = container.dataset.colors.split(',');
+    createPlayerParticles(container, colors);
+  });
 
   // Event delegation
   c.onclick = e => {
@@ -341,29 +357,60 @@ document.getElementById('search-results')?.addEventListener('click', e => {
     const p = state.players[searchPlayer];
     const hasPartner = result.dataset.partner === 'true';
     
-    p.commanders[activeSlot] = {
-      name: result.dataset.name,
-      artUrl: result.dataset.art,
-      hasPartner: hasPartner
-    };
-    
-    updateSlotDisplay(p);
-    
-    // If this commander has partner and we just set first slot, show second slot and move to it
-    if (hasPartner && activeSlot === 0) {
-      document.getElementById('commander-slots').querySelector('[data-slot="1"]').classList.remove('hidden');
-      setActiveSlot(1);
-      document.getElementById('search-input').value = '';
-      document.getElementById('search-results').innerHTML = '';
-      document.getElementById('search-input').focus();
-    } else {
-      // Clear second commander if first doesn't have partner
-      if (activeSlot === 0 && !hasPartner) {
-        p.commanders[1] = null;
-      }
-      closeModal('search-modal');
-      render();
-    }
+    // Fetch full card data for color identity
+    fetch(`https://api.scryfall.com/cards/named?exact=${encodeURIComponent(result.dataset.name)}`)
+      .then(res => res.json())
+      .then(card => {
+        p.commanders[activeSlot] = {
+          name: result.dataset.name,
+          artUrl: result.dataset.art,
+          hasPartner: hasPartner,
+          colorIdentity: card.color_identity || []
+        };
+        
+        updateSlotDisplay(p);
+        
+        // If this commander has partner and we just set first slot, show second slot and move to it
+        if (hasPartner && activeSlot === 0) {
+          document.getElementById('commander-slots').querySelector('[data-slot="1"]').classList.remove('hidden');
+          setActiveSlot(1);
+          document.getElementById('search-input').value = '';
+          document.getElementById('search-results').innerHTML = '';
+          document.getElementById('search-input').focus();
+        } else {
+          // Clear second commander if first doesn't have partner
+          if (activeSlot === 0 && !hasPartner) {
+            p.commanders[1] = null;
+          }
+          closeModal('search-modal');
+          render();
+        }
+      })
+      .catch(() => {
+        // Fallback without color identity
+        p.commanders[activeSlot] = {
+          name: result.dataset.name,
+          artUrl: result.dataset.art,
+          hasPartner: hasPartner,
+          colorIdentity: []
+        };
+        
+        updateSlotDisplay(p);
+        
+        if (hasPartner && activeSlot === 0) {
+          document.getElementById('commander-slots').querySelector('[data-slot="1"]').classList.remove('hidden');
+          setActiveSlot(1);
+          document.getElementById('search-input').value = '';
+          document.getElementById('search-results').innerHTML = '';
+          document.getElementById('search-input').focus();
+        } else {
+          if (activeSlot === 0 && !hasPartner) {
+            p.commanders[1] = null;
+          }
+          closeModal('search-modal');
+          render();
+        }
+      });
   }
 });
 
@@ -706,6 +753,49 @@ document.querySelectorAll('.close-btn').forEach(btn => {
 document.querySelectorAll('.modal').forEach(modal => {
   modal.onclick = e => { if (e.target === modal) modal.classList.add('hidden'); };
 });
+
+// Particle system for commander colors
+function createPlayerParticles(container, colors) {
+  const colorMap = {
+    W: ['#fffbd5', '#f0e6c0'],
+    U: ['#0e68ab', '#4a90c2'],
+    B: ['#1a1a1a', '#0a0a0a'],
+    R: ['#d32f2f', '#ff6659'],
+    G: ['#388e3c', '#6abf69']
+  };
+  
+  const particleColors = colors.flatMap(c => colorMap[c] || []);
+  if (particleColors.length === 0) return;
+  
+  function spawnParticle() {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    const color = particleColors[Math.floor(Math.random() * particleColors.length)];
+    const size = 2 + Math.random() * 4;
+    const x = Math.random() * 100;
+    const duration = 6 + Math.random() * 8;
+    
+    particle.style.cssText = `
+      left: ${x}%;
+      width: ${size}px;
+      height: ${size}px;
+      background: ${color};
+      animation-duration: ${duration}s;
+      opacity: ${0.2 + Math.random() * 0.3};
+    `;
+    
+    container.appendChild(particle);
+    setTimeout(() => particle.remove(), duration * 1000);
+  }
+  
+  // Spawn initial particles
+  for (let i = 0; i < 8; i++) {
+    setTimeout(() => spawnParticle(), i * 150);
+  }
+  
+  // Continue spawning
+  setInterval(() => spawnParticle(), 800);
+}
 
 // Stack Tracker
 let stackSearchTimeout = null;
