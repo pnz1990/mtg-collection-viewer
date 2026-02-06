@@ -26,7 +26,7 @@ function initGame() {
     commanders: [null, null],
     life: state.startingLife,
     poison: 0, energy: 0, experience: 0, storm: 0, cmdTax: 0,
-    cmdDamage: Array(state.numPlayers).fill(0),
+    cmdDamage: {}, // keyed by "playerIdx-cmdIdx"
     mana: { W: 0, U: 0, B: 0, R: 0, G: 0, C: 0 },
     rotated: false
   }));
@@ -43,7 +43,7 @@ function render() {
     if (p.poison > 0) badges.push(`<span class="badge poison"><i class="ms ms-p"></i>${p.poison}</span>`);
     if (p.energy > 0) badges.push(`<span class="badge energy"><span class="card-symbol card-symbol-E"></span>${p.energy}</span>`);
     if (p.experience > 0) badges.push(`<span class="badge experience">✧ ${p.experience}</span>`);
-    const totalCmd = p.cmdDamage.reduce((a, b) => a + b, 0);
+    const totalCmd = Object.values(p.cmdDamage).reduce((a, b) => a + b, 0);
     if (totalCmd > 0) badges.push(`<span class="badge cmdr">⚔ ${totalCmd}</span>`);
     
     const manaColors = ['W', 'U', 'B', 'R', 'G', 'C'];
@@ -346,23 +346,48 @@ let cmdrPlayer = 0;
 function openCmdr(idx) {
   cmdrPlayer = idx;
   const p = state.players[idx];
-  document.getElementById('cmdr-grid').innerHTML = state.players.map((other, i) => {
-    if (i === idx) return '';
-    return `
+  
+  // Build list of all commanders from other players
+  const commanders = [];
+  state.players.forEach((other, playerIdx) => {
+    if (playerIdx === idx) return;
+    other.commanders.forEach((cmd, cmdIdx) => {
+      if (cmd) {
+        const key = `${playerIdx}-${cmdIdx}`;
+        commanders.push({
+          key,
+          name: cmd.name.split(',')[0],
+          damage: p.cmdDamage[key] || 0
+        });
+      }
+    });
+    // If no commanders set, show player name
+    if (!other.commanders[0] && !other.commanders[1]) {
+      const key = `${playerIdx}-0`;
+      commanders.push({
+        key,
+        name: other.name,
+        damage: p.cmdDamage[key] || 0
+      });
+    }
+  });
+  
+  document.getElementById('cmdr-grid').innerHTML = commanders.map(c => `
     <div class="cmdr-item">
-      <div class="cmdr-from">From ${other.name}</div>
-      <div class="cmdr-value">${p.cmdDamage[i]}</div>
+      <div class="cmdr-from">${c.name}</div>
+      <div class="cmdr-value">${c.damage}</div>
       <div class="cmdr-controls">
-        <button onclick="changeCmdr(${i}, -1)">−</button>
-        <button onclick="changeCmdr(${i}, 1)">+</button>
+        <button onclick="changeCmdr('${c.key}', -1)">−</button>
+        <button onclick="changeCmdr('${c.key}', 1)">+</button>
       </div>
-    </div>`;
-  }).join('');
+    </div>
+  `).join('');
   openModal('cmdr-modal');
 }
 
-function changeCmdr(from, delta) {
-  state.players[cmdrPlayer].cmdDamage[from] = Math.max(0, state.players[cmdrPlayer].cmdDamage[from] + delta);
+function changeCmdr(key, delta) {
+  const p = state.players[cmdrPlayer];
+  p.cmdDamage[key] = Math.max(0, (p.cmdDamage[key] || 0) + delta);
   openCmdr(cmdrPlayer);
   render();
 }
