@@ -482,9 +482,11 @@ document.getElementById('dice-plus').onclick = () => {
 document.getElementById('roll-dice').onclick = () => {
   const stage = document.getElementById('dice-stage');
   stage.innerHTML = '';
+  const results = [];
   
   for (let i = 0; i < diceCount; i++) {
     const result = Math.floor(Math.random() * diceType) + 1;
+    results.push(result);
     const wrapper = document.createElement('div');
     wrapper.className = 'dice-wrapper';
     
@@ -542,6 +544,11 @@ document.getElementById('roll-dice').onclick = () => {
       wrapper.innerHTML = `<div class="dice-result-num">${result}</div>`;
     }, 800 + i * 150);
   }
+  
+  setTimeout(() => {
+    const resultStr = results.length > 1 ? results.join(', ') : results[0];
+    logAction(`rolled ${diceCount}d${diceType}: ${resultStr}`);
+  }, 800 + diceCount * 150 + 100);
 };
 
 // Coin
@@ -558,6 +565,7 @@ document.getElementById('flip-coin').onclick = () => {
     coin.classList.remove('flipping');
     if (result === 'tails') coin.classList.add('show-tails');
     document.getElementById('coin-result').textContent = result === 'heads' ? 'Heads!' : 'Tails!';
+    logAction(`flipped coin: ${result}`);
   }, 1000);
 };
 
