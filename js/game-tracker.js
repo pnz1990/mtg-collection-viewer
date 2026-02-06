@@ -352,19 +352,20 @@ document.getElementById('roll-dice').onclick = () => {
     
     let svg = '';
     if (diceType === 6) {
-      // D6 - Cube wireframe
+      // D6 - Cube wireframe with proper 3D perspective
       svg = `<svg viewBox="0 0 60 60">
-        <rect x="8" y="8" width="44" height="44" rx="6" stroke-width="2.5"/>
-        <line x1="8" y1="8" x2="20" y2="0" stroke-width="2"/>
-        <line x1="52" y1="8" x2="60" y2="0" stroke-width="2"/>
-        <line x1="52" y1="52" x2="60" y2="60" stroke-width="2"/>
-        <line x1="20" y1="0" x2="60" y2="0" stroke-width="2"/>
-        <line x1="60" y1="0" x2="60" y2="60" stroke-width="2"/>
-        <circle class="dot" cx="22" cy="22" r="4"/>
-        <circle class="dot" cx="38" cy="22" r="4"/>
-        <circle class="dot" cx="22" cy="38" r="4"/>
-        <circle class="dot" cx="38" cy="38" r="4"/>
-        <circle class="dot" cx="30" cy="30" r="4"/>
+        <!-- Front face -->
+        <rect x="10" y="18" width="32" height="32" rx="4" stroke-width="2.5"/>
+        <!-- Top face -->
+        <polygon points="10,18 18,8 50,8 42,18" stroke-width="2"/>
+        <!-- Right face -->
+        <polygon points="42,18 50,8 50,40 42,50" stroke-width="2"/>
+        <!-- Dots on front face -->
+        <circle class="dot" cx="20" cy="28" r="3"/>
+        <circle class="dot" cx="32" cy="28" r="3"/>
+        <circle class="dot" cx="20" cy="40" r="3"/>
+        <circle class="dot" cx="32" cy="40" r="3"/>
+        <circle class="dot" cx="26" cy="34" r="3"/>
       </svg>`;
     } else if (diceType === 12) {
       // D12 - Dodecahedron wireframe (pentagon-based)
