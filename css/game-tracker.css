@@ -173,7 +173,7 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 .count-btn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px rgba(230,57,70,0.4); }
 .dice-count-select span { font-size: 2rem; font-weight: 600; min-width: 40px; text-align: center; color: var(--accent); text-shadow: 0 0 10px rgba(230,57,70,0.5); }
 
-.dice-stage { min-height: 120px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: center; padding: 10px 20px; }
+.dice-stage { min-height: 120px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; align-items: center; padding: 10px 20px; overflow: hidden; }
 
 .dice-wrapper { width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; }
 
@@ -195,7 +195,7 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 
 /* Coin - Neon style */
 .coin-content .modal-header { border: none; }
-.coin-stage { height: 180px; display: flex; align-items: center; justify-content: center; perspective: 800px; }
+.coin-stage { height: 180px; display: flex; align-items: center; justify-content: center; perspective: 800px; overflow: hidden; }
 .coin-3d { width: 100px; height: 100px; position: relative; transform-style: preserve-3d; }
 .coin-3d.flipping { animation: coinFlip3d 1s ease-out; }
 @keyframes coinFlip3d {
