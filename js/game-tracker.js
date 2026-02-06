@@ -781,7 +781,13 @@ function createPlayerParticles(container, colors) {
 }
 
 // Turn Phases
-const phases = ['Beginning Phase', 'First Main Phase', 'Combat Phase', 'Second Main Phase', 'End Phase'];
+const phases = [
+  { name: 'Beginning Phase', steps: ['Untap Step', 'Upkeep Step', 'Draw Step'] },
+  { name: 'Precombat Main Phase', steps: [] },
+  { name: 'Combat Phase', steps: ['Beginning of Combat Step', 'Declare Attackers Step', 'Declare Blockers Step', 'Combat Damage Step', 'End of Combat Step'] },
+  { name: 'Postcombat Main Phase', steps: [] },
+  { name: 'Ending Phase', steps: ['End Step', 'Cleanup Step'] }
+];
 
 function openPhases() {
   renderPhases();
@@ -793,7 +799,14 @@ function renderPhases() {
   container.innerHTML = phases.map((phase, idx) => `
     <div class="phase-item ${idx === state.currentPhase ? 'active' : ''}" data-idx="${idx}">
       <div class="phase-number">${idx + 1}</div>
-      <div class="phase-name">${phase}</div>
+      <div class="phase-content">
+        <div class="phase-name">${phase.name}</div>
+        ${phase.steps.length > 0 ? `
+          <div class="phase-steps">
+            ${phase.steps.map(step => `<div class="phase-step">├─ ${step}</div>`).join('')}
+          </div>
+        ` : ''}
+      </div>
     </div>
   `).join('');
 }
