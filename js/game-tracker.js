@@ -43,22 +43,12 @@ function getPlayerName(idx) {
 }
 
 // Setup
-async function loadFormats() {
-  try {
-    const res = await fetch('https://api.scryfall.com/catalog/game-formats');
-    const data = await res.json();
-    const formats = data.data.filter(f => ['commander', 'standard', 'modern', 'legacy', 'vintage', 'pioneer', 'pauper'].includes(f));
-    const container = document.getElementById('format-select');
-    container.innerHTML = formats.map(f => 
-      `<button data-value="${f}" ${f === 'commander' ? 'class="selected"' : ''}>${f.charAt(0).toUpperCase() + f.slice(1)}</button>`
-    ).join('');
-  } catch {
-    document.getElementById('format-select').innerHTML = `
-      <button data-value="commander" class="selected">Commander</button>
-      <button data-value="standard">Standard</button>
-      <button data-value="modern">Modern</button>
-    `;
-  }
+function loadFormats() {
+  const formats = ['commander', 'standard', 'modern', 'legacy', 'vintage', 'pioneer', 'pauper'];
+  const container = document.getElementById('format-select');
+  container.innerHTML = formats.map(f => 
+    `<button data-value="${f}" ${f === 'commander' ? 'class="selected"' : ''}>${f.charAt(0).toUpperCase() + f.slice(1)}</button>`
+  ).join('');
 }
 
 loadFormats();
