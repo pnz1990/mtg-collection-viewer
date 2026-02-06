@@ -218,10 +218,11 @@ async function searchCards(query) {
     const data = await res.json();
     const cards = data.data.slice(0, 12);
     document.getElementById('search-results').innerHTML = cards.map(card => {
-      const art = card.image_uris?.art_crop || card.card_faces?.[0]?.image_uris?.art_crop || '';
+      const art = card.image_uris?.art_crop || card.card_faces?.[0]?.image_uris?.art_crop || card.image_uris?.normal || card.card_faces?.[0]?.image_uris?.normal || '';
+      const thumb = card.image_uris?.small || card.card_faces?.[0]?.image_uris?.small || '';
       return `
       <div class="search-result" data-name="${card.name}" data-art="${art}">
-        <img src="${card.image_uris?.small || card.card_faces?.[0]?.image_uris?.small || ''}" onerror="this.style.display='none'">
+        <img src="${thumb}" onerror="this.style.display='none'">
         <span>${card.name}</span>
       </div>`;
     }).join('') || '<div class="search-empty">No commanders found</div>';

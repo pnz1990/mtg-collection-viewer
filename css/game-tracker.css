@@ -49,7 +49,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .player.has-art::before { background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%); }
 
 /* Dual commander art */
-.dual-art-bg { position: absolute; inset: 0; background-size: cover; background-position: center; z-index: 0; }
+.dual-art-bg { position: absolute; inset: 0; background-size: cover; background-position: center; z-index: 0 !important; }
 .dual-art-bg.right { mask-image: linear-gradient(to right, transparent 30%, black 70%); -webkit-mask-image: linear-gradient(to right, transparent 30%, black 70%); }
 .player.has-dual-art::before { background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%); z-index: 1; }
 .player.rotate180 { transform: rotate(180deg); }
