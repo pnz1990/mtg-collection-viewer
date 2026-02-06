@@ -542,7 +542,11 @@ document.getElementById('btn-first').onclick = () => {
     i++;
     if (i >= total) {
       clearInterval(interval);
-      state.activePlayer = order[Math.floor(Math.random() * order.length)];
+      const winner = order[Math.floor(Math.random() * order.length)];
+      state.activePlayer = winner;
+      state.firstPlayer = winner;
+      state.turnCount = 1;
+      logAction(`started turn`);
       render();
     }
   }, 100 + i * 10);
@@ -553,11 +557,12 @@ document.getElementById('btn-pass').onclick = () => {
   const currentIdx = order.indexOf(state.activePlayer);
   if (state.activePlayer >= 0) logAction(`ended turn`);
   const nextPlayer = order[(currentIdx + 1) % order.length];
-  // Increment turn count when we return to first player
+  // First time setting active player
   if (state.firstPlayer === -1) {
     state.firstPlayer = nextPlayer;
     state.turnCount = 1;
   } else if (nextPlayer === state.firstPlayer) {
+    // Increment turn count when returning to first player
     state.turnCount++;
   }
   state.activePlayer = nextPlayer;
