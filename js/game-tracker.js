@@ -416,7 +416,7 @@ function openCounters(idx) {
     { key: 'poison', icon: '<i class="ms ms-p"></i>', label: 'Poison', step: 1 },
     { key: 'energy', icon: '<span class="card-symbol card-symbol-E"></span>', label: 'Energy', step: 1 },
     { key: 'experience', icon: '✧', label: 'Experience', step: 1 },
-    { key: 'storm', icon: '⚡', label: 'Storm', step: 1 },
+    { key: 'storm', icon: '<svg viewBox="0 0 24 24" width="28" height="28"><path d="M7 2v11h3v9l7-12h-4l4-8z" fill="currentColor"/></svg>', label: 'Storm', step: 1 },
     { key: 'cmdTax', icon: '<i class="ms ms-commander"></i>', label: 'Cmdr Tax', step: 2 }
   ];
   document.getElementById('counters-grid').innerHTML = counters.map(c => `
