@@ -106,7 +106,8 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 .mana-clear:active { transform: scale(0.9); }
 
 /* Tools Bar */
-.tools-bar { display: flex; justify-content: center; gap: 12px; padding: 10px 15px; background: var(--bg2); border-top: 1px solid var(--bg3); flex-wrap: wrap; }
+.tools-bar { display: flex; justify-content: center; align-items: center; gap: 12px; padding: 10px 15px; background: var(--bg2); border-top: 1px solid var(--bg3); flex-wrap: wrap; }
+.turn-counter { font-size: 0.85rem; font-weight: 600; color: var(--accent); padding: 6px 12px; background: rgba(230,57,70,0.15); border-radius: 20px; }
 .tool-btn { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--text2); background: transparent; color: var(--text2); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
 .tool-btn svg { width: 22px; height: 22px; }
 .tool-btn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px rgba(230,57,70,0.4); }

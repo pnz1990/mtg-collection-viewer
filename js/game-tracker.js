@@ -4,12 +4,15 @@ const state = {
   numPlayers: 2,
   startingLife: 40,
   activePlayer: -1,
+  turnCount: 0,
+  firstPlayer: -1,
   log: []
 };
 
 function logAction(msg) {
-  const turn = state.activePlayer >= 0 ? getPlayerName(state.activePlayer) : 'Setup';
-  state.log.push({ time: new Date().toLocaleTimeString(), turn, msg });
+  const name = state.activePlayer >= 0 ? getPlayerName(state.activePlayer) : 'Setup';
+  const turnLabel = state.turnCount > 0 ? `${name} T${state.turnCount}` : 'Setup';
+  state.log.push({ time: new Date().toLocaleTimeString(), turn: turnLabel, msg });
 }
 
 function getPlayerName(idx) {
@@ -49,6 +52,7 @@ function initGame() {
 function render() {
   const c = document.getElementById('players-container');
   c.className = `players-container p${state.numPlayers}`;
+  document.getElementById('turn-counter').textContent = `Turn ${state.turnCount}`;
   c.innerHTML = state.players.map((p, i) => {
     const badges = [];
     if (p.poison > 0) badges.push(`<span class="badge poison"><i class="ms ms-p"></i>${p.poison}</span>`);
@@ -549,9 +553,17 @@ document.getElementById('btn-first').onclick = () => {
 document.getElementById('btn-pass').onclick = () => {
   const order = getClockwiseOrder();
   const currentIdx = order.indexOf(state.activePlayer);
-  if (state.activePlayer >= 0) logAction(`${getPlayerName(state.activePlayer)} ended turn`);
-  state.activePlayer = order[(currentIdx + 1) % order.length];
-  logAction(`${getPlayerName(state.activePlayer)} started turn`);
+  if (state.activePlayer >= 0) logAction(`ended turn`);
+  const nextPlayer = order[(currentIdx + 1) % order.length];
+  // Increment turn count when we return to first player
+  if (state.firstPlayer === -1) {
+    state.firstPlayer = nextPlayer;
+    state.turnCount = 1;
+  } else if (nextPlayer === state.firstPlayer) {
+    state.turnCount++;
+  }
+  state.activePlayer = nextPlayer;
+  logAction(`started turn`);
   render();
 };
 
