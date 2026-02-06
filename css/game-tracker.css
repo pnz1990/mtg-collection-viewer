@@ -125,7 +125,7 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 
 /* Modal */
 .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; backdrop-filter: blur(4px); overflow-y: auto; }
-.modal-content { background: var(--bg2); border-radius: 20px; width: 100%; max-width: 360px; max-height: 85vh; overflow-y: auto; margin: auto; }
+.modal-content { background: var(--bg2); border-radius: 20px; width: 100%; max-width: 360px; max-height: 85vh; overflow-y: auto; margin: auto; overflow-x: hidden; }
 .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid var(--bg3); }
 .modal-header h2 { font-size: 1.2rem; font-weight: 600; }
 .close-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--text2); background: transparent; color: var(--text); font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
