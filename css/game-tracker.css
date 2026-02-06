@@ -268,21 +268,28 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 .stack-content { max-width: 500px; max-height: 90vh; }
 
 /* Turn Phases */
-.phases-container { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-.phase-item { display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: var(--bg); border: 2px solid var(--bg3); border-radius: 12px; transition: all 0.3s; }
-.phase-item.active { border-color: var(--accent); background: rgba(230,57,70,0.1); transform: scale(1.02); }
-.phase-item.phase-enter { animation: phaseEnter 0.3s ease-out; }
-@keyframes phaseEnter {
-  0% { transform: scale(1.02) translateX(-20px); opacity: 0.5; }
-  100% { transform: scale(1.02) translateX(0); opacity: 1; }
+.phases-content { max-width: 450px; }
+.phases-display { padding: 30px 20px 20px; }
+.phase-display { text-align: center; padding: 30px 20px; background: linear-gradient(135deg, rgba(230,57,70,0.1) 0%, rgba(230,57,70,0.05) 100%); border-radius: 16px; margin-bottom: 20px; min-height: 200px; display: flex; flex-direction: column; justify-content: center; transition: all 0.3s; }
+.phase-display.phase-pulse { animation: phasePulse 0.3s ease-out; }
+@keyframes phasePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(230,57,70,0.4); }
 }
-.phase-number { width: 40px; height: 40px; border-radius: 50%; background: var(--bg3); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 600; color: var(--text2); flex-shrink: 0; }
-.phase-item.active .phase-number { background: var(--accent); color: white; }
-.phase-content { flex: 1; }
-.phase-name { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 8px; }
-.phase-item.active .phase-name { color: var(--accent); }
-.phase-steps { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
-.phase-step { font-size: 0.85rem; color: var(--text2); padding-left: 8px; font-family: monospace; }
+.phase-main { margin-bottom: 20px; }
+.phase-subtitle { font-size: 0.75rem; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.phase-title { font-size: 1.8rem; font-weight: 700; color: var(--accent); text-shadow: 0 0 20px rgba(230,57,70,0.3); }
+.step-display { padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+.step-subtitle { font-size: 0.7rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.step-title { font-size: 1.2rem; font-weight: 600; color: var(--text); }
+.phase-dots { display: flex; gap: 8px; justify-content: center; margin-bottom: 12px; }
+.phase-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--bg3); transition: all 0.3s; }
+.phase-dot.active { background: var(--accent); box-shadow: 0 0 12px var(--accent); transform: scale(1.3); }
+.phase-dot.completed { background: rgba(230,57,70,0.5); }
+.step-dots { display: flex; gap: 6px; justify-content: center; }
+.step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--bg3); transition: all 0.3s; }
+.step-dot.active { background: var(--text); box-shadow: 0 0 8px rgba(255,255,255,0.5); transform: scale(1.2); }
+.step-dot.completed { background: rgba(255,255,255,0.3); }
 
 /* Stack Tracker */
 .stack-search-box { padding: 15px 20px 10px; }

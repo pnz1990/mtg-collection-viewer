@@ -12,7 +12,8 @@ const state = {
   stack: [],
   format: 'commander',
   particlesEnabled: true,
-  currentPhase: 0
+  currentPhase: 0,
+  currentStep: 0
 };
 
 let clockInterval = null;
@@ -790,35 +791,66 @@ const phases = [
 ];
 
 function openPhases() {
+  state.currentPhase = 0;
+  state.currentStep = 0;
   renderPhases();
   openModal('phases-modal');
 }
 
 function renderPhases() {
   const container = document.getElementById('phases-container');
-  container.innerHTML = phases.map((phase, idx) => `
-    <div class="phase-item ${idx === state.currentPhase ? 'active' : ''}" data-idx="${idx}">
-      <div class="phase-number">${idx + 1}</div>
-      <div class="phase-content">
-        <div class="phase-name">${phase.name}</div>
-        ${phase.steps.length > 0 ? `
-          <div class="phase-steps">
-            ${phase.steps.map(step => `<div class="phase-step">├─ ${step}</div>`).join('')}
-          </div>
-        ` : ''}
-      </div>
-    </div>
-  `).join('');
+  const currentPhaseData = phases[state.currentPhase];
+  const hasSteps = currentPhaseData.steps.length > 0;
+  const currentStepName = hasSteps ? currentPhaseData.steps[state.currentStep] : null;
+  
+  // Main phase display
+  document.getElementById('current-phase-name').textContent = currentPhaseData.name;
+  document.getElementById('current-phase-number').textContent = `Phase ${state.currentPhase + 1} of ${phases.length}`;
+  
+  if (hasSteps) {
+    document.getElementById('current-step-name').textContent = currentStepName;
+    document.getElementById('current-step-number').textContent = `Step ${state.currentStep + 1} of ${currentPhaseData.steps.length}`;
+    document.getElementById('step-display').classList.remove('hidden');
+  } else {
+    document.getElementById('step-display').classList.add('hidden');
+  }
+  
+  // Progress dots
+  const dotsContainer = document.getElementById('phase-dots');
+  dotsContainer.innerHTML = phases.map((p, idx) => 
+    `<div class="phase-dot ${idx === state.currentPhase ? 'active' : ''} ${idx < state.currentPhase ? 'completed' : ''}"></div>`
+  ).join('');
+  
+  // Step dots
+  if (hasSteps) {
+    const stepDotsContainer = document.getElementById('step-dots');
+    stepDotsContainer.innerHTML = currentPhaseData.steps.map((s, idx) => 
+      `<div class="step-dot ${idx === state.currentStep ? 'active' : ''} ${idx < state.currentStep ? 'completed' : ''}"></div>`
+    ).join('');
+    stepDotsContainer.classList.remove('hidden');
+  } else {
+    document.getElementById('step-dots').classList.add('hidden');
+  }
 }
 
 document.getElementById('next-phase')?.addEventListener('click', () => {
-  state.currentPhase = (state.currentPhase + 1) % phases.length;
+  const currentPhaseData = phases[state.currentPhase];
+  const hasSteps = currentPhaseData.steps.length > 0;
+  
+  if (hasSteps && state.currentStep < currentPhaseData.steps.length - 1) {
+    // Move to next step
+    state.currentStep++;
+  } else {
+    // Move to next phase
+    state.currentPhase = (state.currentPhase + 1) % phases.length;
+    state.currentStep = 0;
+  }
+  
   renderPhases();
   
-  // Animate transition
-  const activePhase = document.querySelector('.phase-item.active');
-  activePhase?.classList.add('phase-enter');
-  setTimeout(() => activePhase?.classList.remove('phase-enter'), 300);
+  // Trigger animation
+  document.getElementById('phase-display').classList.add('phase-pulse');
+  setTimeout(() => document.getElementById('phase-display').classList.remove('phase-pulse'), 300);
 });
 
 // Stack Tracker

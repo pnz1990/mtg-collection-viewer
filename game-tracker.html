@@ -271,13 +271,26 @@
 
   <!-- Turn Phases Modal -->
   <div id="phases-modal" class="modal hidden">
-    <div class="modal-content">
+    <div class="modal-content phases-content">
       <div class="modal-header">
         <h2>Turn Phases</h2>
         <button class="close-btn">&times;</button>
       </div>
-      <div id="phases-container" class="phases-container"></div>
-      <button id="next-phase" class="action-btn">Next Phase</button>
+      <div class="phases-display">
+        <div id="phase-display" class="phase-display">
+          <div class="phase-main">
+            <div id="current-phase-number" class="phase-subtitle">Phase 1 of 5</div>
+            <div id="current-phase-name" class="phase-title">Beginning Phase</div>
+          </div>
+          <div id="step-display" class="step-display">
+            <div id="current-step-number" class="step-subtitle">Step 1 of 3</div>
+            <div id="current-step-name" class="step-title">Untap Step</div>
+          </div>
+        </div>
+        <div id="phase-dots" class="phase-dots"></div>
+        <div id="step-dots" class="step-dots"></div>
+      </div>
+      <button id="next-phase" class="action-btn">Next →</button>
     </div>
   </div>
 
