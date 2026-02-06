@@ -5,36 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Game Tracker - MTG Collection Viewer</title>
   <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mana-font@latest/css/mana.css">
   <link rel="stylesheet" href="css/game-tracker.css">
 </head>
 <body>
   <!-- Setup Screen -->
   <div id="setup-screen" class="setup-screen">
     <div class="setup-card">
-      <h1>🎮 Game Setup</h1>
+      <h1>Game Setup</h1>
+      
       <div class="setup-section">
-        <label>Number of Players</label>
-        <div class="setup-options" id="player-count">
-          <button data-value="2" class="selected">2</button>
-          <button data-value="3">3</button>
-          <button data-value="4">4</button>
+        <label>Players</label>
+        <div class="player-select" id="player-count">
+          <button data-value="2" class="selected">
+            <svg viewBox="0 0 100 100"><circle cx="50" cy="20" r="12"/><circle cx="50" cy="80" r="12"/></svg>
+            <span>2</span>
+          </button>
+          <button data-value="3">
+            <svg viewBox="0 0 100 100"><circle cx="50" cy="15" r="10"/><circle cx="20" cy="75" r="10"/><circle cx="80" cy="75" r="10"/></svg>
+            <span>3</span>
+          </button>
+          <button data-value="4">
+            <svg viewBox="0 0 100 100"><circle cx="20" cy="20" r="10"/><circle cx="80" cy="20" r="10"/><circle cx="20" cy="80" r="10"/><circle cx="80" cy="80" r="10"/></svg>
+            <span>4</span>
+          </button>
         </div>
       </div>
+
       <div class="setup-section">
         <label>Starting Life</label>
-        <div class="setup-options" id="starting-life">
+        <div class="life-select" id="starting-life">
           <button data-value="20">20</button>
           <button data-value="40" class="selected">40</button>
           <button data-value="30">30</button>
         </div>
       </div>
-      <div class="setup-section">
-        <label>Layout</label>
-        <div class="setup-options" id="layout">
-          <button data-value="row" class="selected">Side by Side</button>
-          <button data-value="around">Around Table</button>
-        </div>
-      </div>
+
       <button id="start-game" class="start-btn">Start Game</button>
     </div>
   </div>
@@ -43,76 +49,98 @@
   <div id="game-screen" class="game-screen hidden">
     <div id="players-container" class="players-container"></div>
     
-    <!-- Tools Bar -->
     <div class="tools-bar">
-      <button id="btn-dice" class="tool-btn">🎲</button>
-      <button id="btn-coin" class="tool-btn">🪙</button>
-      <button id="btn-reset" class="tool-btn">🔄</button>
-      <button id="btn-menu" class="tool-btn">☰</button>
+      <button id="btn-dice" class="tool-btn" title="Roll Dice">
+        <svg class="dice-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/></svg>
+      </button>
+      <button id="btn-coin" class="tool-btn" title="Flip Coin">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><text x="12" y="16" text-anchor="middle" font-size="10" fill="currentColor">$</text></svg>
+      </button>
+      <button id="btn-reset" class="tool-btn" title="Reset">
+        <svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" fill="currentColor"/></svg>
+      </button>
+      <button id="btn-menu" class="tool-btn" title="Menu">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
     </div>
   </div>
 
   <!-- Dice Modal -->
   <div id="dice-modal" class="modal hidden">
-    <div class="modal-content dice-modal">
-      <h2>Roll Dice</h2>
-      <div class="dice-options">
-        <button class="dice-type selected" data-sides="6">D6</button>
-        <button class="dice-type" data-sides="12">D12</button>
-        <button class="dice-type" data-sides="20">D20</button>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Roll Dice</h2>
+        <button class="close-btn">&times;</button>
       </div>
-      <div class="dice-count">
-        <button id="dice-minus">−</button>
+      <div class="dice-type-select">
+        <button class="dice-type-btn selected" data-sides="6">
+          <div class="dice-shape d6"></div>
+          <span>D6</span>
+        </button>
+        <button class="dice-type-btn" data-sides="20">
+          <div class="dice-shape d20"></div>
+          <span>D20</span>
+        </button>
+      </div>
+      <div class="dice-count-select">
+        <button id="dice-minus" class="count-btn">−</button>
         <span id="dice-num">1</span>
-        <button id="dice-plus">+</button>
+        <button id="dice-plus" class="count-btn">+</button>
       </div>
-      <div id="dice-results" class="dice-results"></div>
-      <button id="roll-dice" class="action-btn">Roll!</button>
-      <button class="close-modal">Close</button>
+      <div id="dice-stage" class="dice-stage"></div>
+      <button id="roll-dice" class="action-btn">Roll</button>
     </div>
   </div>
 
   <!-- Coin Modal -->
   <div id="coin-modal" class="modal hidden">
-    <div class="modal-content coin-modal">
-      <h2>Flip Coin</h2>
-      <div id="coin" class="coin">
-        <div class="coin-side heads">H</div>
-        <div class="coin-side tails">T</div>
+    <div class="modal-content coin-content">
+      <div class="modal-header">
+        <h2>Flip Coin</h2>
+        <button class="close-btn">&times;</button>
+      </div>
+      <div class="coin-stage">
+        <div id="coin" class="coin-3d">
+          <div class="coin-face heads"></div>
+          <div class="coin-face tails"></div>
+        </div>
       </div>
       <div id="coin-result" class="coin-result"></div>
-      <button id="flip-coin" class="action-btn">Flip!</button>
-      <button class="close-modal">Close</button>
+      <button id="flip-coin" class="action-btn">Flip</button>
     </div>
   </div>
 
   <!-- Commander Damage Modal -->
   <div id="cmdr-modal" class="modal hidden">
     <div class="modal-content">
-      <h2>Commander Damage</h2>
+      <div class="modal-header">
+        <h2>Commander Damage</h2>
+        <button class="close-btn">&times;</button>
+      </div>
       <div id="cmdr-grid" class="cmdr-grid"></div>
-      <button class="close-modal">Close</button>
     </div>
   </div>
 
   <!-- Counters Modal -->
   <div id="counters-modal" class="modal hidden">
     <div class="modal-content">
-      <h2 id="counters-title">Counters</h2>
+      <div class="modal-header">
+        <h2 id="counters-title">Counters</h2>
+        <button class="close-btn">&times;</button>
+      </div>
       <div id="counters-grid" class="counters-grid"></div>
-      <button class="close-modal">Close</button>
     </div>
   </div>
 
   <!-- Mana Modal -->
   <div id="mana-modal" class="modal hidden">
     <div class="modal-content">
-      <h2>Floating Mana</h2>
-      <div id="mana-grid" class="mana-grid"></div>
-      <div class="mana-actions">
-        <button id="clear-mana" class="action-btn secondary">Clear All</button>
+      <div class="modal-header">
+        <h2>Floating Mana</h2>
+        <button class="close-btn">&times;</button>
       </div>
-      <button class="close-modal">Close</button>
+      <div id="mana-grid" class="mana-grid"></div>
+      <button id="clear-mana" class="action-btn secondary">Clear All</button>
     </div>
   </div>
 

@@ -1,275 +1,272 @@
 // Game State
-let gameState = {
+const state = {
   players: [],
   numPlayers: 2,
-  startingLife: 40,
-  layout: 'row'
+  startingLife: 40
 };
 
-// Setup handlers
-document.querySelectorAll('.setup-options').forEach(group => {
-  group.querySelectorAll('button').forEach(btn => {
-    btn.onclick = () => {
-      group.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-    };
-  });
+// Setup
+document.querySelectorAll('#player-count button, #starting-life button').forEach(btn => {
+  btn.onclick = () => {
+    btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  };
 });
 
 document.getElementById('start-game').onclick = () => {
-  gameState.numPlayers = parseInt(document.querySelector('#player-count .selected').dataset.value);
-  gameState.startingLife = parseInt(document.querySelector('#starting-life .selected').dataset.value);
-  gameState.layout = document.querySelector('#layout .selected').dataset.value;
+  state.numPlayers = parseInt(document.querySelector('#player-count .selected').dataset.value);
+  state.startingLife = parseInt(document.querySelector('#starting-life .selected').dataset.value);
   initGame();
 };
 
 function initGame() {
-  gameState.players = [];
-  for (let i = 0; i < gameState.numPlayers; i++) {
-    gameState.players.push({
-      name: `Player ${i + 1}`,
-      life: gameState.startingLife,
-      poison: 0,
-      energy: 0,
-      experience: 0,
-      storm: 0,
-      cmdTax: 0,
-      cmdDamage: Array(gameState.numPlayers).fill(0),
-      mana: { W: 0, U: 0, B: 0, R: 0, G: 0, C: 0 }
-    });
-  }
-  renderPlayers();
+  state.players = Array.from({ length: state.numPlayers }, (_, i) => ({
+    name: `Player ${i + 1}`,
+    life: state.startingLife,
+    poison: 0, energy: 0, experience: 0, storm: 0, cmdTax: 0,
+    cmdDamage: Array(state.numPlayers).fill(0),
+    mana: { W: 0, U: 0, B: 0, R: 0, G: 0, C: 0 }
+  }));
+  render();
   document.getElementById('setup-screen').classList.add('hidden');
   document.getElementById('game-screen').classList.remove('hidden');
 }
 
-function renderPlayers() {
-  const container = document.getElementById('players-container');
-  container.className = `players-container layout-${gameState.layout} p${gameState.numPlayers}`;
-  container.innerHTML = gameState.players.map((p, i) => {
-    const rotate = gameState.layout === 'around' && gameState.numPlayers >= 2 && i === 0;
+function render() {
+  const c = document.getElementById('players-container');
+  c.className = `players-container p${state.numPlayers}`;
+  c.innerHTML = state.players.map((p, i) => {
+    const rotate = state.numPlayers === 2 && i === 0;
+    const badges = [];
+    if (p.poison > 0) badges.push(`<span class="badge poison"><i class="ms ms-counter-poison"></i>${p.poison}</span>`);
+    if (p.energy > 0) badges.push(`<span class="badge energy"><i class="ms ms-counter-energy"></i>${p.energy}</span>`);
+    if (p.experience > 0) badges.push(`<span class="badge experience">✧ ${p.experience}</span>`);
+    const totalCmd = p.cmdDamage.reduce((a, b) => a + b, 0);
+    if (totalCmd > 0) badges.push(`<span class="badge cmdr">⚔ ${totalCmd}</span>`);
+    
     return `
-    <div class="player p${i} ${rotate ? 'rotated' : ''}" data-player="${i}">
-      <div class="player-name" onclick="editName(${i})">${p.name}</div>
-      <div class="life-display">
-        <button class="life-btn minus" onclick="changeLife(${i}, -1)">−</button>
+    <div class="player p${i} ${rotate ? 'rotate180' : ''}" data-idx="${i}">
+      <div class="player-name" data-action="name">${p.name}</div>
+      <div class="life-area">
+        <button class="life-btn minus" data-action="life" data-delta="-1">−</button>
         <div class="life-total">${p.life}</div>
-        <button class="life-btn plus" onclick="changeLife(${i}, 1)">+</button>
+        <button class="life-btn plus" data-action="life" data-delta="1">+</button>
       </div>
-      <div class="counter-badges">
-        ${p.poison > 0 ? `<span class="counter-badge poison">☠️ ${p.poison}</span>` : ''}
-        ${p.energy > 0 ? `<span class="counter-badge energy">⚡ ${p.energy}</span>` : ''}
-        ${p.experience > 0 ? `<span class="counter-badge experience">✧ ${p.experience}</span>` : ''}
-        ${getTotalCmdrDamage(i) > 0 ? `<span class="counter-badge cmdr">⚔️ ${getTotalCmdrDamage(i)}</span>` : ''}
-      </div>
+      ${badges.length ? `<div class="player-badges">${badges.join('')}</div>` : ''}
       <div class="player-actions">
-        <button class="player-action" onclick="openCounters(${i})">Counters</button>
-        <button class="player-action" onclick="openCmdrDamage(${i})">Cmdr Dmg</button>
-        <button class="player-action" onclick="openMana(${i})">Mana</button>
+        <button class="action-pill" data-action="counters">Counters</button>
+        <button class="action-pill" data-action="cmdr">Cmdr Dmg</button>
+        <button class="action-pill" data-action="mana">Mana</button>
       </div>
     </div>`;
   }).join('');
+
+  // Event delegation
+  c.onclick = e => {
+    const player = e.target.closest('.player');
+    if (!player) return;
+    const idx = parseInt(player.dataset.idx);
+    const action = e.target.dataset.action;
+    
+    if (action === 'life') {
+      state.players[idx].life += parseInt(e.target.dataset.delta);
+      render();
+    } else if (action === 'name') {
+      const name = prompt('Player name:', state.players[idx].name);
+      if (name) { state.players[idx].name = name; render(); }
+    } else if (action === 'counters') openCounters(idx);
+    else if (action === 'cmdr') openCmdr(idx);
+    else if (action === 'mana') openMana(idx);
+  };
 }
 
-function changeLife(playerIdx, delta) {
-  gameState.players[playerIdx].life += delta;
-  renderPlayers();
-}
-
-function getTotalCmdrDamage(playerIdx) {
-  return gameState.players[playerIdx].cmdDamage.reduce((a, b) => a + b, 0);
-}
-
-function editName(playerIdx) {
-  const name = prompt('Enter player name:', gameState.players[playerIdx].name);
-  if (name) {
-    gameState.players[playerIdx].name = name;
-    renderPlayers();
-  }
-}
-
-// Counters Modal
-let currentCounterPlayer = 0;
-function openCounters(playerIdx) {
-  currentCounterPlayer = playerIdx;
-  const p = gameState.players[playerIdx];
+// Counters
+let counterPlayer = 0;
+function openCounters(idx) {
+  counterPlayer = idx;
+  const p = state.players[idx];
   document.getElementById('counters-title').textContent = `${p.name} - Counters`;
-  document.getElementById('counters-grid').innerHTML = `
+  const counters = [
+    { key: 'poison', icon: '<i class="ms ms-counter-poison"></i>', label: 'Poison', step: 1 },
+    { key: 'energy', icon: '<i class="ms ms-counter-energy"></i>', label: 'Energy', step: 1 },
+    { key: 'experience', icon: '✧', label: 'Experience', step: 1 },
+    { key: 'storm', icon: '🌀', label: 'Storm', step: 1 },
+    { key: 'cmdTax', icon: '<i class="ms ms-commander"></i>', label: 'Cmdr Tax', step: 2 }
+  ];
+  document.getElementById('counters-grid').innerHTML = counters.map(c => `
     <div class="counter-item">
-      <div class="icon">☠️</div><div class="label">Poison</div>
-      <div class="value">${p.poison}</div>
-      <div class="controls">
-        <button onclick="changeCounter('poison', -1)">−</button>
-        <button onclick="changeCounter('poison', 1)">+</button>
+      <div class="counter-icon">${c.icon}</div>
+      <div class="counter-label">${c.label}</div>
+      <div class="counter-value">${p[c.key]}</div>
+      <div class="counter-controls">
+        <button onclick="changeCounter('${c.key}', -${c.step})">−</button>
+        <button onclick="changeCounter('${c.key}', ${c.step})">+</button>
       </div>
     </div>
-    <div class="counter-item">
-      <div class="icon">⚡</div><div class="label">Energy</div>
-      <div class="value">${p.energy}</div>
-      <div class="controls">
-        <button onclick="changeCounter('energy', -1)">−</button>
-        <button onclick="changeCounter('energy', 1)">+</button>
-      </div>
-    </div>
-    <div class="counter-item">
-      <div class="icon">✧</div><div class="label">Experience</div>
-      <div class="value">${p.experience}</div>
-      <div class="controls">
-        <button onclick="changeCounter('experience', -1)">−</button>
-        <button onclick="changeCounter('experience', 1)">+</button>
-      </div>
-    </div>
-    <div class="counter-item">
-      <div class="icon">🌀</div><div class="label">Storm</div>
-      <div class="value">${p.storm}</div>
-      <div class="controls">
-        <button onclick="changeCounter('storm', -1)">−</button>
-        <button onclick="changeCounter('storm', 1)">+</button>
-      </div>
-    </div>
-    <div class="counter-item">
-      <div class="icon">👑</div><div class="label">Cmdr Tax</div>
-      <div class="value">${p.cmdTax}</div>
-      <div class="controls">
-        <button onclick="changeCounter('cmdTax', -2)">−2</button>
-        <button onclick="changeCounter('cmdTax', 2)">+2</button>
-      </div>
-    </div>
-  `;
-  document.getElementById('counters-modal').classList.remove('hidden');
+  `).join('');
+  openModal('counters-modal');
 }
 
-function changeCounter(type, delta) {
-  const p = gameState.players[currentCounterPlayer];
-  p[type] = Math.max(0, p[type] + delta);
-  openCounters(currentCounterPlayer);
-  renderPlayers();
+function changeCounter(key, delta) {
+  state.players[counterPlayer][key] = Math.max(0, state.players[counterPlayer][key] + delta);
+  openCounters(counterPlayer);
+  render();
 }
 
-// Commander Damage Modal
-let currentCmdrPlayer = 0;
-function openCmdrDamage(playerIdx) {
-  currentCmdrPlayer = playerIdx;
-  const p = gameState.players[playerIdx];
-  document.getElementById('cmdr-grid').innerHTML = gameState.players.map((other, i) => {
-    if (i === playerIdx) return '';
+// Commander Damage
+let cmdrPlayer = 0;
+function openCmdr(idx) {
+  cmdrPlayer = idx;
+  const p = state.players[idx];
+  document.getElementById('cmdr-grid').innerHTML = state.players.map((other, i) => {
+    if (i === idx) return '';
     return `
     <div class="cmdr-item">
-      <div class="label">From ${other.name}</div>
-      <div class="value">${p.cmdDamage[i]}</div>
-      <div class="controls">
-        <button onclick="changeCmdrDamage(${i}, -1)">−</button>
-        <button onclick="changeCmdrDamage(${i}, 1)">+</button>
+      <div class="cmdr-from">From ${other.name}</div>
+      <div class="cmdr-value">${p.cmdDamage[i]}</div>
+      <div class="cmdr-controls">
+        <button onclick="changeCmdr(${i}, -1)">−</button>
+        <button onclick="changeCmdr(${i}, 1)">+</button>
       </div>
     </div>`;
   }).join('');
-  document.getElementById('cmdr-modal').classList.remove('hidden');
+  openModal('cmdr-modal');
 }
 
-function changeCmdrDamage(fromIdx, delta) {
-  const p = gameState.players[currentCmdrPlayer];
-  p.cmdDamage[fromIdx] = Math.max(0, p.cmdDamage[fromIdx] + delta);
-  openCmdrDamage(currentCmdrPlayer);
-  renderPlayers();
+function changeCmdr(from, delta) {
+  state.players[cmdrPlayer].cmdDamage[from] = Math.max(0, state.players[cmdrPlayer].cmdDamage[from] + delta);
+  openCmdr(cmdrPlayer);
+  render();
 }
 
-// Mana Modal
-let currentManaPlayer = 0;
-function openMana(playerIdx) {
-  currentManaPlayer = playerIdx;
-  const p = gameState.players[playerIdx];
+// Mana
+let manaPlayer = 0;
+function openMana(idx) {
+  manaPlayer = idx;
+  const p = state.players[idx];
   const colors = [
-    { key: 'W', symbol: '⚪', name: 'White' },
-    { key: 'U', symbol: '🔵', name: 'Blue' },
-    { key: 'B', symbol: '⚫', name: 'Black' },
-    { key: 'R', symbol: '🔴', name: 'Red' },
-    { key: 'G', symbol: '🟢', name: 'Green' },
-    { key: 'C', symbol: '◇', name: 'Colorless' }
+    { key: 'W', icon: 'ms ms-w' },
+    { key: 'U', icon: 'ms ms-u' },
+    { key: 'B', icon: 'ms ms-b' },
+    { key: 'R', icon: 'ms ms-r' },
+    { key: 'G', icon: 'ms ms-g' },
+    { key: 'C', icon: 'ms ms-c' }
   ];
   document.getElementById('mana-grid').innerHTML = colors.map(c => `
-    <div class="mana-item ${c.key}">
-      <div class="symbol">${c.symbol}</div>
-      <div class="value">${p.mana[c.key]}</div>
-      <div class="controls">
+    <div class="mana-item">
+      <div class="mana-symbol"><i class="${c.icon}"></i></div>
+      <div class="mana-value">${p.mana[c.key]}</div>
+      <div class="mana-controls">
         <button onclick="changeMana('${c.key}', -1)">−</button>
         <button onclick="changeMana('${c.key}', 1)">+</button>
       </div>
     </div>
   `).join('');
-  document.getElementById('mana-modal').classList.remove('hidden');
+  openModal('mana-modal');
 }
 
 function changeMana(color, delta) {
-  const p = gameState.players[currentManaPlayer];
-  p.mana[color] = Math.max(0, p.mana[color] + delta);
-  openMana(currentManaPlayer);
+  state.players[manaPlayer].mana[color] = Math.max(0, state.players[manaPlayer].mana[color] + delta);
+  openMana(manaPlayer);
 }
 
 document.getElementById('clear-mana').onclick = () => {
-  const p = gameState.players[currentManaPlayer];
-  Object.keys(p.mana).forEach(k => p.mana[k] = 0);
-  openMana(currentManaPlayer);
+  Object.keys(state.players[manaPlayer].mana).forEach(k => state.players[manaPlayer].mana[k] = 0);
+  openMana(manaPlayer);
 };
 
 // Dice
-let diceType = 6;
-let diceCount = 1;
-
-document.querySelectorAll('.dice-type').forEach(btn => {
+let diceType = 6, diceCount = 1;
+document.querySelectorAll('.dice-type-btn').forEach(btn => {
   btn.onclick = () => {
-    document.querySelectorAll('.dice-type').forEach(b => b.classList.remove('selected'));
+    document.querySelectorAll('.dice-type-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     diceType = parseInt(btn.dataset.sides);
   };
 });
-
 document.getElementById('dice-minus').onclick = () => {
   diceCount = Math.max(1, diceCount - 1);
   document.getElementById('dice-num').textContent = diceCount;
 };
 document.getElementById('dice-plus').onclick = () => {
-  diceCount = Math.min(10, diceCount + 1);
+  diceCount = Math.min(6, diceCount + 1);
   document.getElementById('dice-num').textContent = diceCount;
 };
 
 document.getElementById('roll-dice').onclick = () => {
-  const results = [];
+  const stage = document.getElementById('dice-stage');
+  stage.innerHTML = '';
+  
   for (let i = 0; i < diceCount; i++) {
-    results.push(Math.floor(Math.random() * diceType) + 1);
+    const result = Math.floor(Math.random() * diceType) + 1;
+    const dice = document.createElement('div');
+    dice.className = 'dice-3d rolling';
+    
+    if (diceType === 6) {
+      dice.innerHTML = `
+        <div class="dice-face front">●</div>
+        <div class="dice-face back">●●</div>
+        <div class="dice-face top">●●●</div>
+        <div class="dice-face bottom">●●●●</div>
+        <div class="dice-face left">●●●●●</div>
+        <div class="dice-face right">●●●●●●</div>
+      `;
+    } else {
+      dice.innerHTML = `<div class="dice-face front">${result}</div>`;
+    }
+    
+    stage.appendChild(dice);
+    
+    setTimeout(() => {
+      dice.classList.remove('rolling');
+      dice.innerHTML = '';
+      const num = document.createElement('div');
+      num.className = 'dice-result-num';
+      num.textContent = result;
+      dice.appendChild(num);
+    }, 800 + i * 100);
   }
-  document.getElementById('dice-results').innerHTML = results.map(r => 
-    `<div class="dice-result">${r}</div>`
-  ).join('');
 };
 
 // Coin
 document.getElementById('flip-coin').onclick = () => {
   const coin = document.getElementById('coin');
   const result = Math.random() < 0.5 ? 'heads' : 'tails';
-  coin.classList.remove('heads', 'tails');
+  const endRotation = result === 'heads' ? '1800deg' : '1980deg';
+  
+  coin.style.setProperty('--end-rotation', endRotation);
+  coin.classList.remove('show-heads', 'show-tails', 'flipping');
+  void coin.offsetWidth; // Force reflow
   coin.classList.add('flipping');
+  document.getElementById('coin-result').textContent = '';
+  
   setTimeout(() => {
     coin.classList.remove('flipping');
-    coin.classList.add(result);
+    coin.classList.add(result === 'heads' ? 'show-heads' : 'show-tails');
     document.getElementById('coin-result').textContent = result === 'heads' ? 'Heads!' : 'Tails!';
-  }, 1000);
+  }, 1200);
 };
 
-// Tool buttons
-document.getElementById('btn-dice').onclick = () => document.getElementById('dice-modal').classList.remove('hidden');
-document.getElementById('btn-coin').onclick = () => document.getElementById('coin-modal').classList.remove('hidden');
+// Tools
+document.getElementById('btn-dice').onclick = () => openModal('dice-modal');
+document.getElementById('btn-coin').onclick = () => openModal('coin-modal');
 document.getElementById('btn-reset').onclick = () => {
   if (confirm('Reset game?')) {
     document.getElementById('game-screen').classList.add('hidden');
     document.getElementById('setup-screen').classList.remove('hidden');
   }
 };
-document.getElementById('btn-menu').onclick = () => window.location.href = 'index.html';
+document.getElementById('btn-menu').onclick = () => location.href = 'index.html';
 
-// Close modals
-document.querySelectorAll('.close-modal').forEach(btn => {
+// Modal helpers
+function openModal(id) {
+  document.getElementById(id).classList.remove('hidden');
+}
+
+document.querySelectorAll('.close-btn').forEach(btn => {
   btn.onclick = () => btn.closest('.modal').classList.add('hidden');
 });
+
 document.querySelectorAll('.modal').forEach(modal => {
   modal.onclick = e => { if (e.target === modal) modal.classList.add('hidden'); };
 });
