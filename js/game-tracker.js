@@ -97,7 +97,9 @@ function initGame() {
     rotated: false,
     mulligans: 0,
     cardsInHand: 7,
-    mulliganActive: false
+    mulliganActive: false,
+    cardsDrawn: 0,
+    cardsDiscarded: 0
   }));
   state.gameStartTime = Date.now();
   state.turnStartTime = null;
@@ -210,7 +212,14 @@ function render() {
       
       <div class="player-main">
         <div class="player-name" data-action="${isCommander ? 'name' : 'edit-name'}">${displayName}</div>
-        ${p.cardsInHand < 7 ? `<div class="cards-in-hand">${p.cardsInHand} cards</div>` : ''}
+        ${state.firstPlayer >= 0 ? `
+          <div class="cards-in-hand-tracker">
+            <span class="cards-label">Cards in Hand:</span>
+            <button class="card-btn minus" data-action="card-change" data-delta="-1">−</button>
+            <span class="cards-count">${p.cardsInHand}</span>
+            <button class="card-btn plus" data-action="card-change" data-delta="1">+</button>
+          </div>
+        ` : ''}
         <div class="life-area">
           <button class="life-btn minus" data-action="life" data-delta="-1">−</button>
           <div class="life-total">${p.life}</div>
@@ -265,6 +274,19 @@ function render() {
       }
       
       logAction(`${getPlayerName(idx)} ${delta > 0 ? 'gained' : 'lost'} ${Math.abs(delta)} life`);
+      render();
+    } else if (action === 'card-change') {
+      const delta = parseInt(e.target.dataset.delta);
+      state.players[idx].cardsInHand = Math.max(0, state.players[idx].cardsInHand + delta);
+      
+      if (delta > 0) {
+        state.players[idx].cardsDrawn++;
+        logAction(`${getPlayerName(idx)} drew a card`);
+      } else if (delta < 0) {
+        state.players[idx].cardsDiscarded++;
+        logAction(`${getPlayerName(idx)} discarded a card`);
+      }
+      
       render();
     } else if (action === 'name') {
       openCardSearch(idx);
@@ -988,7 +1010,9 @@ function showDashboard(winner) {
       knockedOut: knockout ? knockout.turn : null,
       isWinner: idx === winner,
       mulligans: p.mulligans,
-      cardsInHand: p.cardsInHand
+      cardsInHand: p.cardsInHand,
+      cardsDrawn: p.cardsDrawn,
+      cardsDiscarded: p.cardsDiscarded
     };
   });
   
@@ -1046,6 +1070,14 @@ function showDashboard(winner) {
           <div class="dashboard-stat">
             <span class="stat-label">Starting Hand</span>
             <span class="stat-value">${p.cardsInHand} cards${p.mulligans > 0 ? ` (${p.mulligans}x)` : ''}</span>
+          </div>
+          <div class="dashboard-stat">
+            <span class="stat-label">Cards Drawn</span>
+            <span class="stat-value">${p.cardsDrawn}</span>
+          </div>
+          <div class="dashboard-stat">
+            <span class="stat-label">Cards Discarded</span>
+            <span class="stat-value">${p.cardsDiscarded}</span>
           </div>
         </div>
       </div>
