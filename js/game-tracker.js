@@ -468,24 +468,32 @@ document.getElementById('flip-coin').onclick = () => {
 };
 
 // Tools
+// Clockwise order: 2p=[0,1], 3p=[0,1,2], 4p=[0,1,3,2] (top-left, top-right, bottom-right, bottom-left)
+function getClockwiseOrder() {
+  if (state.numPlayers === 4) return [0, 1, 3, 2];
+  return Array.from({ length: state.numPlayers }, (_, i) => i);
+}
+
 document.getElementById('btn-first').onclick = () => {
+  const order = getClockwiseOrder();
   let i = 0;
   const total = 15 + Math.floor(Math.random() * 10);
   const interval = setInterval(() => {
-    state.activePlayer = i % state.numPlayers;
+    state.activePlayer = order[i % order.length];
     render();
     i++;
     if (i >= total) {
       clearInterval(interval);
-      state.activePlayer = Math.floor(Math.random() * state.numPlayers);
+      state.activePlayer = order[Math.floor(Math.random() * order.length)];
       render();
     }
   }, 100 + i * 10);
 };
 
 document.getElementById('btn-pass').onclick = () => {
-  if (state.activePlayer === -1) state.activePlayer = 0;
-  else state.activePlayer = (state.activePlayer + 1) % state.numPlayers;
+  const order = getClockwiseOrder();
+  const currentIdx = order.indexOf(state.activePlayer);
+  state.activePlayer = order[(currentIdx + 1) % order.length];
   render();
 };
 
