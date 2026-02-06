@@ -55,14 +55,14 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 
 /* Player Panel */
 .player { display: flex; flex-direction: column; position: relative; overflow: hidden; background-size: cover; background-position: center; min-height: 0; }
-.player-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 1; }
+.player::before { content: ''; position: absolute; inset: 0; z-index: 0; }
+.player-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 2; }
 .player-particles .particle { position: absolute; bottom: -10px; border-radius: 50%; animation: float-up linear forwards; filter: blur(1px); }
 @keyframes float-up {
   0% { transform: translateY(0) translateX(0); opacity: 0; }
   10% { opacity: var(--opacity, 0.4); }
   100% { transform: translateY(-100vh) translateX(calc(-50px + 100px * var(--random, 0.5))); opacity: 0; }
 }
-.player::before { content: ''; position: absolute; inset: 0; z-index: 0; }
 .player:not(.has-art).p0::before { background: linear-gradient(180deg, var(--p0) 0%, transparent 100%); opacity: 0.4; }
 .player:not(.has-art).p1::before { background: linear-gradient(0deg, var(--p1) 0%, transparent 100%); opacity: 0.4; }
 .player:not(.has-art).p2::before { background: linear-gradient(180deg, var(--p2) 0%, transparent 100%); opacity: 0.4; }
