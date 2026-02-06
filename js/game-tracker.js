@@ -82,6 +82,7 @@ function render() {
         </div>
         ${badges.length ? `<div class="player-badges">${badges.join('')}</div>` : ''}
         <div class="player-actions">
+          <button class="action-pill mana-btn" data-action="mana">Mana</button>
           <button class="action-pill" data-action="counters">Counters</button>
           <button class="action-pill" data-action="cmdr">Cmdr Dmg</button>
         </div>
@@ -112,6 +113,7 @@ function render() {
       openCardSearch(idx);
     } else if (action === 'counters') openCounters(idx);
     else if (action === 'cmdr') openCmdr(idx);
+    else if (action === 'mana') openMana(idx);
     else if (action === 'clear-mana') {
       Object.keys(state.players[idx].mana).forEach(k => state.players[idx].mana[k] = 0);
       render();
@@ -271,6 +273,32 @@ document.getElementById('clear-commander')?.addEventListener('click', () => {
   closeModal('search-modal');
   render();
 });
+
+// Mana (mobile modal)
+let manaPlayer = 0;
+function openMana(idx) {
+  manaPlayer = idx;
+  const p = state.players[idx];
+  const colors = ['W', 'U', 'B', 'R', 'G', 'C'];
+  document.getElementById('mana-title').textContent = `${p.commanders[0]?.name?.split(',')[0] || p.name} - Mana`;
+  document.getElementById('mana-grid').innerHTML = colors.map(c => `
+    <div class="mana-item">
+      <i class="ms ms-${c.toLowerCase()} ms-cost ms-2x"></i>
+      <div class="mana-value">${p.mana[c]}</div>
+      <div class="mana-controls">
+        <button onclick="changeMana('${c}', -1)">−</button>
+        <button onclick="changeMana('${c}', 1)">+</button>
+      </div>
+    </div>
+  `).join('');
+  openModal('mana-modal');
+}
+
+function changeMana(color, delta) {
+  state.players[manaPlayer].mana[color] = Math.max(0, state.players[manaPlayer].mana[color] + delta);
+  openMana(manaPlayer);
+  render();
+}
 
 // Counters
 let counterPlayer = 0;

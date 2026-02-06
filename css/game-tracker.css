@@ -220,13 +220,16 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 .mana-controls button:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px rgba(230,57,70,0.4); }
 
 /* Responsive */
-@media (max-width: 400px) {
-  .life-total { font-size: 3.5rem; min-width: 90px; }
-  .life-btn { width: 54px; height: 54px; font-size: 1.6rem; }
+/* Mobile - hide mana bar, smaller controls */
+@media (max-width: 767px) {
+  .mana-bar { display: none; }
+  .life-total { font-size: 3rem; min-width: 80px; }
+  .life-btn { width: 48px; height: 48px; font-size: 1.4rem; }
   .player-actions { gap: 4px; }
-  .action-pill { padding: 6px 10px; font-size: 0.7rem; }
+  .action-pill { padding: 6px 10px; font-size: 0.75rem; }
 }
 @media (min-width: 768px) {
+  .mana-btn { display: none; }
   .players-container.p2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
   .players-container.p2 .player:first-child { transform: rotate(0deg); }
   .life-total { font-size: 5rem; }
