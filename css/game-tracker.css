@@ -10,6 +10,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 .hidden { display: none !important; }
 
+/* Rotate Warning */
+.rotate-warning { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; gap: 20px; color: var(--text2); text-align: center; padding: 40px; }
+.rotate-warning svg { opacity: 0.6; animation: rotate-hint 2s ease-in-out infinite; }
+@keyframes rotate-hint { 0%, 100% { transform: rotate(-15deg); } 50% { transform: rotate(15deg); } }
+@media (max-width: 767px) and (orientation: portrait) { .rotate-warning { display: flex; } }
+
 /* Setup */
 .setup-screen { height: 100%; display: flex; align-items: center; justify-content: center; padding: 20px; background: linear-gradient(135deg, #1a1a2e 0%, #0d0d0d 100%); }
 .setup-card { background: var(--bg2); border-radius: 20px; padding: 40px; width: 100%; max-width: 380px; }
@@ -131,7 +137,11 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 .search-result span { flex: 1; font-size: 0.95rem; }
 .search-loading, .search-empty { text-align: center; padding: 30px; color: var(--text2); }
 
-.action-btn { display: block; width: calc(100% - 40px); margin: 20px; padding: 16px; background: transparent; border: 2px solid var(--accent); border-radius: 12px; color: var(--accent); font-size: 1rem; font-weight: 600; cursor: pointer; box-shadow: 0 0 10px rgba(230,57,70,0.3); transition: all 0.2s; }
+.modal-actions { padding: 15px 20px; display: flex; flex-direction: column; gap: 10px; }
+.rotate-toggle { display: flex; align-items: center; gap: 10px; color: var(--text2); font-size: 0.9rem; cursor: pointer; }
+.rotate-toggle input { width: 18px; height: 18px; accent-color: var(--accent); }
+
+.action-btn { display: block; width: 100%; padding: 14px; background: transparent; border: 2px solid var(--accent); border-radius: 12px; color: var(--accent); font-size: 1rem; font-weight: 600; cursor: pointer; box-shadow: 0 0 10px rgba(230,57,70,0.3); transition: all 0.2s; }
 .action-btn:hover { background: rgba(230,57,70,0.15); box-shadow: 0 0 20px rgba(230,57,70,0.5); }
 .action-btn.secondary { border-color: var(--text2); color: var(--text2); box-shadow: none; }
 .action-btn.secondary:hover { background: rgba(255,255,255,0.05); }

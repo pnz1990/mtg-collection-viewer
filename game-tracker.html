@@ -10,6 +10,12 @@
   <link rel="stylesheet" href="css/game-tracker.css">
 </head>
 <body>
+  <!-- Rotate Warning -->
+  <div id="rotate-warning" class="rotate-warning">
+    <svg viewBox="0 0 24 24" width="64" height="64"><path fill="currentColor" d="M7.5 21.5c-.83 0-1.5-.67-1.5-1.5V4c0-.83.67-1.5 1.5-1.5h9c.83 0 1.5.67 1.5 1.5v16c0 .83-.67 1.5-1.5 1.5h-9zM12 18c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z"/><path fill="currentColor" d="M16.48 2.52c3.27 1.55 5.61 4.72 5.97 8.48h1.5C23.44 4.84 18.29 0 12 0l-.66.03 3.81 3.81 1.33-1.32z"/></svg>
+    <p>Please rotate your device to landscape mode</p>
+  </div>
+
   <!-- Setup Screen -->
   <div id="setup-screen" class="setup-screen">
     <div class="setup-card">
@@ -60,8 +66,8 @@
       <button id="btn-reset" class="tool-btn" title="Reset">
         <svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" fill="currentColor"/></svg>
       </button>
-      <button id="btn-menu" class="tool-btn" title="Menu">
-        <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <button id="btn-menu" class="tool-btn" title="Home">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/></svg>
       </button>
     </div>
   </div>
@@ -87,7 +93,10 @@
         <input type="text" id="search-input" placeholder="Search commanders..." autocomplete="off">
       </div>
       <div id="search-results" class="search-results"></div>
-      <button id="clear-commander" class="action-btn secondary">Clear Commander(s)</button>
+      <div class="modal-actions">
+        <label class="rotate-toggle"><input type="checkbox" id="rotate-player"> Rotate panel 180°</label>
+        <button id="clear-commander" class="action-btn secondary">Clear Commander(s)</button>
+      </div>
     </div>
   </div>
 

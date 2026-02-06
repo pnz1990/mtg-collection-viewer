@@ -22,11 +22,12 @@ document.getElementById('start-game').onclick = () => {
 function initGame() {
   state.players = Array.from({ length: state.numPlayers }, (_, i) => ({
     name: `Player ${i + 1}`,
-    commanders: [null, null], // [{ name, artUrl }, ...]
+    commanders: [null, null],
     life: state.startingLife,
     poison: 0, energy: 0, experience: 0, storm: 0, cmdTax: 0,
     cmdDamage: Array(state.numPlayers).fill(0),
-    mana: { W: 0, U: 0, B: 0, R: 0, G: 0, C: 0 }
+    mana: { W: 0, U: 0, B: 0, R: 0, G: 0, C: 0 },
+    rotated: false
   }));
   render();
   document.getElementById('setup-screen').classList.add('hidden');
@@ -37,7 +38,6 @@ function render() {
   const c = document.getElementById('players-container');
   c.className = `players-container p${state.numPlayers}`;
   c.innerHTML = state.players.map((p, i) => {
-    const rotate = state.numPlayers === 2 && i === 0;
     const badges = [];
     if (p.poison > 0) badges.push(`<span class="badge poison"><i class="ms ms-p"></i>${p.poison}</span>`);
     if (p.energy > 0) badges.push(`<span class="badge energy"><span class="card-symbol card-symbol-E"></span>${p.energy}</span>`);
@@ -71,7 +71,7 @@ function render() {
     const singleBgStyle = cmd1 && !cmd2 ? `background-image: url('${cmd1.artUrl}')` : '';
     
     return `
-    <div class="player p${i} ${rotate ? 'rotate180' : ''} ${artClass}" data-idx="${i}" style="${singleBgStyle}">
+    <div class="player p${i} ${p.rotated ? 'rotate180' : ''} ${artClass}" data-idx="${i}" style="${singleBgStyle}">
       ${cmd1 && cmd2 ? `<div class="dual-art-bg" style="background-image: url('${cmd1.artUrl}')"></div><div class="dual-art-bg right" style="background-image: url('${cmd2.artUrl}')"></div>` : ''}
       <div class="player-main">
         <div class="player-name" data-action="name">${displayName}</div>
@@ -174,6 +174,7 @@ function openCardSearch(idx) {
   
   document.getElementById('search-input').value = '';
   document.getElementById('search-results').innerHTML = '';
+  document.getElementById('rotate-player').checked = p.rotated;
   openModal('search-modal');
   document.getElementById('search-input').focus();
 }
@@ -271,6 +272,11 @@ document.getElementById('clear-commander')?.addEventListener('click', () => {
   p.commanders = [null, null];
   p.name = `Player ${searchPlayer + 1}`;
   closeModal('search-modal');
+  render();
+});
+
+document.getElementById('rotate-player')?.addEventListener('change', e => {
+  state.players[searchPlayer].rotated = e.target.checked;
   render();
 });
 
