@@ -3,8 +3,19 @@ const state = {
   players: [],
   numPlayers: 2,
   startingLife: 40,
-  activePlayer: -1
+  activePlayer: -1,
+  log: []
 };
+
+function logAction(msg) {
+  const turn = state.activePlayer >= 0 ? getPlayerName(state.activePlayer) : 'Setup';
+  state.log.push({ time: new Date().toLocaleTimeString(), turn, msg });
+}
+
+function getPlayerName(idx) {
+  const p = state.players[idx];
+  return p.commanders[0]?.name.split(',')[0] || p.name;
+}
 
 // Setup
 document.querySelectorAll('#player-count button, #starting-life button').forEach(btn => {
@@ -109,7 +120,9 @@ function render() {
     const action = e.target.dataset.action || e.target.closest('[data-action]')?.dataset.action;
     
     if (action === 'life') {
-      state.players[idx].life += parseInt(e.target.dataset.delta);
+      const delta = parseInt(e.target.dataset.delta);
+      state.players[idx].life += delta;
+      logAction(`${getPlayerName(idx)} ${delta > 0 ? 'gained' : 'lost'} ${Math.abs(delta)} life`);
       render();
     } else if (action === 'name') {
       openCardSearch(idx);
@@ -337,6 +350,8 @@ function openCounters(idx) {
 
 function changeCounter(key, delta) {
   state.players[counterPlayer][key] = Math.max(0, state.players[counterPlayer][key] + delta);
+  const labels = { poison: 'poison', energy: 'energy', experience: 'experience', storm: 'storm', cmdTax: 'commander tax' };
+  logAction(`${getPlayerName(counterPlayer)} ${delta > 0 ? 'gained' : 'lost'} ${Math.abs(delta)} ${labels[key]}`);
   openCounters(counterPlayer);
   render();
 }
@@ -398,6 +413,12 @@ function openCmdr(idx) {
 function changeCmdr(key, delta) {
   const p = state.players[cmdrPlayer];
   p.cmdDamage[key] = Math.max(0, (p.cmdDamage[key] || 0) + delta);
+  if (delta > 0) {
+    const [playerIdx, cmdIdx] = key.split('-').map(Number);
+    const other = state.players[playerIdx];
+    const cmdName = other.commanders[cmdIdx]?.name.split(',')[0] || other.name;
+    logAction(`${getPlayerName(cmdrPlayer)} took ${delta} commander damage from ${cmdName}`);
+  }
   openCmdr(cmdrPlayer);
   render();
 }
@@ -528,8 +549,17 @@ document.getElementById('btn-first').onclick = () => {
 document.getElementById('btn-pass').onclick = () => {
   const order = getClockwiseOrder();
   const currentIdx = order.indexOf(state.activePlayer);
+  if (state.activePlayer >= 0) logAction(`${getPlayerName(state.activePlayer)} ended turn`);
   state.activePlayer = order[(currentIdx + 1) % order.length];
+  logAction(`${getPlayerName(state.activePlayer)} started turn`);
   render();
+};
+
+document.getElementById('btn-log').onclick = () => {
+  document.getElementById('log-list').innerHTML = state.log.length === 0 
+    ? '<div class="log-empty">No actions yet</div>'
+    : state.log.slice().reverse().map(e => `<div class="log-entry"><span class="log-time">${e.time}</span><span class="log-turn">${e.turn}</span><span class="log-msg">${e.msg}</span></div>`).join('');
+  openModal('log-modal');
 };
 
 document.getElementById('btn-dice').onclick = () => openModal('dice-modal');
