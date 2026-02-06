@@ -6,8 +6,12 @@ const state = {
   activePlayer: -1,
   turnCount: 0,
   firstPlayer: -1,
-  log: []
+  log: [],
+  gameStartTime: null,
+  turnStartTime: null
 };
+
+let clockInterval = null;
 
 function logAction(msg) {
   const name = state.activePlayer >= 0 ? getPlayerName(state.activePlayer) : 'Setup';
@@ -44,9 +48,32 @@ function initGame() {
     mana: { W: 0, U: 0, B: 0, R: 0, G: 0, C: 0 },
     rotated: false
   }));
+  state.gameStartTime = Date.now();
+  state.turnStartTime = null;
+  startClock();
   render();
   document.getElementById('setup-screen').classList.add('hidden');
   document.getElementById('game-screen').classList.remove('hidden');
+}
+
+function startClock() {
+  if (clockInterval) clearInterval(clockInterval);
+  clockInterval = setInterval(updateClocks, 1000);
+}
+
+function updateClocks() {
+  const gameTime = Math.floor((Date.now() - state.gameStartTime) / 1000);
+  const turnTime = state.turnStartTime ? Math.floor((Date.now() - state.turnStartTime) / 1000) : 0;
+  
+  const formatTime = (s) => {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    return h > 0 ? `${h}:${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}` : `${m}:${sec.toString().padStart(2, '0')}`;
+  };
+  
+  document.getElementById('game-clock').textContent = formatTime(gameTime);
+  document.getElementById('turn-clock').textContent = formatTime(turnTime);
 }
 
 function render() {
@@ -554,6 +581,7 @@ document.getElementById('btn-first').onclick = () => {
       state.activePlayer = winner;
       state.firstPlayer = winner;
       state.turnCount = 1;
+      state.turnStartTime = Date.now();
       logAction(`started turn`);
       render();
     }
@@ -574,6 +602,7 @@ document.getElementById('btn-pass').onclick = () => {
     state.turnCount++;
   }
   state.activePlayer = nextPlayer;
+  state.turnStartTime = Date.now();
   logAction(`started turn`);
   render();
 };
@@ -589,6 +618,7 @@ document.getElementById('btn-dice').onclick = () => openModal('dice-modal');
 document.getElementById('btn-coin').onclick = () => openModal('coin-modal');
 document.getElementById('btn-reset').onclick = () => {
   if (confirm('Reset game?')) {
+    if (clockInterval) clearInterval(clockInterval);
     document.getElementById('game-screen').classList.add('hidden');
     document.getElementById('setup-screen').classList.remove('hidden');
   }
