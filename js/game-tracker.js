@@ -356,6 +356,7 @@ function render() {
   // Long press for life buttons - increment by 10
   let lifeHoldTimer = null;
   let lifeHoldInterval = null;
+  let pressTimer = null;
   
   c.addEventListener('pointerdown', e => {
     const lifeBtn = e.target.closest('.life-btn');
