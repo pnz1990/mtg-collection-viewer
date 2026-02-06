@@ -58,8 +58,6 @@ function render() {
     if (p.poison > 0) badges.push(`<span class="badge poison"><i class="ms ms-p"></i>${p.poison}</span>`);
     if (p.energy > 0) badges.push(`<span class="badge energy"><span class="card-symbol card-symbol-E"></span>${p.energy}</span>`);
     if (p.experience > 0) badges.push(`<span class="badge experience">✧ ${p.experience}</span>`);
-    const totalCmd = Object.values(p.cmdDamage).reduce((a, b) => a + b, 0);
-    if (totalCmd > 0) badges.push(`<span class="badge cmdr">⚔ ${totalCmd}</span>`);
     
     const manaColors = ['W', 'U', 'B', 'R', 'G', 'C'];
     
