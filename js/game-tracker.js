@@ -2,7 +2,8 @@
 const state = {
   players: [],
   numPlayers: 2,
-  startingLife: 40
+  startingLife: 40,
+  activePlayer: -1
 };
 
 // Setup
@@ -69,9 +70,10 @@ function render() {
     
     // Background style for single commander
     const singleBgStyle = cmd1 && !cmd2 ? `background-image: url('${cmd1.artUrl}')` : '';
+    const isActive = state.activePlayer === i;
     
     return `
-    <div class="player p${i} ${p.rotated ? 'rotate180' : ''} ${artClass}" data-idx="${i}" style="${singleBgStyle}">
+    <div class="player p${i} ${p.rotated ? 'rotate180' : ''} ${artClass} ${isActive ? 'active' : ''}" data-idx="${i}" style="${singleBgStyle}">
       ${cmd1 && cmd2 ? `<div class="dual-art-bg" style="background-image: url('${cmd1.artUrl}')"></div><div class="dual-art-bg right" style="background-image: url('${cmd2.artUrl}')"></div>` : ''}
       <div class="player-main">
         <div class="player-name" data-action="name">${displayName}</div>
@@ -466,6 +468,27 @@ document.getElementById('flip-coin').onclick = () => {
 };
 
 // Tools
+document.getElementById('btn-first').onclick = () => {
+  let i = 0;
+  const total = 15 + Math.floor(Math.random() * 10);
+  const interval = setInterval(() => {
+    state.activePlayer = i % state.numPlayers;
+    render();
+    i++;
+    if (i >= total) {
+      clearInterval(interval);
+      state.activePlayer = Math.floor(Math.random() * state.numPlayers);
+      render();
+    }
+  }, 100 + i * 10);
+};
+
+document.getElementById('btn-pass').onclick = () => {
+  if (state.activePlayer === -1) state.activePlayer = 0;
+  else state.activePlayer = (state.activePlayer + 1) % state.numPlayers;
+  render();
+};
+
 document.getElementById('btn-dice').onclick = () => openModal('dice-modal');
 document.getElementById('btn-coin').onclick = () => openModal('coin-modal');
 document.getElementById('btn-reset').onclick = () => {
