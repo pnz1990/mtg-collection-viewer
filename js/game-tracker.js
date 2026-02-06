@@ -1,7 +1,7 @@
 // Game State
 const state = {
   players: [],
-  numPlayers: 2,
+  numPlayers: 4,
   startingLife: 40,
   activePlayer: -1,
   turnCount: 0,
