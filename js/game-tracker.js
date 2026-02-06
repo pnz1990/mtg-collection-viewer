@@ -27,8 +27,71 @@ const state = {
   currentPlane: null,
   lifeHistory: [],
   firstBlood: null,
-  currentDungeon: null
+  currentDungeon: null,
+  history: [],
+  animations: true,
+  theme: 'dark'
 };
+
+let clockInterval = null;
+
+// Undo system
+function saveHistory() {
+  state.history.push(JSON.stringify({ players: state.players, turnCount: state.turnCount, activePlayer: state.activePlayer, log: state.log, turnTimes: state.turnTimes, damageDealt: state.damageDealt, commanderDamageDealt: state.commanderDamageDealt, knockouts: state.knockouts, lifeHistory: state.lifeHistory, monarch: state.monarch, initiative: state.initiative, ringBearer: state.ringBearer, ringTemptation: state.ringTemptation }));
+  if (state.history.length > 50) state.history.shift();
+}
+
+function undo() {
+  if (state.history.length === 0) return alert('Nothing to undo');
+  const prev = JSON.parse(state.history.pop());
+  Object.assign(state, prev);
+  render();
+}
+
+// Auto-save
+function saveGame() {
+  const data = btoa(JSON.stringify(state));
+  const url = `${window.location.origin}${window.location.pathname}?load=${data}`;
+  navigator.clipboard.writeText(url).then(() => alert('Game save link copied to clipboard!'));
+}
+
+function loadGame() {
+  const params = new URLSearchParams(window.location.search);
+  const data = params.get('load');
+  if (data) {
+    try {
+      const loaded = JSON.parse(atob(data));
+      Object.assign(state, loaded);
+      state.gameStartTime = Date.now() - (loaded.gameTime || 0);
+      document.getElementById('setup-screen').classList.add('hidden');
+      document.getElementById('game-screen').classList.remove('hidden');
+      startClock();
+      render();
+    } catch {}
+  }
+}
+
+// Animations
+function animateLife(idx, delta) {
+  if (!state.animations) return;
+  const player = document.querySelector(`.player[data-idx="${idx}"]`);
+  const anim = document.createElement('div');
+  anim.className = 'life-anim';
+  anim.textContent = delta > 0 ? `+${delta}` : delta;
+  anim.style.cssText = `position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem; font-weight: 700; color: ${delta > 0 ? '#4caf50' : '#f44336'}; z-index: 100; animation: lifeAnim 1s ease-out forwards; pointer-events: none;`;
+  player.appendChild(anim);
+  setTimeout(() => anim.remove(), 1000);
+}
+
+function animateEvent(idx, text, color = '#e63946') {
+  if (!state.animations) return;
+  const player = document.querySelector(`.player[data-idx="${idx}"]`);
+  const anim = document.createElement('div');
+  anim.textContent = text;
+  anim.style.cssText = `position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem; font-weight: 700; color: ${color}; z-index: 100; animation: eventAnim 1.5s ease-out forwards; pointer-events: none; text-shadow: 0 0 10px ${color};`;
+  player.appendChild(anim);
+  setTimeout(() => anim.remove(), 1500);
+}
 
 let clockInterval = null;
 
@@ -36,6 +99,14 @@ function logAction(msg) {
   const name = state.activePlayer >= 0 ? getPlayerName(state.activePlayer) : 'Setup';
   const turnLabel = state.turnCount > 0 ? `${name} T${state.turnCount}` : 'Setup';
   state.log.push({ time: new Date().toLocaleTimeString(), turn: turnLabel, msg });
+}
+
+function addNote() {
+  const note = prompt('Add note:');
+  if (note) {
+    logAction(`📝 ${note}`);
+    render();
+  }
 }
 
 function getPlayerName(idx) {
@@ -53,6 +124,7 @@ function loadFormats() {
 }
 
 loadFormats();
+loadGame();
 
 document.addEventListener('click', e => {
   if (e.target.closest('#format-select button')) {
@@ -101,7 +173,8 @@ function initGame() {
     cardsDrawn: 0,
     cardsDiscarded: 0,
     planeswalkers: [],
-    citysBlessing: false
+    citysBlessing: false,
+    customCounters: {}
   }));
   state.gameStartTime = Date.now();
   state.turnStartTime = null;
@@ -113,6 +186,7 @@ function initGame() {
   state.knockouts = [];
   state.lifeHistory = [];
   state.firstBlood = null;
+  state.history = [];
   for (let i = 0; i < state.numPlayers; i++) {
     state.damageDealt[i] = 0;
     state.commanderDamageDealt[i] = 0;
@@ -122,6 +196,23 @@ function initGame() {
   document.getElementById('setup-screen').classList.add('hidden');
   document.getElementById('game-screen').classList.remove('hidden');
 }
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === ' ') {
+    e.preventDefault();
+    passTurn();
+  } else if (e.key === 'z' && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault();
+    undo();
+  } else if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault();
+    saveGame();
+  } else if (e.key === 'n') {
+    addNote();
+  }
+});
 
 function startClock() {
   if (clockInterval) clearInterval(clockInterval);
@@ -275,7 +366,9 @@ function render() {
         }
       }
       
+      saveHistory();
       state.players[idx].life = newLife;
+      animateLife(idx, delta);
       
       // Track damage dealt and first blood
       if (delta < 0 && state.activePlayer >= 0 && state.activePlayer !== idx) {
@@ -291,6 +384,7 @@ function render() {
       // Track knockouts
       if (oldLife > 0 && newLife <= 0) {
         state.knockouts.push({ player: idx, killer: state.activePlayer, turn: state.turnCount, time: Date.now() });
+        animateEvent(idx, '💀 KNOCKED OUT');
         logAction(`${getPlayerName(idx)} was knocked out`);
       } else {
         logAction(`${getPlayerName(idx)} ${delta > 0 ? 'gained' : 'lost'} ${Math.abs(delta)} life`);
@@ -932,6 +1026,17 @@ document.getElementById('btn-reset').onclick = () => {
   }
 };
 document.getElementById('btn-menu').onclick = () => location.href = 'index.html';
+document.getElementById('btn-undo')?.addEventListener('click', () => undo());
+document.getElementById('btn-save')?.addEventListener('click', () => saveGame());
+document.getElementById('btn-note')?.addEventListener('click', () => addNote());
+document.getElementById('btn-theme')?.addEventListener('click', () => {
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  document.body.classList.toggle('light-theme', state.theme === 'light');
+});
+document.getElementById('btn-animations')?.addEventListener('click', () => {
+  state.animations = !state.animations;
+  document.getElementById('btn-animations').style.opacity = state.animations ? '1' : '0.5';
+});
 
 // Modal helpers
 function openModal(id) {
@@ -1371,12 +1476,14 @@ function renderMonarch() {
 
 function setMonarch(idx) {
   state.monarch = state.monarch === idx ? -1 : idx;
+  if (state.monarch >= 0) animateEvent(idx, '👑 MONARCH', '#ffd700');
   logAction(state.monarch >= 0 ? `${getPlayerName(idx)} becomes the monarch` : 'Monarch removed');
   renderMonarch();
 }
 
 function setInitiative(idx) {
   state.initiative = state.initiative === idx ? -1 : idx;
+  if (state.initiative >= 0) animateEvent(idx, '⚔️ INITIATIVE', '#ff6b6b');
   logAction(state.initiative >= 0 ? `${getPlayerName(idx)} takes the initiative` : 'Initiative removed');
   renderMonarch();
 }
@@ -1387,6 +1494,9 @@ function toggleDayNight() {
   const indicator = document.getElementById('daynight-status');
   indicator.textContent = state.dayNight === 'day' ? '☀️ Day' : '🌙 Night';
   indicator.style.display = 'block';
+  if (state.animations) {
+    state.players.forEach((_, i) => animateEvent(i, state.dayNight === 'day' ? '☀️ DAY' : '🌙 NIGHT', state.dayNight === 'day' ? '#ffd700' : '#4a5568'));
+  }
   logAction(`It becomes ${state.dayNight}`);
 }
 
@@ -1532,6 +1642,7 @@ function renderCitys() {
 
 function toggleCitys(idx) {
   state.players[idx].citysBlessing = !state.players[idx].citysBlessing;
+  if (state.players[idx].citysBlessing) animateEvent(idx, '🏛️ CITY\'S BLESSING', '#4299e1');
   logAction(`${getPlayerName(idx)} ${state.players[idx].citysBlessing ? 'gained' : 'lost'} the city's blessing`);
   renderCitys();
 }
