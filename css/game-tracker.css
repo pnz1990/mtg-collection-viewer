@@ -268,7 +268,7 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 .stack-label { padding: 15px 20px 10px; font-size: 0.75rem; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
 .stack-container { padding: 0 20px 20px; max-height: 450px; overflow-y: auto; position: relative; }
 .stack-empty { text-align: center; color: var(--text2); padding: 40px 20px; font-size: 0.9rem; }
-.stack-card { position: relative; width: 150px; margin: 0 auto -105px; aspect-ratio: 5/7; border-radius: 12px; overflow: hidden; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+.stack-card { position: relative; width: 150px; margin: 0 auto -180px; aspect-ratio: 5/7; border-radius: 12px; overflow: hidden; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
 .stack-card:last-child { margin-bottom: 0; }
 .stack-card:hover { transform: translateY(-20px) scale(1.05); z-index: 100; box-shadow: 0 12px 24px rgba(0,0,0,0.6); }
 .stack-card:hover .stack-card-overlay { opacity: 1; }
@@ -295,7 +295,7 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
   .setup-card { padding: 30px 20px; }
   .setup-card h1 { font-size: 1.4rem; margin-bottom: 25px; }
   .stack-content { max-width: 100%; }
-  .stack-card { width: 120px; margin-bottom: -85px; }
+  .stack-card { width: 120px; margin-bottom: -145px; }
   .stack-card:last-child { margin-bottom: 0; }
   .stack-container { max-height: 350px; }
 }
