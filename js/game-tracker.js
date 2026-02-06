@@ -94,7 +94,9 @@ function initGame() {
     poison: 0, energy: 0, experience: 0, storm: 0, cmdTax: 0,
     cmdDamage: {}, // keyed by "playerIdx-cmdIdx"
     mana: { W: 0, U: 0, B: 0, R: 0, G: 0, C: 0 },
-    rotated: false
+    rotated: false,
+    mulligans: 0,
+    cardsInHand: 7
   }));
   state.gameStartTime = Date.now();
   state.turnStartTime = null;
@@ -173,6 +175,9 @@ function render() {
     const singleBgStyle = isCommander && cmd1 && !cmd2 ? `background-image: url('${cmd1.artUrl}')` : '';
     const isActive = state.activePlayer === i;
     
+    // Show mulligan button only after first player selected
+    const showMulligan = state.firstPlayer >= 0 && p.mulligans < 7;
+    
     // Get combined color identity for particles
     let colorIdentity = [];
     if (isCommander && cmd1) {
@@ -188,6 +193,7 @@ function render() {
       ${colorIdentity.length > 0 ? `<div class="player-particles" data-colors="${colorIdentity.join(',')}"></div>` : ''}
       <div class="player-main">
         <div class="player-name" data-action="${isCommander ? 'name' : 'edit-name'}">${displayName}</div>
+        ${p.cardsInHand < 7 ? `<div class="cards-in-hand">${p.cardsInHand} cards</div>` : ''}
         <div class="life-area">
           <button class="life-btn minus" data-action="life" data-delta="-1">−</button>
           <div class="life-total">${p.life}</div>
@@ -195,6 +201,7 @@ function render() {
         </div>
         ${badges.length ? `<div class="player-badges">${badges.join('')}</div>` : ''}
         <div class="player-actions">
+          ${showMulligan ? '<button class="action-pill" data-action="mulligan">Mulligan</button>' : ''}
           <button class="action-pill mana-btn" data-action="mana">Mana</button>
           <button class="action-pill" data-action="counters">Counters</button>
           ${isCommander ? '<button class="action-pill" data-action="cmdr">Commander Damage</button>' : ''}
@@ -246,6 +253,8 @@ function render() {
       openCardSearch(idx);
     } else if (action === 'edit-name') {
       editPlayerName(idx);
+    } else if (action === 'mulligan') {
+      openMulligan(idx);
     } else if (action === 'counters') openCounters(idx);
     else if (action === 'cmdr') openCmdr(idx);
     else if (action === 'mana') openMana(idx);
@@ -297,6 +306,50 @@ function editPlayerName(idx) {
     render();
   }
 }
+
+// Mulligan
+let mulliganPlayer = 0;
+
+function openMulligan(idx) {
+  mulliganPlayer = idx;
+  const p = state.players[idx];
+  const cardsToShow = p.mulligans === 0 ? 7 : Math.max(1, 7 - p.mulligans);
+  
+  document.getElementById('mulligan-player-name').textContent = getPlayerName(idx);
+  document.getElementById('mulligan-count').textContent = p.mulligans === 0 ? 'Free Mulligan' : `Mulligan ${p.mulligans}`;
+  
+  // Show cards
+  const container = document.getElementById('mulligan-cards');
+  container.innerHTML = '';
+  for (let i = 0; i < cardsToShow; i++) {
+    const card = document.createElement('div');
+    card.className = 'mulligan-card';
+    card.style.animationDelay = `${i * 0.05}s`;
+    container.appendChild(card);
+  }
+  
+  openModal('mulligan-modal');
+}
+
+document.getElementById('btn-keep')?.addEventListener('click', () => {
+  const p = state.players[mulliganPlayer];
+  logAction(`${getPlayerName(mulliganPlayer)} kept ${p.cardsInHand} cards`);
+  closeModal('mulligan-modal');
+});
+
+document.getElementById('btn-mulligan')?.addEventListener('click', () => {
+  const p = state.players[mulliganPlayer];
+  p.mulligans++;
+  p.cardsInHand = p.mulligans === 1 ? 7 : Math.max(1, 7 - p.mulligans);
+  logAction(`${getPlayerName(mulliganPlayer)} mulliganed (${p.mulligans} total)`);
+  
+  if (p.mulligans < 7) {
+    openMulligan(mulliganPlayer);
+  } else {
+    closeModal('mulligan-modal');
+  }
+  render();
+});
 
 // Card Search
 let searchPlayer = 0;
@@ -942,7 +995,9 @@ function showDashboard(winner) {
       cmdrDamageDealt: state.commanderDamageDealt[idx] || 0,
       cmdrDamageTaken: totalCmdrDmg,
       knockedOut: knockout ? knockout.turn : null,
-      isWinner: idx === winner
+      isWinner: idx === winner,
+      mulligans: p.mulligans,
+      cardsInHand: p.cardsInHand
     };
   });
   
@@ -996,6 +1051,10 @@ function showDashboard(winner) {
           <div class="dashboard-stat">
             <span class="stat-label">Knocked Out</span>
             <span class="stat-value">${p.knockedOut ? `Turn ${p.knockedOut}` : 'Survived'}</span>
+          </div>
+          <div class="dashboard-stat">
+            <span class="stat-label">Starting Hand</span>
+            <span class="stat-value">${p.cardsInHand} cards${p.mulligans > 0 ? ` (${p.mulligans}x)` : ''}</span>
           </div>
         </div>
       </div>

@@ -109,6 +109,7 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 
 .player-name { font-size: 0.9rem; color: rgba(255,255,255,0.6); margin-bottom: 4px; padding: 4px 12px; border-radius: 20px; cursor: pointer; transition: background 0.2s; }
 .player-name:active { background: rgba(255,255,255,0.1); }
+.cards-in-hand { font-size: 0.75rem; color: var(--accent); margin-bottom: 4px; font-weight: 600; }
 
 .life-area { display: flex; align-items: center; gap: 8px; width: 100%; max-width: 280px; justify-content: center; }
 .life-btn { width: 64px; height: 64px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); background: transparent; color: white; font-size: 2rem; font-weight: 300; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
@@ -296,6 +297,22 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 
 /* Turn Phases */
 .phases-content { max-width: 450px; }
+
+/* Mulligan */
+.mulligan-content { max-width: 500px; }
+.mulligan-display { padding: 30px 20px; }
+.mulligan-subtitle { text-align: center; font-size: 0.85rem; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
+.mulligan-cards { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; min-height: 140px; align-items: center; }
+.mulligan-card { width: 60px; height: 84px; background: linear-gradient(135deg, var(--bg3) 0%, var(--bg) 100%); border: 2px solid var(--accent); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.4); animation: cardDeal 0.3s ease-out backwards; position: relative; }
+.mulligan-card::before { content: ''; position: absolute; inset: 4px; border-radius: 6px; border: 1px solid rgba(230,57,70,0.3); }
+@keyframes cardDeal {
+  0% { transform: translateY(-100px) rotate(-10deg); opacity: 0; }
+  100% { transform: translateY(0) rotate(0); opacity: 1; }
+}
+.mulligan-actions { display: flex; gap: 12px; padding: 0 20px 20px; }
+.mulligan-actions .action-btn { flex: 1; }
+
+/* Turn Phases */
 .phases-display { padding: 30px 20px 20px; }
 .phase-display { text-align: center; padding: 30px 20px; background: linear-gradient(135deg, rgba(230,57,70,0.1) 0%, rgba(230,57,70,0.05) 100%); border-radius: 16px; margin-bottom: 20px; min-height: 200px; display: flex; flex-direction: column; justify-content: center; transition: all 0.3s; }
 .phase-display.phase-pulse { animation: phasePulse 0.3s ease-out; }
