@@ -273,6 +273,8 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 .stack-item-info { flex: 1; }
 .stack-item-name { font-size: 0.85rem; font-weight: 500; margin-bottom: 2px; }
 .stack-item-player { font-size: 0.7rem; color: var(--text2); }
+.stack-duplicate { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--text2); background: transparent; color: var(--text2); font-size: 1rem; cursor: pointer; transition: all 0.2s; }
+.stack-duplicate:hover { border-color: #4caf50; color: #4caf50; }
 .stack-remove { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--text2); background: transparent; color: var(--text2); font-size: 1rem; cursor: pointer; transition: all 0.2s; }
 .stack-remove:hover { border-color: var(--accent); color: var(--accent); }
 

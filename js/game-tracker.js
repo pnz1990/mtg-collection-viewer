@@ -668,9 +668,18 @@ function renderStack() {
           <div class="stack-item-name">${item.name}</div>
           <div class="stack-item-player">${playerName}</div>
         </div>
+        <button class="stack-duplicate" onclick="duplicateInStack(${idx})" title="Duplicate">⎘</button>
         <button class="stack-remove" onclick="removeFromStack(${idx})">✕</button>
       </div>`;
     }).join('');
+  }
+}
+
+function duplicateInStack(idx) {
+  if (state.stack.length < 50) {
+    const item = state.stack[idx];
+    state.stack.splice(idx, 0, { ...item });
+    renderStack();
   }
 }
 
