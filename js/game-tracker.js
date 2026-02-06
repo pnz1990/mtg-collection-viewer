@@ -54,10 +54,8 @@ function render() {
     let artClass = '';
     
     if (cmd1 && cmd2) {
-      bgStyle = `--art1: url('${cmd1.artUrl}'); --art2: url('${cmd2.artUrl}');`;
       artClass = 'has-dual-art';
     } else if (cmd1) {
-      bgStyle = `background-image: url('${cmd1.artUrl}')`;
       artClass = 'has-art';
     }
     
@@ -69,8 +67,11 @@ function render() {
       displayName = cmd1.name;
     }
     
+    // Background style for single commander
+    const singleBgStyle = cmd1 && !cmd2 ? `background-image: url('${cmd1.artUrl}')` : '';
+    
     return `
-    <div class="player p${i} ${rotate ? 'rotate180' : ''} ${artClass}" data-idx="${i}" style="${bgStyle}">
+    <div class="player p${i} ${rotate ? 'rotate180' : ''} ${artClass}" data-idx="${i}" style="${singleBgStyle}">
       ${cmd1 && cmd2 ? `<div class="dual-art-bg" style="background-image: url('${cmd1.artUrl}')"></div><div class="dual-art-bg right" style="background-image: url('${cmd2.artUrl}')"></div>` : ''}
       <div class="player-main">
         <div class="player-name" data-action="name">${displayName}</div>
