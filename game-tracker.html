@@ -386,8 +386,11 @@
   <div id="planeswalker-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header"><h2>Planeswalker Tracker</h2><button class="close-btn">&times;</button></div>
+      <div class="search-box">
+        <input type="text" id="pw-search-input" placeholder="Search planeswalkers..." autocomplete="off">
+      </div>
+      <div id="pw-search-results" class="search-results"></div>
       <div id="pw-list" class="pw-list"></div>
-      <button id="add-pw" class="action-btn">Add Planeswalker</button>
     </div>
   </div>
 
@@ -404,24 +407,28 @@
   <div id="daynight-status" class="daynight-indicator">☀️ Day</div>
 
   <div id="dungeon-modal" class="modal hidden">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 500px;">
       <div class="modal-header"><h2>Dungeon</h2><button class="close-btn">&times;</button></div>
       <div style="padding: 20px; text-align: center;">
-        <div id="dungeon-name" style="font-size: 1.2rem; margin-bottom: 10px;">Tomb of Annihilation</div>
-        <div id="dungeon-room" style="font-size: 2rem; color: var(--accent); margin: 20px 0;">Room 1</div>
-        <button id="dungeon-next" class="action-btn" style="margin-bottom: 10px;">Next Room</button>
-        <button id="dungeon-change" class="action-btn secondary">Change Dungeon</button>
+        <img id="dungeon-img" style="width: 100%; border-radius: 12px; margin-bottom: 15px; transform: rotate(90deg); max-height: 400px; object-fit: contain;">
+        <div id="dungeon-room" style="font-size: 1.5rem; color: var(--accent); margin: 15px 0;">Room 1</div>
+        <div style="display: flex; gap: 10px;">
+          <button id="dungeon-next" class="action-btn">Next Room</button>
+          <button id="dungeon-change" class="action-btn secondary">Change Dungeon</button>
+        </div>
       </div>
     </div>
   </div>
 
   <div id="ring-modal" class="modal hidden">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 500px;">
       <div class="modal-header"><h2>The Ring Tempts You</h2><button class="close-btn">&times;</button></div>
       <div style="padding: 20px; text-align: center;">
-        <div style="margin-bottom: 15px;">Ring Bearer: <span id="ring-bearer-name" style="color: var(--accent);">None</span></div>
-        <div style="margin-bottom: 15px;">Temptation: <span id="ring-temptation" style="font-size: 2rem; color: var(--accent);">0</span></div>
+        <img src="https://cards.scryfall.io/normal/front/d/4/d4eadebc-c30f-4d5f-a1f0-d6b3e876c186.jpg" style="width: 100%; max-width: 300px; border-radius: 12px; margin-bottom: 15px;">
+        <div style="margin-bottom: 15px;">Ring Bearer: <span id="ring-bearer-name" style="color: var(--accent); font-weight: 600;">None</span></div>
+        <div style="margin-bottom: 15px;">Temptation: <span id="ring-temptation" style="font-size: 2rem; color: var(--accent); font-weight: 700;">0</span></div>
         <button id="ring-tempt" class="action-btn" style="margin-bottom: 15px;">The Ring Tempts You</button>
+        <h3 style="margin: 15px 0 10px; font-size: 0.9rem;">Select Ring-bearer</h3>
         <div id="ring-players" class="token-players"></div>
       </div>
     </div>
@@ -436,14 +443,14 @@
   </div>
 
   <div id="planechase-modal" class="modal hidden">
-    <div class="modal-content" style="max-width: 500px;">
+    <div class="modal-content" style="max-width: 600px;">
       <div class="modal-header"><h2>Planechase</h2><button class="close-btn">&times;</button></div>
       <div style="padding: 20px; text-align: center;">
-        <div id="plane-name" style="font-size: 1.1rem; margin-bottom: 15px;">Loading...</div>
-        <img id="plane-img" style="width: 100%; border-radius: 12px; margin-bottom: 15px;">
-        <div style="display: flex; gap: 10px;">
-          <button id="roll-plane" class="action-btn">Planeswalk</button>
-          <button id="roll-chaos" class="action-btn secondary">Roll Chaos</button>
+        <div id="plane-name" style="font-size: 1.1rem; margin-bottom: 15px; font-weight: 600;">Loading...</div>
+        <img id="plane-img" style="width: 100%; border-radius: 12px; margin-bottom: 15px; transform: rotate(90deg); max-height: 400px; object-fit: contain;">
+        <div style="display: flex; gap: 10px; justify-content: center;">
+          <button id="roll-plane" class="action-btn">🌀 Planeswalk</button>
+          <button id="roll-chaos" class="action-btn secondary">⚡ Roll Chaos</button>
         </div>
       </div>
     </div>
