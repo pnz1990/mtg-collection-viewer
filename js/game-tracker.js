@@ -157,19 +157,18 @@ function render() {
 let searchPlayer = 0;
 let searchTimeout = null;
 let activeSlot = 0;
-let hasPartner = false;
 
 function openCardSearch(idx) {
   searchPlayer = idx;
   const p = state.players[idx];
-  hasPartner = p.commanders[1] !== null;
   activeSlot = 0;
   
-  document.getElementById('partner-check').checked = hasPartner;
+  // Show second slot if first commander has partner
+  const hasPartner = p.commanders[0]?.hasPartner || false;
   document.getElementById('commander-slots').querySelector('[data-slot="1"]').classList.toggle('hidden', !hasPartner);
   
   updateSlotDisplay(p);
-  setActiveSlot(0);
+  setActiveSlot(p.commanders[0] && hasPartner ? (p.commanders[1] ? 0 : 1) : 0);
   
   document.getElementById('search-input').value = '';
   document.getElementById('search-results').innerHTML = '';
@@ -180,6 +179,10 @@ function openCardSearch(idx) {
 function updateSlotDisplay(p) {
   document.getElementById('slot-name-0').textContent = p.commanders[0]?.name || 'Not set';
   document.getElementById('slot-name-1').textContent = p.commanders[1]?.name || 'Not set';
+  
+  // Show/hide second slot based on partner status
+  const hasPartner = p.commanders[0]?.hasPartner || false;
+  document.getElementById('commander-slots').querySelector('[data-slot="1"]').classList.toggle('hidden', !hasPartner);
 }
 
 function setActiveSlot(slot) {
@@ -188,16 +191,6 @@ function setActiveSlot(slot) {
     el.classList.toggle('active', i === slot);
   });
 }
-
-document.getElementById('partner-check')?.addEventListener('change', e => {
-  hasPartner = e.target.checked;
-  document.getElementById('commander-slots').querySelector('[data-slot="1"]').classList.toggle('hidden', !hasPartner);
-  if (!hasPartner) {
-    state.players[searchPlayer].commanders[1] = null;
-    setActiveSlot(0);
-    updateSlotDisplay(state.players[searchPlayer]);
-  }
-});
 
 document.getElementById('commander-slots')?.addEventListener('click', e => {
   const slot = e.target.closest('.commander-slot');
@@ -213,17 +206,20 @@ async function searchCards(query) {
   }
   document.getElementById('search-results').innerHTML = '<div class="search-loading">Searching...</div>';
   try {
-    const res = await fetch(`https://api.scryfall.com/cards/search?q=${encodeURIComponent(query)}+is:commander&unique=cards&order=name`);
+    // If selecting second slot, only search for partners
+    const partnerFilter = activeSlot === 1 ? '+is:partner' : '';
+    const res = await fetch(`https://api.scryfall.com/cards/search?q=${encodeURIComponent(query)}+is:commander${partnerFilter}&unique=cards&order=name`);
     if (!res.ok) throw new Error();
     const data = await res.json();
     const cards = data.data.slice(0, 12);
     document.getElementById('search-results').innerHTML = cards.map(card => {
       const art = card.image_uris?.art_crop || card.card_faces?.[0]?.image_uris?.art_crop || card.image_uris?.normal || card.card_faces?.[0]?.image_uris?.normal || '';
       const thumb = card.image_uris?.small || card.card_faces?.[0]?.image_uris?.small || '';
+      const hasPartner = card.keywords?.includes('Partner') || card.oracle_text?.includes('Partner with') || false;
       return `
-      <div class="search-result" data-name="${card.name}" data-art="${art}">
+      <div class="search-result" data-name="${card.name}" data-art="${art}" data-partner="${hasPartner}">
         <img src="${thumb}" onerror="this.style.display='none'">
-        <span>${card.name}</span>
+        <span>${card.name}${hasPartner ? ' <small style="color:var(--accent)">(Partner)</small>' : ''}</span>
       </div>`;
     }).join('') || '<div class="search-empty">No commanders found</div>';
   } catch {
@@ -240,18 +236,28 @@ document.getElementById('search-results')?.addEventListener('click', e => {
   const result = e.target.closest('.search-result');
   if (result) {
     const p = state.players[searchPlayer];
+    const hasPartner = result.dataset.partner === 'true';
+    
     p.commanders[activeSlot] = {
       name: result.dataset.name,
-      artUrl: result.dataset.art
+      artUrl: result.dataset.art,
+      hasPartner: hasPartner
     };
+    
     updateSlotDisplay(p);
     
-    // If partners and just set first, move to second slot
-    if (hasPartner && activeSlot === 0 && !p.commanders[1]) {
+    // If this commander has partner and we just set first slot, show second slot and move to it
+    if (hasPartner && activeSlot === 0) {
+      document.getElementById('commander-slots').querySelector('[data-slot="1"]').classList.remove('hidden');
       setActiveSlot(1);
       document.getElementById('search-input').value = '';
+      document.getElementById('search-results').innerHTML = '';
       document.getElementById('search-input').focus();
     } else {
+      // Clear second commander if first doesn't have partner
+      if (activeSlot === 0 && !hasPartner) {
+        p.commanders[1] = null;
+      }
       closeModal('search-modal');
       render();
     }
