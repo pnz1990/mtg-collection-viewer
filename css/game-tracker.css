@@ -47,6 +47,33 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 
 /* Game Screen */
 .game-screen { height: 100%; display: flex; flex-direction: column; }
+
+/* Dashboard Screen */
+.dashboard-screen { height: 100%; overflow-y: auto; background: linear-gradient(135deg, #1a1a2e 0%, #0d0d0d 100%); padding: 40px 20px; }
+.dashboard-content { max-width: 900px; margin: 0 auto; }
+.dashboard-content h1 { text-align: center; font-size: 2rem; margin-bottom: 30px; color: var(--accent); }
+.dashboard-content h2 { font-size: 1.3rem; margin: 30px 0 20px; color: var(--text); }
+.dashboard-overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 30px; }
+.dashboard-stat-box { background: var(--bg2); padding: 20px; border-radius: 12px; text-align: center; }
+.dashboard-stat-box .stat-label { font-size: 0.75rem; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.dashboard-stat-box .stat-value { font-size: 1.5rem; font-weight: 600; color: var(--accent); }
+.dashboard-players { display: flex; flex-direction: column; gap: 16px; margin-bottom: 30px; }
+.dashboard-player { background: var(--bg2); border-radius: 16px; padding: 20px; display: flex; gap: 20px; align-items: center; border: 2px solid var(--bg3); }
+.dashboard-player.winner { border-color: var(--accent); background: rgba(230,57,70,0.1); }
+.dashboard-rank { font-size: 2rem; font-weight: 700; min-width: 60px; text-align: center; color: var(--text2); }
+.dashboard-player.winner .dashboard-rank { font-size: 2.5rem; }
+.dashboard-player-info { flex: 1; }
+.dashboard-player-name { font-size: 1.2rem; font-weight: 600; margin-bottom: 12px; color: var(--text); }
+.dashboard-player.winner .dashboard-player-name { color: var(--accent); }
+.dashboard-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+.dashboard-stat { background: var(--bg); padding: 10px; border-radius: 8px; }
+.dashboard-stat .stat-label { font-size: 0.7rem; color: var(--text2); display: block; margin-bottom: 4px; }
+.dashboard-stat .stat-value { font-size: 1.1rem; font-weight: 600; color: var(--text); }
+.dashboard-stat .stat-value.positive { color: #4caf50; }
+.dashboard-stat .stat-value.negative { color: #f44336; }
+.dashboard-stat .stat-value.highlight { color: var(--accent); font-weight: 700; }
+
+/* Game Screen */
 .players-container { flex: 1; display: grid; min-height: 0; }
 .players-container.p2 { grid-template-rows: 1fr 1fr; }
 .players-container.p3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }

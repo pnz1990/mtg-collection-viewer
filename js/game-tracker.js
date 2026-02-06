@@ -13,7 +13,11 @@ const state = {
   format: 'commander',
   particlesEnabled: true,
   currentPhase: 0,
-  currentStep: 0
+  currentStep: 0,
+  turnTimes: [],
+  damageDealt: {},
+  commanderDamageDealt: {},
+  knockouts: []
 };
 
 let clockInterval = null;
@@ -96,6 +100,14 @@ function initGame() {
   state.turnStartTime = null;
   state.log = [];
   state.stack = [];
+  state.turnTimes = [];
+  state.damageDealt = {};
+  state.commanderDamageDealt = {};
+  state.knockouts = [];
+  for (let i = 0; i < state.numPlayers; i++) {
+    state.damageDealt[i] = 0;
+    state.commanderDamageDealt[i] = 0;
+  }
   startClock();
   render();
   document.getElementById('setup-screen').classList.add('hidden');
@@ -215,7 +227,19 @@ function render() {
     
     if (action === 'life') {
       const delta = parseInt(e.target.dataset.delta);
+      const oldLife = state.players[idx].life;
       state.players[idx].life += delta;
+      
+      // Track damage dealt
+      if (delta < 0 && state.activePlayer >= 0 && state.activePlayer !== idx) {
+        state.damageDealt[state.activePlayer] = (state.damageDealt[state.activePlayer] || 0) + Math.abs(delta);
+      }
+      
+      // Track knockouts
+      if (oldLife > 0 && state.players[idx].life <= 0) {
+        state.knockouts.push({ player: idx, turn: state.turnCount, time: Date.now() });
+      }
+      
       logAction(`${getPlayerName(idx)} ${delta > 0 ? 'gained' : 'lost'} ${Math.abs(delta)} life`);
       render();
     } else if (action === 'name') {
@@ -528,7 +552,10 @@ function changeCmdr(key, delta) {
     const [playerIdx, cmdIdx] = key.split('-').map(Number);
     const other = state.players[playerIdx];
     const cmdName = other.commanders[cmdIdx]?.name.split(',')[0] || other.name;
+    
+    // Track commander damage dealt
     if (actualDelta > 0) {
+      state.commanderDamageDealt[playerIdx] = (state.commanderDamageDealt[playerIdx] || 0) + actualDelta;
       logAction(`${getPlayerName(cmdrPlayer)} took ${actualDelta} commander damage from ${cmdName} (${p.life} life)`);
     } else {
       logAction(`${getPlayerName(cmdrPlayer)} removed ${-actualDelta} commander damage from ${cmdName} (+${-actualDelta} life)`);
@@ -677,7 +704,14 @@ document.getElementById('btn-first').onclick = () => {
 document.getElementById('btn-pass').onclick = () => {
   const order = getClockwiseOrder();
   const currentIdx = order.indexOf(state.activePlayer);
-  if (state.activePlayer >= 0) logAction(`ended turn`);
+  if (state.activePlayer >= 0) {
+    logAction(`ended turn`);
+    // Track turn time
+    if (state.turnStartTime) {
+      const turnDuration = (Date.now() - state.turnStartTime) / 1000;
+      state.turnTimes.push({ player: state.activePlayer, duration: turnDuration });
+    }
+  }
   const nextPlayer = order[(currentIdx + 1) % order.length];
   // First time setting active player
   if (state.firstPlayer === -1) {
@@ -712,6 +746,7 @@ document.getElementById('btn-particles').onclick = () => {
   btn.style.opacity = state.particlesEnabled ? '1' : '0.5';
 };
 document.getElementById('btn-phases').onclick = () => openPhases();
+document.getElementById('btn-end').onclick = () => endGame();
 document.getElementById('btn-reset').onclick = () => {
   if (confirm('Reset game?')) {
     if (clockInterval) clearInterval(clockInterval);
@@ -851,6 +886,129 @@ document.getElementById('next-phase')?.addEventListener('click', () => {
   // Trigger animation
   document.getElementById('phase-display').classList.add('phase-pulse');
   setTimeout(() => document.getElementById('phase-display').classList.remove('phase-pulse'), 300);
+});
+
+// End Game & Dashboard
+function endGame() {
+  if (!confirm('End game and view stats?')) return;
+  
+  if (clockInterval) clearInterval(clockInterval);
+  
+  // Determine winner
+  const alivePlayers = state.players.filter(p => p.life > 0);
+  let winner = -1;
+  
+  if (alivePlayers.length === 1) {
+    winner = state.players.indexOf(alivePlayers[0]);
+  } else if (alivePlayers.length > 1) {
+    // Ask who won
+    const names = alivePlayers.map((p, i) => `${state.players.indexOf(p) + 1}. ${getPlayerName(state.players.indexOf(p))}`).join('\n');
+    const choice = prompt(`Multiple players alive. Who won?\n${names}\n\nEnter player number:`);
+    if (choice) winner = parseInt(choice) - 1;
+  }
+  
+  showDashboard(winner);
+}
+
+function showDashboard(winner) {
+  const gameTime = Math.floor((Date.now() - state.gameStartTime) / 1000);
+  const formatTime = (s) => {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    return h > 0 ? `${h}h ${m}m ${sec}s` : `${m}m ${sec}s`;
+  };
+  
+  // Calculate stats
+  const avgTurnTime = state.turnTimes.length > 0 
+    ? state.turnTimes.reduce((sum, t) => sum + t.duration, 0) / state.turnTimes.length 
+    : 0;
+  
+  const longestTurn = state.turnTimes.length > 0
+    ? state.turnTimes.reduce((max, t) => t.duration > max.duration ? t : max, state.turnTimes[0])
+    : null;
+  
+  const playerStats = state.players.map((p, idx) => {
+    const lifeChange = p.life - state.startingLife;
+    const totalCmdrDmg = Object.values(p.cmdDamage).reduce((sum, v) => sum + v, 0);
+    const knockout = state.knockouts.find(k => k.player === idx);
+    
+    return {
+      idx,
+      name: getPlayerName(idx),
+      finalLife: p.life,
+      lifeChange,
+      damageDealt: state.damageDealt[idx] || 0,
+      cmdrDamageDealt: state.commanderDamageDealt[idx] || 0,
+      cmdrDamageTaken: totalCmdrDmg,
+      knockedOut: knockout ? knockout.turn : null,
+      isWinner: idx === winner
+    };
+  });
+  
+  // Sort by placement (winner first, then by knockout order reversed, then by life)
+  playerStats.sort((a, b) => {
+    if (a.isWinner) return -1;
+    if (b.isWinner) return 1;
+    if (a.knockedOut && b.knockedOut) return b.knockedOut - a.knockedOut;
+    if (a.knockedOut) return 1;
+    if (b.knockedOut) return -1;
+    return b.finalLife - a.finalLife;
+  });
+  
+  const maxDamage = Math.max(...playerStats.map(p => p.damageDealt));
+  const maxCmdrDamage = Math.max(...playerStats.map(p => p.cmdrDamageDealt));
+  const biggestSwing = Math.max(...playerStats.map(p => Math.abs(p.lifeChange)));
+  
+  // Render dashboard
+  document.getElementById('dashboard-game-time').textContent = formatTime(gameTime);
+  document.getElementById('dashboard-turns').textContent = state.turnCount;
+  document.getElementById('dashboard-avg-turn').textContent = formatTime(Math.floor(avgTurnTime));
+  document.getElementById('dashboard-longest-turn').textContent = longestTurn 
+    ? `${getPlayerName(longestTurn.player)} (${formatTime(Math.floor(longestTurn.duration))})`
+    : 'N/A';
+  
+  const playersContainer = document.getElementById('dashboard-players');
+  playersContainer.innerHTML = playerStats.map((p, rank) => `
+    <div class="dashboard-player ${p.isWinner ? 'winner' : ''}">
+      <div class="dashboard-rank">${p.isWinner ? '👑' : `#${rank + 1}`}</div>
+      <div class="dashboard-player-info">
+        <div class="dashboard-player-name">${p.name}</div>
+        <div class="dashboard-stats-grid">
+          <div class="dashboard-stat">
+            <span class="stat-label">Final Life</span>
+            <span class="stat-value ${p.finalLife > 0 ? 'positive' : 'negative'}">${p.finalLife}</span>
+          </div>
+          <div class="dashboard-stat">
+            <span class="stat-label">Damage Dealt</span>
+            <span class="stat-value ${p.damageDealt === maxDamage && maxDamage > 0 ? 'highlight' : ''}">${p.damageDealt}</span>
+          </div>
+          ${state.format === 'commander' ? `
+          <div class="dashboard-stat">
+            <span class="stat-label">Cmdr Damage Dealt</span>
+            <span class="stat-value ${p.cmdrDamageDealt === maxCmdrDamage && maxCmdrDamage > 0 ? 'highlight' : ''}">${p.cmdrDamageDealt}</span>
+          </div>
+          <div class="dashboard-stat">
+            <span class="stat-label">Cmdr Damage Taken</span>
+            <span class="stat-value">${p.cmdrDamageTaken}</span>
+          </div>
+          ` : ''}
+          <div class="dashboard-stat">
+            <span class="stat-label">Knocked Out</span>
+            <span class="stat-value">${p.knockedOut ? `Turn ${p.knockedOut}` : 'Survived'}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  
+  document.getElementById('game-screen').classList.add('hidden');
+  document.getElementById('dashboard-screen').classList.remove('hidden');
+}
+
+document.getElementById('dashboard-new-game')?.addEventListener('click', () => {
+  document.getElementById('dashboard-screen').classList.add('hidden');
+  document.getElementById('setup-screen').classList.remove('hidden');
 });
 
 // Stack Tracker

@@ -105,12 +105,43 @@
       <button id="btn-phases" class="tool-btn" title="Turn Phases">
         <svg viewBox="0 0 24 24"><circle cx="4" cy="12" r="2" fill="currentColor"/><circle cx="12" cy="12" r="2" fill="currentColor"/><circle cx="20" cy="12" r="2" fill="currentColor"/><line x1="6" y1="12" x2="10" y2="12" stroke="currentColor" stroke-width="2"/><line x1="14" y1="12" x2="18" y2="12" stroke="currentColor" stroke-width="2"/></svg>
       </button>
+      <button id="btn-end" class="tool-btn" title="End Game">
+        <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" fill="currentColor"/></svg>
+      </button>
       <button id="btn-reset" class="tool-btn" title="Reset">
         <svg viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" fill="currentColor"/></svg>
       </button>
       <button id="btn-menu" class="tool-btn" title="Home">
         <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/></svg>
       </button>
+    </div>
+  </div>
+
+  <!-- Dashboard Screen -->
+  <div id="dashboard-screen" class="dashboard-screen hidden">
+    <div class="dashboard-content">
+      <h1>Game Summary</h1>
+      <div class="dashboard-overview">
+        <div class="dashboard-stat-box">
+          <div class="stat-label">Total Time</div>
+          <div class="stat-value" id="dashboard-game-time">0:00</div>
+        </div>
+        <div class="dashboard-stat-box">
+          <div class="stat-label">Total Turns</div>
+          <div class="stat-value" id="dashboard-turns">0</div>
+        </div>
+        <div class="dashboard-stat-box">
+          <div class="stat-label">Avg Turn Time</div>
+          <div class="stat-value" id="dashboard-avg-turn">0:00</div>
+        </div>
+        <div class="dashboard-stat-box">
+          <div class="stat-label">Longest Turn</div>
+          <div class="stat-value" id="dashboard-longest-turn">N/A</div>
+        </div>
+      </div>
+      <h2>Player Rankings</h2>
+      <div id="dashboard-players" class="dashboard-players"></div>
+      <button id="dashboard-new-game" class="start-btn">New Game</button>
     </div>
   </div>
 
