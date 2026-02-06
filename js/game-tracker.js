@@ -22,8 +22,7 @@ document.getElementById('start-game').onclick = () => {
 function initGame() {
   state.players = Array.from({ length: state.numPlayers }, (_, i) => ({
     name: `Player ${i + 1}`,
-    commander: '',
-    artUrl: '',
+    commanders: [null, null], // [{ name, artUrl }, ...]
     life: state.startingLife,
     poison: 0, energy: 0, experience: 0, storm: 0, cmdTax: 0,
     cmdDamage: Array(state.numPlayers).fill(0),
@@ -47,12 +46,34 @@ function render() {
     if (totalCmd > 0) badges.push(`<span class="badge cmdr">⚔ ${totalCmd}</span>`);
     
     const manaColors = ['W', 'U', 'B', 'R', 'G', 'C'];
-    const bgStyle = p.artUrl ? `background-image: url('${p.artUrl}')` : '';
+    
+    // Handle commander art backgrounds
+    const cmd1 = p.commanders[0];
+    const cmd2 = p.commanders[1];
+    let bgStyle = '';
+    let artClass = '';
+    
+    if (cmd1 && cmd2) {
+      bgStyle = `--art1: url('${cmd1.artUrl}'); --art2: url('${cmd2.artUrl}');`;
+      artClass = 'has-dual-art';
+    } else if (cmd1) {
+      bgStyle = `background-image: url('${cmd1.artUrl}')`;
+      artClass = 'has-art';
+    }
+    
+    // Display name
+    let displayName = p.name;
+    if (cmd1 && cmd2) {
+      displayName = `${cmd1.name.split(',')[0]} & ${cmd2.name.split(',')[0]}`;
+    } else if (cmd1) {
+      displayName = cmd1.name;
+    }
     
     return `
-    <div class="player p${i} ${rotate ? 'rotate180' : ''} ${p.artUrl ? 'has-art' : ''}" data-idx="${i}" style="${bgStyle}">
+    <div class="player p${i} ${rotate ? 'rotate180' : ''} ${artClass}" data-idx="${i}" style="${bgStyle}">
+      ${cmd1 && cmd2 ? `<div class="dual-art-bg" style="background-image: url('${cmd1.artUrl}')"></div><div class="dual-art-bg right" style="background-image: url('${cmd2.artUrl}')"></div>` : ''}
       <div class="player-main">
-        <div class="player-name" data-action="name">${p.name}</div>
+        <div class="player-name" data-action="name">${displayName}</div>
         <div class="life-area">
           <button class="life-btn minus" data-action="life" data-delta="-1">−</button>
           <div class="life-total">${p.life}</div>
@@ -134,15 +155,55 @@ function render() {
 // Card Search
 let searchPlayer = 0;
 let searchTimeout = null;
+let activeSlot = 0;
+let hasPartner = false;
 
 function openCardSearch(idx) {
   searchPlayer = idx;
   const p = state.players[idx];
-  document.getElementById('search-input').value = p.commander || '';
+  hasPartner = p.commanders[1] !== null;
+  activeSlot = 0;
+  
+  document.getElementById('partner-check').checked = hasPartner;
+  document.getElementById('commander-slots').querySelector('[data-slot="1"]').classList.toggle('hidden', !hasPartner);
+  
+  updateSlotDisplay(p);
+  setActiveSlot(0);
+  
+  document.getElementById('search-input').value = '';
   document.getElementById('search-results').innerHTML = '';
   openModal('search-modal');
   document.getElementById('search-input').focus();
 }
+
+function updateSlotDisplay(p) {
+  document.getElementById('slot-name-0').textContent = p.commanders[0]?.name || 'Not set';
+  document.getElementById('slot-name-1').textContent = p.commanders[1]?.name || 'Not set';
+}
+
+function setActiveSlot(slot) {
+  activeSlot = slot;
+  document.querySelectorAll('.commander-slot').forEach((el, i) => {
+    el.classList.toggle('active', i === slot);
+  });
+}
+
+document.getElementById('partner-check')?.addEventListener('change', e => {
+  hasPartner = e.target.checked;
+  document.getElementById('commander-slots').querySelector('[data-slot="1"]').classList.toggle('hidden', !hasPartner);
+  if (!hasPartner) {
+    state.players[searchPlayer].commanders[1] = null;
+    setActiveSlot(0);
+    updateSlotDisplay(state.players[searchPlayer]);
+  }
+});
+
+document.getElementById('commander-slots')?.addEventListener('click', e => {
+  const slot = e.target.closest('.commander-slot');
+  if (slot && !slot.classList.contains('hidden')) {
+    setActiveSlot(parseInt(slot.dataset.slot));
+  }
+});
 
 async function searchCards(query) {
   if (query.length < 2) {
@@ -151,7 +212,7 @@ async function searchCards(query) {
   }
   document.getElementById('search-results').innerHTML = '<div class="search-loading">Searching...</div>';
   try {
-    const res = await fetch(`https://api.scryfall.com/cards/search?q=${encodeURIComponent(query)}&unique=cards&order=name`);
+    const res = await fetch(`https://api.scryfall.com/cards/search?q=${encodeURIComponent(query)}+is:commander&unique=cards&order=name`);
     if (!res.ok) throw new Error();
     const data = await res.json();
     const cards = data.data.slice(0, 12);
@@ -162,9 +223,9 @@ async function searchCards(query) {
         <img src="${card.image_uris?.small || card.card_faces?.[0]?.image_uris?.small || ''}" onerror="this.style.display='none'">
         <span>${card.name}</span>
       </div>`;
-    }).join('') || '<div class="search-empty">No results</div>';
+    }).join('') || '<div class="search-empty">No commanders found</div>';
   } catch {
-    document.getElementById('search-results').innerHTML = '<div class="search-empty">No results</div>';
+    document.getElementById('search-results').innerHTML = '<div class="search-empty">No commanders found</div>';
   }
 }
 
@@ -177,19 +238,28 @@ document.getElementById('search-results')?.addEventListener('click', e => {
   const result = e.target.closest('.search-result');
   if (result) {
     const p = state.players[searchPlayer];
-    p.name = result.dataset.name;
-    p.commander = result.dataset.name;
-    p.artUrl = result.dataset.art;
-    closeModal('search-modal');
-    render();
+    p.commanders[activeSlot] = {
+      name: result.dataset.name,
+      artUrl: result.dataset.art
+    };
+    updateSlotDisplay(p);
+    
+    // If partners and just set first, move to second slot
+    if (hasPartner && activeSlot === 0 && !p.commanders[1]) {
+      setActiveSlot(1);
+      document.getElementById('search-input').value = '';
+      document.getElementById('search-input').focus();
+    } else {
+      closeModal('search-modal');
+      render();
+    }
   }
 });
 
 document.getElementById('clear-commander')?.addEventListener('click', () => {
   const p = state.players[searchPlayer];
+  p.commanders = [null, null];
   p.name = `Player ${searchPlayer + 1}`;
-  p.commander = '';
-  p.artUrl = '';
   closeModal('search-modal');
   render();
 });
