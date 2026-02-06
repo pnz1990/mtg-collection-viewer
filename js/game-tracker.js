@@ -414,12 +414,20 @@ function openCmdr(idx) {
 
 function changeCmdr(key, delta) {
   const p = state.players[cmdrPlayer];
-  p.cmdDamage[key] = Math.max(0, (p.cmdDamage[key] || 0) + delta);
-  if (delta > 0) {
+  const oldVal = p.cmdDamage[key] || 0;
+  const newVal = Math.max(0, oldVal + delta);
+  const actualDelta = newVal - oldVal;
+  p.cmdDamage[key] = newVal;
+  if (actualDelta !== 0) {
+    p.life -= actualDelta;
     const [playerIdx, cmdIdx] = key.split('-').map(Number);
     const other = state.players[playerIdx];
     const cmdName = other.commanders[cmdIdx]?.name.split(',')[0] || other.name;
-    logAction(`${getPlayerName(cmdrPlayer)} took ${delta} commander damage from ${cmdName}`);
+    if (actualDelta > 0) {
+      logAction(`${getPlayerName(cmdrPlayer)} took ${actualDelta} commander damage from ${cmdName} (${p.life} life)`);
+    } else {
+      logAction(`${getPlayerName(cmdrPlayer)} removed ${-actualDelta} commander damage from ${cmdName} (+${-actualDelta} life)`);
+    }
   }
   openCmdr(cmdrPlayer);
   render();
