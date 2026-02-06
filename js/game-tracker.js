@@ -10,7 +10,9 @@ const state = {
   gameStartTime: null,
   turnStartTime: null,
   stack: [],
-  format: 'commander'
+  format: 'commander',
+  particlesEnabled: true,
+  currentPhase: 0
 };
 
 let clockInterval = null;
@@ -700,6 +702,15 @@ document.getElementById('btn-log').onclick = () => {
 document.getElementById('btn-dice').onclick = () => openModal('dice-modal');
 document.getElementById('btn-coin').onclick = () => openModal('coin-modal');
 document.getElementById('btn-stack').onclick = () => openStack();
+document.getElementById('btn-particles').onclick = () => {
+  state.particlesEnabled = !state.particlesEnabled;
+  document.querySelectorAll('.player-particles').forEach(p => {
+    p.style.display = state.particlesEnabled ? 'block' : 'none';
+  });
+  const btn = document.getElementById('btn-particles');
+  btn.style.opacity = state.particlesEnabled ? '1' : '0.5';
+};
+document.getElementById('btn-phases').onclick = () => openPhases();
 document.getElementById('btn-reset').onclick = () => {
   if (confirm('Reset game?')) {
     if (clockInterval) clearInterval(clockInterval);
@@ -768,6 +779,34 @@ function createPlayerParticles(container, colors) {
   // Continue spawning
   setInterval(() => spawnParticle(), 600);
 }
+
+// Turn Phases
+const phases = ['Beginning Phase', 'First Main Phase', 'Combat Phase', 'Second Main Phase', 'End Phase'];
+
+function openPhases() {
+  renderPhases();
+  openModal('phases-modal');
+}
+
+function renderPhases() {
+  const container = document.getElementById('phases-container');
+  container.innerHTML = phases.map((phase, idx) => `
+    <div class="phase-item ${idx === state.currentPhase ? 'active' : ''}" data-idx="${idx}">
+      <div class="phase-number">${idx + 1}</div>
+      <div class="phase-name">${phase}</div>
+    </div>
+  `).join('');
+}
+
+document.getElementById('next-phase')?.addEventListener('click', () => {
+  state.currentPhase = (state.currentPhase + 1) % phases.length;
+  renderPhases();
+  
+  // Animate transition
+  const activePhase = document.querySelector('.phase-item.active');
+  activePhase?.classList.add('phase-enter');
+  setTimeout(() => activePhase?.classList.remove('phase-enter'), 300);
+});
 
 // Stack Tracker
 let stackSearchTimeout = null;
