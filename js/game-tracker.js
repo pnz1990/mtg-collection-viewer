@@ -17,7 +17,14 @@ const state = {
   turnTimes: [],
   damageDealt: {},
   commanderDamageDealt: {},
-  knockouts: []
+  knockouts: [],
+  advancedMode: false,
+  dayNight: 'day',
+  monarch: -1,
+  initiative: -1,
+  ringBearer: -1,
+  ringTemptation: 0,
+  currentPlane: null
 };
 
 let clockInterval = null;
@@ -99,7 +106,9 @@ function initGame() {
     cardsInHand: 7,
     mulliganActive: false,
     cardsDrawn: 0,
-    cardsDiscarded: 0
+    cardsDiscarded: 0,
+    planeswalkers: [],
+    citysBlessing: false
   }));
   state.gameStartTime = Date.now();
   state.turnStartTime = null;
@@ -892,6 +901,26 @@ document.getElementById('btn-particles').onclick = () => {
 };
 document.getElementById('btn-phases').onclick = () => openPhases();
 document.getElementById('btn-end').onclick = () => endGame();
+document.getElementById('btn-toggle-tools').onclick = () => {
+  state.advancedMode = !state.advancedMode;
+  document.getElementById('basic-tools').classList.toggle('hidden', state.advancedMode);
+  document.getElementById('advanced-tools').classList.toggle('hidden', !state.advancedMode);
+};
+
+// Advanced tools
+document.getElementById('btn-planeswalker')?.onclick = () => openModal('planeswalker-modal');
+document.getElementById('btn-monarch')?.onclick = () => openModal('monarch-modal');
+document.getElementById('btn-daynight')?.onclick = () => {
+  state.dayNight = state.dayNight === 'day' ? 'night' : 'day';
+  document.getElementById('daynight-status').textContent = state.dayNight === 'day' ? '☀️ Day' : '🌙 Night';
+  logAction(`It becomes ${state.dayNight}`);
+};
+document.getElementById('btn-dungeon')?.onclick = () => openModal('dungeon-modal');
+document.getElementById('btn-ring')?.onclick = () => openModal('ring-modal');
+document.getElementById('btn-vote')?.onclick = () => openModal('vote-modal');
+document.getElementById('btn-planechase')?.onclick = () => openPlanechase();
+document.getElementById('btn-citys')?.onclick = () => openModal('citys-modal');
+
 document.getElementById('btn-reset').onclick = () => {
   if (confirm('Reset game?')) {
     if (clockInterval) clearInterval(clockInterval);
@@ -1171,6 +1200,175 @@ document.getElementById('dashboard-new-game')?.addEventListener('click', () => {
   document.getElementById('dashboard-screen').classList.add('hidden');
   document.getElementById('setup-screen').classList.remove('hidden');
 });
+
+// Advanced Tools Implementation
+
+// Planeswalker Tracker
+let pwPlayer = 0;
+function renderPlaneswalkers() {
+  const p = state.players[pwPlayer];
+  const container = document.getElementById('pw-list');
+  container.innerHTML = p.planeswalkers.length === 0 
+    ? '<div class="empty-state">No planeswalkers tracked</div>'
+    : p.planeswalkers.map((pw, idx) => `
+      <div class="pw-item">
+        <div class="pw-name">${pw.name}</div>
+        <div class="pw-loyalty">
+          <button onclick="changePWLoyalty(${idx}, -1)">−</button>
+          <span>${pw.loyalty}</span>
+          <button onclick="changePWLoyalty(${idx}, 1)">+</button>
+        </div>
+        <button class="pw-remove" onclick="removePW(${idx})">✕</button>
+      </div>
+    `).join('');
+}
+
+function changePWLoyalty(idx, delta) {
+  state.players[pwPlayer].planeswalkers[idx].loyalty = Math.max(0, state.players[pwPlayer].planeswalkers[idx].loyalty + delta);
+  renderPlaneswalkers();
+}
+
+function removePW(idx) {
+  state.players[pwPlayer].planeswalkers.splice(idx, 1);
+  renderPlaneswalkers();
+}
+
+document.getElementById('add-pw')?.addEventListener('click', () => {
+  const name = prompt('Planeswalker name:');
+  const loyalty = prompt('Starting loyalty:', '3');
+  if (name && loyalty) {
+    state.players[pwPlayer].planeswalkers.push({ name, loyalty: parseInt(loyalty) });
+    renderPlaneswalkers();
+  }
+});
+
+// Monarch/Initiative
+function renderMonarch() {
+  document.getElementById('monarch-players').innerHTML = state.players.map((p, i) => `
+    <button class="token-player-btn ${state.monarch === i ? 'active' : ''}" onclick="setMonarch(${i})">${getPlayerName(i)}</button>
+  `).join('');
+  document.getElementById('initiative-players').innerHTML = state.players.map((p, i) => `
+    <button class="token-player-btn ${state.initiative === i ? 'active' : ''}" onclick="setInitiative(${i})">${getPlayerName(i)}</button>
+  `).join('');
+}
+
+function setMonarch(idx) {
+  state.monarch = state.monarch === idx ? -1 : idx;
+  logAction(state.monarch >= 0 ? `${getPlayerName(idx)} becomes the monarch` : 'Monarch removed');
+  renderMonarch();
+}
+
+function setInitiative(idx) {
+  state.initiative = state.initiative === idx ? -1 : idx;
+  logAction(state.initiative >= 0 ? `${getPlayerName(idx)} takes the initiative` : 'Initiative removed');
+  renderMonarch();
+}
+
+// Dungeon Tracker
+const dungeons = ['Tomb of Annihilation', 'Lost Mine of Phandelver', 'Dungeon of the Mad Mage'];
+let currentDungeon = 0;
+let dungeonRoom = 0;
+
+function renderDungeon() {
+  document.getElementById('dungeon-name').textContent = dungeons[currentDungeon];
+  document.getElementById('dungeon-room').textContent = `Room ${dungeonRoom + 1}`;
+}
+
+document.getElementById('dungeon-next')?.addEventListener('click', () => {
+  dungeonRoom++;
+  logAction(`Advanced to room ${dungeonRoom + 1} in ${dungeons[currentDungeon]}`);
+  renderDungeon();
+});
+
+document.getElementById('dungeon-change')?.addEventListener('click', () => {
+  currentDungeon = (currentDungeon + 1) % dungeons.length;
+  dungeonRoom = 0;
+  renderDungeon();
+});
+
+// Ring Tempts You
+function renderRing() {
+  document.getElementById('ring-bearer-name').textContent = state.ringBearer >= 0 ? getPlayerName(state.ringBearer) : 'None';
+  document.getElementById('ring-temptation').textContent = state.ringTemptation;
+  document.getElementById('ring-players').innerHTML = state.players.map((p, i) => `
+    <button class="token-player-btn ${state.ringBearer === i ? 'active' : ''}" onclick="setRingBearer(${i})">${getPlayerName(i)}</button>
+  `).join('');
+}
+
+function setRingBearer(idx) {
+  state.ringBearer = idx;
+  renderRing();
+}
+
+document.getElementById('ring-tempt')?.addEventListener('click', () => {
+  state.ringTemptation++;
+  logAction(`The Ring tempts you (${state.ringTemptation})`);
+  renderRing();
+});
+
+// Voting
+function renderVote() {
+  const container = document.getElementById('vote-options');
+  container.innerHTML = state.players.map((p, i) => `
+    <div class="vote-row">
+      <span>${getPlayerName(i)}</span>
+      <input type="text" id="vote-${i}" placeholder="Vote...">
+    </div>
+  `).join('');
+}
+
+document.getElementById('tally-votes')?.addEventListener('click', () => {
+  const votes = {};
+  state.players.forEach((p, i) => {
+    const vote = document.getElementById(`vote-${i}`).value;
+    if (vote) votes[vote] = (votes[vote] || 0) + 1;
+  });
+  const result = Object.entries(votes).sort((a, b) => b[1] - a[1])[0];
+  alert(result ? `Winner: ${result[0]} (${result[1]} votes)` : 'No votes cast');
+});
+
+// Planechase
+async function openPlanechase() {
+  if (!state.currentPlane) await rollPlane();
+  openModal('planechase-modal');
+}
+
+async function rollPlane() {
+  try {
+    const res = await fetch('https://api.scryfall.com/cards/random?q=t:plane');
+    const card = await res.json();
+    state.currentPlane = card;
+    document.getElementById('plane-name').textContent = card.name;
+    document.getElementById('plane-img').src = card.image_uris?.normal || '';
+    logAction(`Planeswalked to ${card.name}`);
+  } catch {
+    alert('Failed to fetch plane');
+  }
+}
+
+document.getElementById('roll-plane')?.addEventListener('click', () => rollPlane());
+document.getElementById('roll-chaos')?.addEventListener('click', () => {
+  const roll = Math.random();
+  if (roll < 0.17) {
+    alert('⚡ CHAOS!');
+    logAction('Chaos symbol rolled!');
+  } else {
+    alert('Blank');
+  }
+});
+
+// City's Blessing
+function renderCitys() {
+  document.getElementById('citys-players').innerHTML = state.players.map((p, i) => `
+    <button class="token-player-btn ${p.citysBlessing ? 'active' : ''}" onclick="toggleCitys(${i})">${getPlayerName(i)}</button>
+  `).join('');
+}
+
+function toggleCitys(idx) {
+  state.players[idx].citysBlessing = !state.players[idx].citysBlessing;
+  logAction(`${getPlayerName(idx)} ${state.players[idx].citysBlessing ? 'gained' : 'lost'} the city's blessing`);
+  renderCitys();
+}
 
 // Stack Tracker
 let stackSearchTimeout = null;
