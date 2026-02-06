@@ -923,18 +923,18 @@ document.getElementById('btn-toggle-tools').onclick = () => {
 };
 
 // Advanced tools
-document.getElementById('btn-planeswalker')?.onclick = () => openModal('planeswalker-modal');
-document.getElementById('btn-monarch')?.onclick = () => openModal('monarch-modal');
-document.getElementById('btn-daynight')?.onclick = () => {
+document.getElementById('btn-planeswalker')?.addEventListener('click', () => openModal('planeswalker-modal'));
+document.getElementById('btn-monarch')?.addEventListener('click', () => openModal('monarch-modal'));
+document.getElementById('btn-daynight')?.addEventListener('click', () => {
   state.dayNight = state.dayNight === 'day' ? 'night' : 'day';
   document.getElementById('daynight-status').textContent = state.dayNight === 'day' ? '☀️ Day' : '🌙 Night';
   logAction(`It becomes ${state.dayNight}`);
-};
-document.getElementById('btn-dungeon')?.onclick = () => openModal('dungeon-modal');
-document.getElementById('btn-ring')?.onclick = () => openModal('ring-modal');
-document.getElementById('btn-vote')?.onclick = () => openModal('vote-modal');
-document.getElementById('btn-planechase')?.onclick = () => openPlanechase();
-document.getElementById('btn-citys')?.onclick = () => openModal('citys-modal');
+});
+document.getElementById('btn-dungeon')?.addEventListener('click', () => openModal('dungeon-modal'));
+document.getElementById('btn-ring')?.addEventListener('click', () => openModal('ring-modal'));
+document.getElementById('btn-vote')?.addEventListener('click', () => openModal('vote-modal'));
+document.getElementById('btn-planechase')?.addEventListener('click', () => openPlanechase());
+document.getElementById('btn-citys')?.addEventListener('click', () => openModal('citys-modal'));
 
 document.getElementById('btn-reset').onclick = () => {
   if (confirm('Reset game?')) {
