@@ -126,7 +126,7 @@ function render() {
         <div class="player-actions">
           <button class="action-pill mana-btn" data-action="mana">Mana</button>
           <button class="action-pill" data-action="counters">Counters</button>
-          <button class="action-pill" data-action="cmdr">Cmdr Dmg</button>
+          <button class="action-pill" data-action="cmdr">Commander Damage</button>
         </div>
       </div>
       <div class="mana-bar">
