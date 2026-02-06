@@ -96,7 +96,8 @@ function initGame() {
     mana: { W: 0, U: 0, B: 0, R: 0, G: 0, C: 0 },
     rotated: false,
     mulligans: 0,
-    cardsInHand: 7
+    cardsInHand: 7,
+    mulliganActive: false
   }));
   state.gameStartTime = Date.now();
   state.turnStartTime = null;
@@ -191,6 +192,22 @@ function render() {
     <div class="player p${i} ${p.rotated ? 'rotate180' : ''} ${artClass} ${isActive ? 'active' : ''}" data-idx="${i}" style="${singleBgStyle}">
       ${isCommander && cmd1 && cmd2 ? `<div class="dual-art-bg" style="background-image: url('${cmd1.artUrl}')"></div><div class="dual-art-bg right" style="background-image: url('${cmd2.artUrl}')"></div>` : ''}
       ${colorIdentity.length > 0 ? `<div class="player-particles" data-colors="${colorIdentity.join(',')}"></div>` : ''}
+      
+      ${p.mulliganActive ? `
+        <div class="mulligan-overlay">
+          <div class="mulligan-label">${p.mulligans === 0 ? 'Free Mulligan' : `Mulligan ${p.mulligans}`}</div>
+          <div class="mulligan-cards-inline">
+            ${Array.from({length: p.mulligans === 0 ? 7 : Math.max(1, 7 - p.mulligans)}, (_, cardIdx) => 
+              `<div class="mulligan-card-inline" style="animation-delay: ${cardIdx * 0.05}s"></div>`
+            ).join('')}
+          </div>
+          <div class="mulligan-actions-inline">
+            <button class="mulligan-btn keep" data-action="keep-hand">Keep</button>
+            ${p.mulligans < 7 ? '<button class="mulligan-btn mulligan" data-action="do-mulligan">Mulligan</button>' : ''}
+          </div>
+        </div>
+      ` : ''}
+      
       <div class="player-main">
         <div class="player-name" data-action="${isCommander ? 'name' : 'edit-name'}">${displayName}</div>
         ${p.cardsInHand < 7 ? `<div class="cards-in-hand">${p.cardsInHand} cards</div>` : ''}
@@ -255,6 +272,18 @@ function render() {
       editPlayerName(idx);
     } else if (action === 'mulligan') {
       openMulligan(idx);
+    } else if (action === 'keep-hand') {
+      const p = state.players[idx];
+      logAction(`${getPlayerName(idx)} kept ${p.cardsInHand} cards`);
+      p.mulliganActive = false;
+      render();
+    } else if (action === 'do-mulligan') {
+      const p = state.players[idx];
+      p.mulligans++;
+      p.cardsInHand = p.mulligans === 1 ? 7 : Math.max(1, 7 - p.mulligans);
+      logAction(`${getPlayerName(idx)} mulliganed (${p.mulligans} total)`);
+      if (p.mulligans >= 7) p.mulliganActive = false;
+      render();
     } else if (action === 'counters') openCounters(idx);
     else if (action === 'cmdr') openCmdr(idx);
     else if (action === 'mana') openMana(idx);
@@ -308,48 +337,10 @@ function editPlayerName(idx) {
 }
 
 // Mulligan
-let mulliganPlayer = 0;
-
 function openMulligan(idx) {
-  mulliganPlayer = idx;
-  const p = state.players[idx];
-  const cardsToShow = p.mulligans === 0 ? 7 : Math.max(1, 7 - p.mulligans);
-  
-  document.getElementById('mulligan-player-name').textContent = getPlayerName(idx);
-  document.getElementById('mulligan-count').textContent = p.mulligans === 0 ? 'Free Mulligan' : `Mulligan ${p.mulligans}`;
-  
-  // Show cards
-  const container = document.getElementById('mulligan-cards');
-  container.innerHTML = '';
-  for (let i = 0; i < cardsToShow; i++) {
-    const card = document.createElement('div');
-    card.className = 'mulligan-card';
-    card.style.animationDelay = `${i * 0.05}s`;
-    container.appendChild(card);
-  }
-  
-  openModal('mulligan-modal');
-}
-
-document.getElementById('btn-keep')?.addEventListener('click', () => {
-  const p = state.players[mulliganPlayer];
-  logAction(`${getPlayerName(mulliganPlayer)} kept ${p.cardsInHand} cards`);
-  closeModal('mulligan-modal');
-});
-
-document.getElementById('btn-mulligan')?.addEventListener('click', () => {
-  const p = state.players[mulliganPlayer];
-  p.mulligans++;
-  p.cardsInHand = p.mulligans === 1 ? 7 : Math.max(1, 7 - p.mulligans);
-  logAction(`${getPlayerName(mulliganPlayer)} mulliganed (${p.mulligans} total)`);
-  
-  if (p.mulligans < 7) {
-    openMulligan(mulliganPlayer);
-  } else {
-    closeModal('mulligan-modal');
-  }
+  state.players[idx].mulliganActive = true;
   render();
-});
+}
 
 // Card Search
 let searchPlayer = 0;

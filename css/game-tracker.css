@@ -299,18 +299,21 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 .phases-content { max-width: 450px; }
 
 /* Mulligan */
-.mulligan-content { max-width: 500px; }
-.mulligan-display { padding: 30px 20px; }
-.mulligan-subtitle { text-align: center; font-size: 0.85rem; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
-.mulligan-cards { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; min-height: 140px; align-items: center; }
-.mulligan-card { width: 60px; height: 84px; background: linear-gradient(135deg, var(--bg3) 0%, var(--bg) 100%); border: 2px solid var(--accent); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.4); animation: cardDeal 0.3s ease-out backwards; position: relative; }
-.mulligan-card::before { content: ''; position: absolute; inset: 4px; border-radius: 6px; border: 1px solid rgba(230,57,70,0.3); }
+.mulligan-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(4px); z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+.mulligan-label { font-size: 0.85rem; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+.mulligan-cards-inline { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px; max-width: 100%; }
+.mulligan-card-inline { width: 40px; height: 56px; background: linear-gradient(135deg, var(--bg3) 0%, var(--bg) 100%); border: 2px solid var(--accent); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.4); animation: cardDeal 0.3s ease-out backwards; position: relative; flex-shrink: 0; }
+.mulligan-card-inline::before { content: ''; position: absolute; inset: 3px; border-radius: 4px; border: 1px solid rgba(230,57,70,0.3); }
 @keyframes cardDeal {
-  0% { transform: translateY(-100px) rotate(-10deg); opacity: 0; }
+  0% { transform: translateY(-50px) rotate(-10deg); opacity: 0; }
   100% { transform: translateY(0) rotate(0); opacity: 1; }
 }
-.mulligan-actions { display: flex; gap: 12px; padding: 0 20px 20px; }
-.mulligan-actions .action-btn { flex: 1; }
+.mulligan-actions-inline { display: flex; gap: 10px; }
+.mulligan-btn { padding: 10px 20px; border-radius: 10px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 2px solid; }
+.mulligan-btn.keep { background: transparent; border-color: var(--text2); color: var(--text2); }
+.mulligan-btn.keep:hover { background: rgba(255,255,255,0.1); }
+.mulligan-btn.mulligan { background: transparent; border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px rgba(230,57,70,0.3); }
+.mulligan-btn.mulligan:hover { background: rgba(230,57,70,0.15); box-shadow: 0 0 20px rgba(230,57,70,0.5); }
 
 /* Turn Phases */
 .phases-display { padding: 30px 20px 20px; }
