@@ -153,7 +153,7 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 .rotate-toggle { display: flex; align-items: center; gap: 10px; color: var(--text2); font-size: 0.9rem; cursor: pointer; }
 .rotate-toggle input { width: 18px; height: 18px; accent-color: var(--accent); }
 
-.action-btn { display: block; width: 100%; padding: 14px; background: transparent; border: 2px solid var(--accent); border-radius: 12px; color: var(--accent); font-size: 1rem; font-weight: 600; cursor: pointer; box-shadow: 0 0 10px rgba(230,57,70,0.3); transition: all 0.2s; }
+.action-btn { display: block; width: 100%; padding: 14px; background: transparent; border: 2px solid var(--accent); border-radius: 12px; color: var(--accent); font-size: 1rem; font-weight: 600; cursor: pointer; box-shadow: 0 0 10px rgba(230,57,70,0.3); transition: all 0.2s; margin: 0 20px 20px; width: calc(100% - 40px); }
 .action-btn:hover { background: rgba(230,57,70,0.15); box-shadow: 0 0 20px rgba(230,57,70,0.5); }
 .action-btn.secondary { border-color: var(--text2); color: var(--text2); box-shadow: none; }
 .action-btn.secondary:hover { background: rgba(255,255,255,0.05); }
