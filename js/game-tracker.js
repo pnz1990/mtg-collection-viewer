@@ -743,4 +743,7 @@ function addToStack(name, img, playerIdx) {
   document.getElementById('stack-player-selector').classList.add('hidden');
   document.getElementById('stack-search-input').value = '';
   document.getElementById('stack-search-results').innerHTML = '';
+  // Scroll to bottom to show newest card
+  const container = document.getElementById('stack-container');
+  setTimeout(() => container.scrollTop = container.scrollHeight, 100);
 }
