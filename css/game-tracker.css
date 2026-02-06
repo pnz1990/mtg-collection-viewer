@@ -6,6 +6,8 @@
 }
 html, body { height: 100%; overflow: hidden; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); }
+/* Prevent iOS zoom on tap */
+button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 .hidden { display: none !important; }
 
 /* Setup */
@@ -40,7 +42,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .players-container.p4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
 
 /* Player Panel */
-.player { display: flex; flex-direction: column; position: relative; overflow: hidden; background-size: cover; background-position: center; }
+.player { display: flex; flex-direction: column; position: relative; overflow: hidden; background-size: cover; background-position: center; min-height: 0; }
 .player::before { content: ''; position: absolute; inset: 0; z-index: 0; }
 .player:not(.has-art).p0::before { background: linear-gradient(180deg, var(--p0) 0%, transparent 100%); opacity: 0.4; }
 .player:not(.has-art).p1::before { background: linear-gradient(0deg, var(--p1) 0%, transparent 100%); opacity: 0.4; }
@@ -55,7 +57,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .player.rotate180 { transform: rotate(180deg); }
 .player > *:not(.dual-art-bg) { position: relative; z-index: 2; }
 
-.player-main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; }
+.player-main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; min-height: 0; overflow: hidden; }
 
 .player-name { font-size: 0.9rem; color: rgba(255,255,255,0.6); margin-bottom: 4px; padding: 4px 12px; border-radius: 20px; cursor: pointer; transition: background 0.2s; }
 .player-name:active { background: rgba(255,255,255,0.1); }
@@ -88,7 +90,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .action-pill:active { transform: scale(0.95); box-shadow: 0 0 10px rgba(230,57,70,0.4); }
 
 /* Mana Bar */
-.mana-bar { display: flex; align-items: center; justify-content: center; gap: 4px; padding: 8px; background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.1); }
+.mana-bar { display: flex; align-items: center; justify-content: center; gap: 4px; padding: 8px; background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
 .mana-pip { display: flex; align-items: center; gap: 2px; padding: 6px 8px; background: rgba(255,255,255,0.05); border-radius: 16px; cursor: pointer; transition: all 0.15s; min-width: 36px; justify-content: center; user-select: none; -webkit-user-select: none; }
 .mana-pip:active { transform: scale(0.9); background: rgba(255,255,255,0.15); }
 .mana-pip i { font-size: 16px; }
