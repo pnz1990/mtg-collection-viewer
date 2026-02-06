@@ -44,19 +44,31 @@ function render() {
     const totalCmd = p.cmdDamage.reduce((a, b) => a + b, 0);
     if (totalCmd > 0) badges.push(`<span class="badge cmdr">⚔ ${totalCmd}</span>`);
     
+    const manaColors = ['W', 'U', 'B', 'R', 'G', 'C'];
+    
     return `
     <div class="player p${i} ${rotate ? 'rotate180' : ''}" data-idx="${i}">
-      <div class="player-name" data-action="name">${p.name}</div>
-      <div class="life-area">
-        <button class="life-btn minus" data-action="life" data-delta="-1">−</button>
-        <div class="life-total">${p.life}</div>
-        <button class="life-btn plus" data-action="life" data-delta="1">+</button>
+      <div class="player-main">
+        <div class="player-name" data-action="name">${p.name}</div>
+        <div class="life-area">
+          <button class="life-btn minus" data-action="life" data-delta="-1">−</button>
+          <div class="life-total">${p.life}</div>
+          <button class="life-btn plus" data-action="life" data-delta="1">+</button>
+        </div>
+        ${badges.length ? `<div class="player-badges">${badges.join('')}</div>` : ''}
+        <div class="player-actions">
+          <button class="action-pill" data-action="counters">Counters</button>
+          <button class="action-pill" data-action="cmdr">Cmdr Dmg</button>
+        </div>
       </div>
-      ${badges.length ? `<div class="player-badges">${badges.join('')}</div>` : ''}
-      <div class="player-actions">
-        <button class="action-pill" data-action="counters">Counters</button>
-        <button class="action-pill" data-action="cmdr">Cmdr Dmg</button>
-        <button class="action-pill" data-action="mana">Mana</button>
+      <div class="mana-bar">
+        ${manaColors.map(color => `
+          <div class="mana-pip" data-color="${color}">
+            <i class="ms ms-${color.toLowerCase()}"></i>
+            <span class="mana-count">${p.mana[color] || ''}</span>
+          </div>
+        `).join('')}
+        <button class="mana-clear" data-action="clear-mana">✕</button>
       </div>
     </div>`;
   }).join('');
@@ -66,7 +78,7 @@ function render() {
     const player = e.target.closest('.player');
     if (!player) return;
     const idx = parseInt(player.dataset.idx);
-    const action = e.target.dataset.action;
+    const action = e.target.dataset.action || e.target.closest('[data-action]')?.dataset.action;
     
     if (action === 'life') {
       state.players[idx].life += parseInt(e.target.dataset.delta);
@@ -76,7 +88,18 @@ function render() {
       if (name) { state.players[idx].name = name; render(); }
     } else if (action === 'counters') openCounters(idx);
     else if (action === 'cmdr') openCmdr(idx);
-    else if (action === 'mana') openMana(idx);
+    else if (action === 'clear-mana') {
+      Object.keys(state.players[idx].mana).forEach(k => state.players[idx].mana[k] = 0);
+      render();
+    }
+    
+    // Mana pip click
+    const pip = e.target.closest('.mana-pip');
+    if (pip) {
+      const color = pip.dataset.color;
+      state.players[idx].mana[color]++;
+      render();
+    }
   };
 }
 
@@ -138,42 +161,6 @@ function changeCmdr(from, delta) {
   openCmdr(cmdrPlayer);
   render();
 }
-
-// Mana
-let manaPlayer = 0;
-function openMana(idx) {
-  manaPlayer = idx;
-  const p = state.players[idx];
-  const colors = [
-    { key: 'W', icon: 'ms ms-w' },
-    { key: 'U', icon: 'ms ms-u' },
-    { key: 'B', icon: 'ms ms-b' },
-    { key: 'R', icon: 'ms ms-r' },
-    { key: 'G', icon: 'ms ms-g' },
-    { key: 'C', icon: 'ms ms-c' }
-  ];
-  document.getElementById('mana-grid').innerHTML = colors.map(c => `
-    <div class="mana-item">
-      <div class="mana-symbol"><i class="${c.icon}"></i></div>
-      <div class="mana-value">${p.mana[c.key]}</div>
-      <div class="mana-controls">
-        <button onclick="changeMana('${c.key}', -1)">−</button>
-        <button onclick="changeMana('${c.key}', 1)">+</button>
-      </div>
-    </div>
-  `).join('');
-  openModal('mana-modal');
-}
-
-function changeMana(color, delta) {
-  state.players[manaPlayer].mana[color] = Math.max(0, state.players[manaPlayer].mana[color] + delta);
-  openMana(manaPlayer);
-}
-
-document.getElementById('clear-mana').onclick = () => {
-  Object.keys(state.players[manaPlayer].mana).forEach(k => state.players[manaPlayer].mana[k] = 0);
-  openMana(manaPlayer);
-};
 
 // Dice
 let diceType = 6, diceCount = 1;
