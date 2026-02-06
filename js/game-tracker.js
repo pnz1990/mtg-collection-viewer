@@ -231,6 +231,7 @@ function render() {
           <button class="action-pill mana-btn" data-action="mana">Mana</button>
           <button class="action-pill" data-action="counters">Counters</button>
           ${isCommander ? '<button class="action-pill" data-action="cmdr">Commander Damage</button>' : ''}
+          ${state.firstPlayer >= 0 && p.life > 0 ? '<button class="action-pill resign-btn" data-action="resign">Resign</button>' : ''}
         </div>
       </div>
       <div class="mana-bar">
@@ -261,7 +262,16 @@ function render() {
     if (action === 'life') {
       const delta = parseInt(e.target.dataset.delta);
       const oldLife = state.players[idx].life;
-      state.players[idx].life += delta;
+      const newLife = oldLife + delta;
+      
+      // Confirm knockout
+      if (oldLife > 0 && newLife <= 0) {
+        if (!confirm(`Knock out ${getPlayerName(idx)}?`)) {
+          return;
+        }
+      }
+      
+      state.players[idx].life = newLife;
       
       // Track damage dealt
       if (delta < 0 && state.activePlayer >= 0 && state.activePlayer !== idx) {
@@ -269,11 +279,13 @@ function render() {
       }
       
       // Track knockouts
-      if (oldLife > 0 && state.players[idx].life <= 0) {
+      if (oldLife > 0 && newLife <= 0) {
         state.knockouts.push({ player: idx, turn: state.turnCount, time: Date.now() });
+        logAction(`${getPlayerName(idx)} was knocked out`);
+      } else {
+        logAction(`${getPlayerName(idx)} ${delta > 0 ? 'gained' : 'lost'} ${Math.abs(delta)} life`);
       }
       
-      logAction(`${getPlayerName(idx)} ${delta > 0 ? 'gained' : 'lost'} ${Math.abs(delta)} life`);
       render();
     } else if (action === 'card-change') {
       const delta = parseInt(e.target.dataset.delta);
@@ -294,6 +306,15 @@ function render() {
       editPlayerName(idx);
     } else if (action === 'mulligan') {
       openMulligan(idx);
+    } else if (action === 'resign') {
+      if (confirm(`${getPlayerName(idx)} resign?`)) {
+        if (state.players[idx].life > 0) {
+          state.players[idx].life = 0;
+          state.knockouts.push({ player: idx, turn: state.turnCount, time: Date.now() });
+          logAction(`${getPlayerName(idx)} resigned`);
+          render();
+        }
+      }
     } else if (action === 'keep-hand') {
       const p = state.players[idx];
       logAction(`${getPlayerName(idx)} kept ${p.cardsInHand} cards`);
@@ -612,6 +633,17 @@ function changeCmdr(key, delta) {
   const oldVal = p.cmdDamage[key] || 0;
   const newVal = Math.max(0, oldVal + delta);
   const actualDelta = newVal - oldVal;
+  
+  // Check for commander damage knockout at 21
+  if (newVal >= 21 && oldVal < 21) {
+    if (!confirm(`${getPlayerName(cmdrPlayer)} takes lethal commander damage (21+). Knock out?`)) {
+      openCmdr(cmdrPlayer);
+      return;
+    }
+    p.life = 0;
+    state.knockouts.push({ player: cmdrPlayer, turn: state.turnCount, time: Date.now() });
+  }
+  
   p.cmdDamage[key] = newVal;
   if (actualDelta !== 0) {
     p.life -= actualDelta;
@@ -622,7 +654,11 @@ function changeCmdr(key, delta) {
     // Track commander damage dealt
     if (actualDelta > 0) {
       state.commanderDamageDealt[playerIdx] = (state.commanderDamageDealt[playerIdx] || 0) + actualDelta;
-      logAction(`${getPlayerName(cmdrPlayer)} took ${actualDelta} commander damage from ${cmdName} (${p.life} life)`);
+      if (newVal >= 21) {
+        logAction(`${getPlayerName(cmdrPlayer)} was knocked out by commander damage from ${cmdName}`);
+      } else {
+        logAction(`${getPlayerName(cmdrPlayer)} took ${actualDelta} commander damage from ${cmdName} (${p.life} life)`);
+      }
     } else {
       logAction(`${getPlayerName(cmdrPlayer)} removed ${-actualDelta} commander damage from ${cmdName} (+${-actualDelta} life)`);
     }
@@ -778,7 +814,23 @@ document.getElementById('btn-pass').onclick = () => {
       state.turnTimes.push({ player: state.activePlayer, duration: turnDuration });
     }
   }
-  const nextPlayer = order[(currentIdx + 1) % order.length];
+  
+  // Find next alive player
+  let nextIdx = (currentIdx + 1) % order.length;
+  let attempts = 0;
+  while (state.players[order[nextIdx]].life <= 0 && attempts < order.length) {
+    nextIdx = (nextIdx + 1) % order.length;
+    attempts++;
+  }
+  
+  // If all players dead, don't pass turn
+  if (attempts >= order.length) {
+    alert('All players are knocked out!');
+    return;
+  }
+  
+  const nextPlayer = order[nextIdx];
+  
   // First time setting active player
   if (state.firstPlayer === -1) {
     state.firstPlayer = nextPlayer;
