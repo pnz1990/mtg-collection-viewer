@@ -22,6 +22,8 @@ document.getElementById('start-game').onclick = () => {
 function initGame() {
   state.players = Array.from({ length: state.numPlayers }, (_, i) => ({
     name: `Player ${i + 1}`,
+    commander: '',
+    artUrl: '',
     life: state.startingLife,
     poison: 0, energy: 0, experience: 0, storm: 0, cmdTax: 0,
     cmdDamage: Array(state.numPlayers).fill(0),
@@ -45,9 +47,10 @@ function render() {
     if (totalCmd > 0) badges.push(`<span class="badge cmdr">⚔ ${totalCmd}</span>`);
     
     const manaColors = ['W', 'U', 'B', 'R', 'G', 'C'];
+    const bgStyle = p.artUrl ? `background-image: url('${p.artUrl}')` : '';
     
     return `
-    <div class="player p${i} ${rotate ? 'rotate180' : ''}" data-idx="${i}">
+    <div class="player p${i} ${rotate ? 'rotate180' : ''} ${p.artUrl ? 'has-art' : ''}" data-idx="${i}" style="${bgStyle}">
       <div class="player-main">
         <div class="player-name" data-action="name">${p.name}</div>
         <div class="life-area">
@@ -84,8 +87,7 @@ function render() {
       state.players[idx].life += parseInt(e.target.dataset.delta);
       render();
     } else if (action === 'name') {
-      const name = prompt('Player name:', state.players[idx].name);
-      if (name) { state.players[idx].name = name; render(); }
+      openCardSearch(idx);
     } else if (action === 'counters') openCounters(idx);
     else if (action === 'cmdr') openCmdr(idx);
     else if (action === 'clear-mana') {
@@ -102,6 +104,69 @@ function render() {
     }
   };
 }
+
+// Card Search
+let searchPlayer = 0;
+let searchTimeout = null;
+
+function openCardSearch(idx) {
+  searchPlayer = idx;
+  const p = state.players[idx];
+  document.getElementById('search-input').value = p.commander || '';
+  document.getElementById('search-results').innerHTML = '';
+  openModal('search-modal');
+  document.getElementById('search-input').focus();
+}
+
+async function searchCards(query) {
+  if (query.length < 2) {
+    document.getElementById('search-results').innerHTML = '';
+    return;
+  }
+  document.getElementById('search-results').innerHTML = '<div class="search-loading">Searching...</div>';
+  try {
+    const res = await fetch(`https://api.scryfall.com/cards/search?q=${encodeURIComponent(query)}&unique=cards&order=name`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const cards = data.data.slice(0, 12);
+    document.getElementById('search-results').innerHTML = cards.map(card => {
+      const art = card.image_uris?.art_crop || card.card_faces?.[0]?.image_uris?.art_crop || '';
+      return `
+      <div class="search-result" data-name="${card.name}" data-art="${art}">
+        <img src="${card.image_uris?.small || card.card_faces?.[0]?.image_uris?.small || ''}" onerror="this.style.display='none'">
+        <span>${card.name}</span>
+      </div>`;
+    }).join('') || '<div class="search-empty">No results</div>';
+  } catch {
+    document.getElementById('search-results').innerHTML = '<div class="search-empty">No results</div>';
+  }
+}
+
+document.getElementById('search-input')?.addEventListener('input', e => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => searchCards(e.target.value), 300);
+});
+
+document.getElementById('search-results')?.addEventListener('click', e => {
+  const result = e.target.closest('.search-result');
+  if (result) {
+    const p = state.players[searchPlayer];
+    p.name = result.dataset.name;
+    p.commander = result.dataset.name;
+    p.artUrl = result.dataset.art;
+    closeModal('search-modal');
+    render();
+  }
+});
+
+document.getElementById('clear-commander')?.addEventListener('click', () => {
+  const p = state.players[searchPlayer];
+  p.name = `Player ${searchPlayer + 1}`;
+  p.commander = '';
+  p.artUrl = '';
+  closeModal('search-modal');
+  render();
+});
 
 // Counters
 let counterPlayer = 0;
@@ -246,6 +311,10 @@ document.getElementById('btn-menu').onclick = () => location.href = 'index.html'
 // Modal helpers
 function openModal(id) {
   document.getElementById(id).classList.remove('hidden');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
 }
 
 document.querySelectorAll('.close-btn').forEach(btn => {
