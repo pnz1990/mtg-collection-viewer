@@ -91,6 +91,8 @@ function initGame() {
   }));
   state.gameStartTime = Date.now();
   state.turnStartTime = null;
+  state.log = [];
+  state.stack = [];
   startClock();
   render();
   document.getElementById('setup-screen').classList.add('hidden');
