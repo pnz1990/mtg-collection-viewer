@@ -379,6 +379,8 @@ async function loadUpgrades(card, collectionCard) {
     const data = await response.json();
     const upgrades = data.data
       .filter(c => {
+        // Exclude the exact same version (set + collector number)
+        if (c.set === card.set && c.collector_number === card.collector_number) return false;
         const price = parseFloat(c.prices?.usd || c.prices?.usd_foil || 0);
         return price > currentPrice;
       })
