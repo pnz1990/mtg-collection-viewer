@@ -501,10 +501,19 @@ body.has-art-bg::after {
   --shimmer-y: 50%;
 }
 
-.upgrade-front {
+.upgrade-front,
+.upgrade-back {
   width: 100%;
   display: block;
   border-radius: 12px;
+  backface-visibility: hidden;
+}
+
+.upgrade-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: rotateY(180deg);
 }
 
 .upgrade-card.foil .upgrade-inner::before {

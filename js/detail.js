@@ -420,6 +420,7 @@ async function loadUpgrades(card, collectionCard) {
               <a href="${u.scryfall_uri}" target="_blank" class="upgrade-card ${foilClass}" data-card-id="${u.id}">
                 <div class="upgrade-inner">
                   <img src="${img}" alt="${u.set_name}" class="upgrade-front">
+                  <img src="images/back.png" alt="Card back" class="upgrade-back">
                 </div>
                 <div class="upgrade-info">
                   <div class="upgrade-set">${u.set_name}</div>
