@@ -464,33 +464,71 @@ body.has-art-bg::after {
   color: #e0e0e0;
 }
 
+.upgrades-loading {
+  text-align: center;
+  padding: 20px;
+  color: #aaa;
+}
+
 .upgrades-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
 }
 
 .upgrade-card {
   display: block;
-  border-radius: 8px;
-  overflow: hidden;
-  background: rgba(0,0,0,0.3);
-  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 12px;
+  overflow: visible;
   text-decoration: none;
+  perspective: 1000px;
+  cursor: grab;
+  position: relative;
 }
 
-.upgrade-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+.upgrade-card:active {
+  cursor: grabbing;
 }
 
-.upgrade-card img {
+.upgrade-inner {
+  position: relative;
+  width: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out;
+  border-radius: 12px;
+  overflow: hidden;
+  --shimmer-x: 50%;
+  --shimmer-y: 50%;
+}
+
+.upgrade-front {
   width: 100%;
   display: block;
+  border-radius: 12px;
+}
+
+.upgrade-card.foil .upgrade-inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--shimmer-x) var(--shimmer-y),
+    rgba(255,255,255,0.4) 0%,
+    rgba(200,200,255,0.3) 20%,
+    rgba(255,200,255,0.2) 40%,
+    transparent 70%
+  );
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 12px;
 }
 
 .upgrade-info {
   padding: 8px;
+  background: rgba(0,0,0,0.6);
+  border-radius: 0 0 12px 12px;
+  margin-top: -4px;
 }
 
 .upgrade-set {

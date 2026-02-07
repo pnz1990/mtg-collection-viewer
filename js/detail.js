@@ -369,12 +369,23 @@ function createParticles(colors) {
 async function loadUpgrades(card, collectionCard) {
   if (!collectionCard) return;
   
+  // Show loading
+  document.getElementById('upgrades-section').innerHTML = `
+    <div class="upgrades-panel">
+      <h3>Possible Upgrades</h3>
+      <div class="upgrades-loading">Loading...</div>
+    </div>
+  `;
+  
   const currentPrice = getDetailPrice(collectionCard, card).price / collectionCard.quantity;
   
   try {
     await new Promise(r => setTimeout(r, 200));
     const response = await fetch(`https://api.scryfall.com/cards/search?q=!"${card.name}"+game:paper&unique=prints`);
-    if (!response.ok) return;
+    if (!response.ok) {
+      document.getElementById('upgrades-section').innerHTML = '';
+      return;
+    }
     
     const data = await response.json();
     const upgrades = data.data
@@ -391,7 +402,10 @@ async function loadUpgrades(card, collectionCard) {
       })
       .slice(0, 6);
     
-    if (upgrades.length === 0) return;
+    if (upgrades.length === 0) {
+      document.getElementById('upgrades-section').innerHTML = '';
+      return;
+    }
     
     document.getElementById('upgrades-section').innerHTML = `
       <div class="upgrades-panel">
@@ -399,10 +413,14 @@ async function loadUpgrades(card, collectionCard) {
         <div class="upgrades-grid">
           ${upgrades.map(u => {
             const price = parseFloat(u.prices?.usd || u.prices?.usd_foil || 0);
-            const img = u.image_uris?.small || u.card_faces?.[0]?.image_uris?.small;
+            const img = u.image_uris?.normal || u.card_faces?.[0]?.image_uris?.normal;
+            const isFoil = u.finishes?.includes('foil') && !u.finishes?.includes('nonfoil');
+            const foilClass = isFoil ? 'foil' : '';
             return `
-              <a href="detail.html?id=${u.id}" class="upgrade-card">
-                <img src="${img}" alt="${u.set_name}">
+              <a href="${u.scryfall_uri}" target="_blank" class="upgrade-card ${foilClass}" data-card-id="${u.id}">
+                <div class="upgrade-inner">
+                  <img src="${img}" alt="${u.set_name}" class="upgrade-front">
+                </div>
                 <div class="upgrade-info">
                   <div class="upgrade-set">${u.set_name}</div>
                   <div class="upgrade-price">$${price.toFixed(2)}</div>
@@ -413,8 +431,48 @@ async function loadUpgrades(card, collectionCard) {
         </div>
       </div>
     `;
+    
+    // Add 3D tilt effect
+    document.querySelectorAll('.upgrade-card').forEach(card => {
+      const inner = card.querySelector('.upgrade-inner');
+      let isDragging = false;
+      
+      const startDrag = e => {
+        isDragging = true;
+        e.preventDefault();
+      };
+      
+      const endDrag = () => {
+        if (isDragging) {
+          isDragging = false;
+          inner.style.transform = '';
+          inner.style.setProperty('--shimmer-x', '50%');
+          inner.style.setProperty('--shimmer-y', '50%');
+        }
+      };
+      
+      const onMove = e => {
+        if (!isDragging) return;
+        const rect = card.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const x = (clientX - rect.left) / rect.width - 0.5;
+        const y = (clientY - rect.top) / rect.height - 0.5;
+        inner.style.transform = `rotateX(${-y * 15}deg) rotateY(${x * 15}deg)`;
+        inner.style.setProperty('--shimmer-x', `${50 + x * 100}%`);
+        inner.style.setProperty('--shimmer-y', `${50 + y * 100}%`);
+      };
+      
+      card.addEventListener('mousedown', startDrag);
+      card.addEventListener('touchstart', startDrag, { passive: false });
+      document.addEventListener('mouseup', endDrag);
+      document.addEventListener('touchend', endDrag);
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('touchmove', onMove);
+    });
   } catch (e) {
     console.error('Failed to load upgrades:', e);
+    document.getElementById('upgrades-section').innerHTML = '';
   }
 }
 
