@@ -253,23 +253,23 @@ document.addEventListener('keydown', e => {
   
   const gameStarted = !document.getElementById('game-screen').classList.contains('hidden');
   
-  if (e.key === 't' && gameStarted) {
+  if ((e.key === 't' || e.key === 'T') && gameStarted) {
     e.preventDefault();
     passTurn();
-  } else if (e.key === 'r' && gameStarted) {
+  } else if ((e.key === 'r' || e.key === 'R') && gameStarted) {
     e.preventDefault();
     document.getElementById('btn-first').click();
   } else if (e.key === 'Escape' && gameStarted) {
     e.preventDefault();
     endGame();
-  } else if (e.key === '+' && gameStarted && state.activePlayer >= 0) {
+  } else if (e.key === 'ArrowUp' && gameStarted && state.activePlayer >= 0) {
     e.preventDefault();
     saveHistory();
     state.players[state.activePlayer].life += 1;
     animateLife(state.activePlayer, 1);
     logAction(`${getPlayerName(state.activePlayer)} gained 1 life`);
     render();
-  } else if (e.key === '-' && gameStarted && state.activePlayer >= 0) {
+  } else if (e.key === 'ArrowDown' && gameStarted && state.activePlayer >= 0) {
     e.preventDefault();
     saveHistory();
     state.players[state.activePlayer].life -= 1;
@@ -279,17 +279,17 @@ document.addEventListener('keydown', e => {
   } else if (e.key === 'z' && (e.ctrlKey || e.metaKey)) {
     e.preventDefault();
     undo();
-  } else if (e.key === 'n' && gameStarted) {
+  } else if ((e.key === 'n' || e.key === 'N') && gameStarted) {
     addNote();
-  } else if (e.key === 's' && gameStarted) {
+  } else if ((e.key === 's' || e.key === 'S') && gameStarted) {
     openStack();
-  } else if (e.key === 'd' && gameStarted) {
+  } else if ((e.key === 'd' || e.key === 'D') && gameStarted) {
     openModal('dice-modal');
-  } else if (e.key === 'c' && gameStarted) {
+  } else if ((e.key === 'c' || e.key === 'C') && gameStarted) {
     openModal('coin-modal');
-  } else if (e.key === 'l' && gameStarted) {
+  } else if ((e.key === 'l' || e.key === 'L') && gameStarted) {
     document.getElementById('btn-log').click();
-  } else if (e.key === 'i' && gameStarted) {
+  } else if ((e.key === 'i' || e.key === 'I') && gameStarted) {
     showKeyboardShortcuts();
   }
 });
