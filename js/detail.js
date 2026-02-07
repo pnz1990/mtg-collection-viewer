@@ -275,9 +275,14 @@ function renderCardDetails(card, collectionCard) {
             <a href="https://twitter.com/search?q=mtg+${encodeURIComponent('"' + card.name + '"')}" target="_blank" class="ext-btn twitter">Twitter</a>
           </div>
         </div>
+        
+        <div id="upgrades-section"></div>
       </div>
     </div>
   `;
+  
+  // Load possible upgrades
+  loadUpgrades(card, collectionCard);
   
   // Add 3D tilt effect on click+drag
   const wrapper = document.querySelector('.detail-image-wrapper');
@@ -359,6 +364,56 @@ function createParticles(colors) {
     setTimeout(() => spawnParticle(), i * 200);
   }
   setInterval(spawnParticle, 500);
+}
+
+async function loadUpgrades(card, collectionCard) {
+  if (!collectionCard) return;
+  
+  const currentPrice = getDetailPrice(collectionCard, card).price / collectionCard.quantity;
+  
+  try {
+    await new Promise(r => setTimeout(r, 200));
+    const response = await fetch(`https://api.scryfall.com/cards/search?q=!"${card.name}"+game:paper&unique=prints`);
+    if (!response.ok) return;
+    
+    const data = await response.json();
+    const upgrades = data.data
+      .filter(c => {
+        const price = parseFloat(c.prices?.usd || c.prices?.usd_foil || 0);
+        return price > currentPrice;
+      })
+      .sort((a, b) => {
+        const priceA = parseFloat(a.prices?.usd || a.prices?.usd_foil || 0);
+        const priceB = parseFloat(b.prices?.usd || b.prices?.usd_foil || 0);
+        return priceA - priceB;
+      })
+      .slice(0, 6);
+    
+    if (upgrades.length === 0) return;
+    
+    document.getElementById('upgrades-section').innerHTML = `
+      <div class="upgrades-panel">
+        <h3>Possible Upgrades</h3>
+        <div class="upgrades-grid">
+          ${upgrades.map(u => {
+            const price = parseFloat(u.prices?.usd || u.prices?.usd_foil || 0);
+            const img = u.image_uris?.small || u.card_faces?.[0]?.image_uris?.small;
+            return `
+              <a href="detail.html?id=${u.id}" class="upgrade-card">
+                <img src="${img}" alt="${u.set_name}">
+                <div class="upgrade-info">
+                  <div class="upgrade-set">${u.set_name}</div>
+                  <div class="upgrade-price">$${price.toFixed(2)}</div>
+                </div>
+              </a>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  } catch (e) {
+    console.error('Failed to load upgrades:', e);
+  }
 }
 
 loadCardDetails();
