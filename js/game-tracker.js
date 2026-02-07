@@ -250,23 +250,26 @@ function initGame() {
 // Keyboard shortcuts
 document.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-  if (e.key === ' ') {
+  
+  const gameStarted = !document.getElementById('game-screen').classList.contains('hidden');
+  
+  if (e.key === ' ' && gameStarted) {
     e.preventDefault();
     passTurn();
   } else if (e.key === 'z' && (e.ctrlKey || e.metaKey)) {
     e.preventDefault();
     undo();
-  } else if (e.key === 'n') {
+  } else if (e.key === 'n' && gameStarted) {
     addNote();
-  } else if (e.key === 's') {
+  } else if (e.key === 's' && gameStarted) {
     openStack();
-  } else if (e.key === 'd') {
+  } else if (e.key === 'd' && gameStarted) {
     openModal('dice-modal');
-  } else if (e.key === 'c') {
+  } else if (e.key === 'c' && gameStarted) {
     openModal('coin-modal');
-  } else if (e.key === 'l') {
+  } else if (e.key === 'l' && gameStarted) {
     document.getElementById('btn-log').click();
-  } else if (e.key === 'i') {
+  } else if (e.key === 'i' && gameStarted) {
     showKeyboardShortcuts();
   }
 });
