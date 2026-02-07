@@ -1305,7 +1305,7 @@ function showWinnerModal(alivePlayers) {
   const modal = document.createElement('div');
   modal.className = 'modal-overlay';
   modal.innerHTML = `
-    <div class="modal winner-modal">
+    <div class="winner-modal">
       <h2>Who Won?</h2>
       <div class="winner-players">
         ${alivePlayers.map(p => {
@@ -1329,6 +1329,14 @@ function showWinnerModal(alivePlayers) {
   modal.querySelector('.modal-close').addEventListener('click', () => {
     modal.remove();
     startClock(); // Resume game
+  });
+  
+  // Close on overlay click
+  modal.addEventListener('click', e => {
+    if (e.target === modal) {
+      modal.remove();
+      startClock();
+    }
   });
 }
 
