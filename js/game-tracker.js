@@ -267,7 +267,11 @@ function render() {
     const badges = [];
     if (p.poison > 0) badges.push(`<span class="badge poison"><i class="ms ms-p"></i>${p.poison}</span>`);
     if (p.energy > 0) badges.push(`<span class="badge energy"><span class="card-symbol card-symbol-E"></span>${p.energy}</span>`);
-    if (p.experience > 0) badges.push(`<span class="badge experience">✧ ${p.experience}</span>`);
+    if (p.experience > 0) badges.push(`<span class="badge experience">EXP ${p.experience}</span>`);
+    if (state.monarch === i) badges.push(`<span class="badge monarch">MONARCH</span>`);
+    if (state.initiative === i) badges.push(`<span class="badge initiative">INITIATIVE</span>`);
+    if (state.ringBearer === i) badges.push(`<span class="badge ring">RING BEARER</span>`);
+    if (p.citysBlessing) badges.push(`<span class="badge citys">CITY'S BLESSING</span>`);
     
     const manaColors = ['W', 'U', 'B', 'R', 'G', 'C'];
     
@@ -1475,7 +1479,8 @@ function renderAllPW() {
 }
 
 function changePWLoyalty(pIdx, pwIdx, delta) {
-  state.players[pIdx].planeswalkers[pwIdx].loyalty = Math.max(0, state.players[pIdx].planeswalkers[pwIdx].loyalty + delta);
+  const pw = state.players[pIdx].planeswalkers[pwIdx];
+  pw.loyalty = Math.max(0, parseInt(pw.loyalty) + parseInt(delta));
   document.getElementById('pw-list').innerHTML = renderAllPW();
 }
 
@@ -1513,6 +1518,7 @@ document.getElementById('pw-search-results')?.addEventListener('click', e => {
     return;
   }
   const card = JSON.parse(result.dataset.card);
+  card.loyalty = parseInt(card.loyalty); // Ensure number
   state.players[pwSelectedPlayer].planeswalkers.push(card);
   logAction(`${getPlayerName(pwSelectedPlayer)} added ${card.name}`);
   document.getElementById('pw-list').innerHTML = renderAllPW();
@@ -1716,12 +1722,13 @@ async function rollPlane() {
 document.getElementById('roll-plane')?.addEventListener('click', () => rollPlane());
 document.getElementById('roll-chaos')?.addEventListener('click', () => {
   const roll = Math.random();
-  if (roll < 0.167) {
-    alert('⚡ CHAOS!');
-    logAction('Chaos symbol rolled!');
-  } else {
-    alert('○ Blank');
-  }
+  const result = roll < 0.167 ? 'CHAOS!' : 'Blank';
+  const resultEl = document.createElement('div');
+  resultEl.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg2); border: 3px solid var(--accent); border-radius: 20px; padding: 40px 60px; font-size: 3rem; font-weight: 700; z-index: 10000; animation: chaosAnim 1.5s ease-out forwards;';
+  resultEl.textContent = result;
+  document.body.appendChild(resultEl);
+  setTimeout(() => resultEl.remove(), 1500);
+  if (roll < 0.167) logAction('Chaos symbol rolled!');
 });
 
 // City's Blessing

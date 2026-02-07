@@ -19,6 +19,7 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 /* Animations */
 @keyframes lifeAnim { 0% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -150%) scale(1.5); } }
 @keyframes eventAnim { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); } 20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); } 80% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } }
+@keyframes chaosAnim { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5) rotate(-10deg); } 20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1) rotate(5deg); } 80% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } }
 
 /* Rotate Warning */
 .rotate-warning { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; gap: 20px; color: var(--text2); text-align: center; padding: 40px; }
@@ -153,13 +154,17 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 .life-total { font-size: 4.5rem; font-weight: 200; min-width: 110px; text-align: center; line-height: 1; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
 
 .player-badges { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; justify-content: center; }
-.badge { display: flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(0,0,0,0.4); border-radius: 20px; font-size: 0.8rem; }
+.badge { display: flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(0,0,0,0.4); border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 .badge svg, .badge i { width: 14px; height: 14px; font-size: 14px; }
 .badge.poison { color: #7cb342; }
 .badge.poison .ms-p { color: #7cb342; }
 .badge.energy { color: #ffb300; }
 .badge.experience { color: #ab47bc; }
 .badge.cmdr { color: #ef5350; }
+.badge.monarch { color: #ffd700; border: 1px solid #ffd700; }
+.badge.initiative { color: #ff6b6b; border: 1px solid #ff6b6b; }
+.badge.ring { color: #9c27b0; border: 1px solid #9c27b0; }
+.badge.citys { color: #4299e1; border: 1px solid #4299e1; }
 
 /* Scryfall energy symbol */
 .card-symbol-E { display: inline-block; width: 14px; height: 14px; background: url('https://svgs.scryfall.io/card-symbols/E.svg') center/contain no-repeat; vertical-align: middle; }

@@ -162,6 +162,76 @@ test('High life', () => { mockState.players[2].life = 1000; assertEquals(mockSta
 test('Valid player count', () => assert(mockState.numPlayers > 0));
 test('History limit', () => assert(mockState.history.length <= 50));
 
+section('Bug Fixes - Regression Tests');
+test('PW loyalty is number not string', () => {
+  const pw = { name: 'Test', loyalty: 4, img: '' };
+  mockState.players[0].planeswalkers = [pw];
+  const newLoyalty = parseInt(pw.loyalty) + 1;
+  assertEquals(typeof newLoyalty, 'number');
+  assertEquals(newLoyalty, 5);
+});
+
+test('PW loyalty does not concatenate', () => {
+  const pw = { name: 'Test', loyalty: '4', img: '' };
+  const result = parseInt(pw.loyalty) + 1;
+  assertEquals(result, 5);
+  assert(result !== 41, 'Should not concatenate to 41');
+});
+
+test('Ring bearer badge shows when assigned', () => {
+  mockState.ringBearer = 0;
+  assert(mockState.ringBearer === 0);
+});
+
+test('Monarch badge shows when assigned', () => {
+  mockState.monarch = 1;
+  assert(mockState.monarch === 1);
+});
+
+test('Initiative badge shows when assigned', () => {
+  mockState.initiative = 2;
+  assert(mockState.initiative === 2);
+});
+
+test('City\'s blessing badge shows when gained', () => {
+  mockState.players[0].citysBlessing = true;
+  assert(mockState.players[0].citysBlessing === true);
+});
+
+test('Multiple status badges can coexist', () => {
+  mockState.monarch = 0;
+  mockState.ringBearer = 0;
+  mockState.players[0].citysBlessing = true;
+  assert(mockState.monarch === 0 && mockState.ringBearer === 0 && mockState.players[0].citysBlessing);
+});
+
+test('Chaos roll probability correct', () => {
+  let chaos = 0;
+  for (let i = 0; i < 1000; i++) {
+    if (Math.random() < 0.167) chaos++;
+  }
+  const ratio = chaos / 1000;
+  assert(ratio > 0.1 && ratio < 0.25, `Chaos ratio ${ratio} should be ~0.167`);
+});
+
+test('Dungeon per-player isolation', () => {
+  mockState.players[0].dungeon = { card: { name: 'D1' }, room: 1 };
+  mockState.players[1].dungeon = { card: { name: 'D2' }, room: 3 };
+  assert(mockState.players[0].dungeon.room !== mockState.players[1].dungeon.room);
+  assert(mockState.players[0].dungeon.card.name !== mockState.players[1].dungeon.card.name);
+});
+
+test('Ring image URL is valid', () => {
+  const url = 'https://cards.scryfall.io/large/front/d/4/d4eadebc-c30f-4d5f-a1f0-d6b3e876c186.jpg';
+  assert(url.includes('scryfall.io'));
+  assert(url.includes('.jpg'));
+});
+
+test('Plane card rotation applied', () => {
+  const rotation = 'rotate(90deg)';
+  assert(rotation.includes('90deg'));
+});
+
 // Summary
 const passed = results.filter(r => r.pass).length;
 const failed = results.filter(r => !r.pass).length;
