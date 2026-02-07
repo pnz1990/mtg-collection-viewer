@@ -225,6 +225,16 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 .winner-modal .modal-close { width: 100%; padding: 12px; background: var(--bg3); border: none; border-radius: 10px; color: var(--text2); font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
 .winner-modal .modal-close:hover { background: var(--bg); }
 
+/* Shortcuts Modal */
+.shortcuts-modal { background: var(--bg2); border-radius: 20px; padding: 30px; max-width: 450px; width: 100%; }
+.shortcuts-modal h2 { font-size: 1.4rem; margin-bottom: 20px; text-align: center; }
+.shortcuts-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.shortcut-item { display: flex; align-items: center; gap: 15px; padding: 10px; background: var(--bg); border-radius: 8px; }
+.shortcut-item kbd { padding: 6px 12px; background: var(--bg3); border: 1px solid var(--text2); border-radius: 6px; font-family: monospace; font-size: 0.9rem; font-weight: 600; color: var(--text); min-width: 60px; text-align: center; }
+.shortcut-item span { color: var(--text2); font-size: 0.95rem; }
+.shortcuts-modal .modal-close { width: 100%; padding: 12px; background: var(--accent); border: none; border-radius: 10px; color: white; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.shortcuts-modal .modal-close:hover { opacity: 0.9; }
+
 /* Search Modal */
 .search-content { max-height: 85vh; }
 .commander-slots { display: flex; gap: 10px; padding: 15px 20px; }

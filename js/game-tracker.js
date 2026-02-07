@@ -256,11 +256,18 @@ document.addEventListener('keydown', e => {
   } else if (e.key === 'z' && (e.ctrlKey || e.metaKey)) {
     e.preventDefault();
     undo();
-  } else if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
-    e.preventDefault();
-    shareGame();
   } else if (e.key === 'n') {
     addNote();
+  } else if (e.key === 's') {
+    openStackModal();
+  } else if (e.key === 'd') {
+    openDiceModal();
+  } else if (e.key === 'c') {
+    flipCoin();
+  } else if (e.key === 'l') {
+    openLogModal();
+  } else if (e.key === 'i') {
+    showKeyboardShortcuts();
   }
 });
 
@@ -1104,6 +1111,7 @@ document.getElementById('btn-reset').onclick = () => {
 document.getElementById('btn-menu').onclick = () => location.href = 'index.html';
 document.getElementById('btn-undo')?.addEventListener('click', () => undo());
 document.getElementById('btn-note')?.addEventListener('click', () => addNote());
+document.getElementById('btn-info')?.addEventListener('click', () => showKeyboardShortcuts());
 document.getElementById('btn-theme')?.addEventListener('click', () => {
   state.theme = state.theme === 'dark' ? 'light' : 'dark';
   document.body.classList.toggle('light-theme', state.theme === 'light');
@@ -1112,6 +1120,54 @@ document.getElementById('btn-animations')?.addEventListener('click', () => {
   state.animations = !state.animations;
   document.getElementById('btn-animations').style.opacity = state.animations ? '1' : '0.5';
 });
+
+function showKeyboardShortcuts() {
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal shortcuts-modal">
+      <h2>Keyboard Shortcuts</h2>
+      <div class="shortcuts-list">
+        <div class="shortcut-item">
+          <kbd>Space</kbd>
+          <span>Pass Turn</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd>S</kbd>
+          <span>Stack Tracker</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd>D</kbd>
+          <span>Roll Dice</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd>C</kbd>
+          <span>Flip Coin</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd>L</kbd>
+          <span>Game Log</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd>N</kbd>
+          <span>Add Note</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd>I</kbd>
+          <span>Show Shortcuts</span>
+        </div>
+        <div class="shortcut-item">
+          <kbd>Ctrl+Z</kbd>
+          <span>Undo</span>
+        </div>
+      </div>
+      <button class="modal-close">Close</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.querySelector('.modal-close').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+}
 
 // Modal helpers
 function openModal(id) {
