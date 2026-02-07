@@ -42,6 +42,68 @@ const state = {
   }
 })();
 
+// Check for shared game summary
+(function checkGameSummary() {
+  const params = new URLSearchParams(window.location.search);
+  const gameData = params.get('game');
+  if (gameData) {
+    try {
+      const summary = JSON.parse(atob(gameData));
+      displaySharedSummary(summary);
+      // Clear URL parameter
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } catch (e) {
+      console.error('Failed to load game summary:', e);
+    }
+  }
+})();
+
+function displaySharedSummary(summary) {
+  document.getElementById('setup-screen').classList.add('hidden');
+  document.getElementById('game-screen').classList.add('hidden');
+  document.getElementById('dashboard-screen').classList.remove('hidden');
+  
+  const formatTime = (s) => {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    return h > 0 ? `${h}h ${m}m ${sec}s` : `${m}m ${sec}s`;
+  };
+  
+  document.getElementById('dashboard-content').innerHTML = `
+    <h2>Game Summary</h2>
+    <div class="summary-stats">
+      <div class="stat-card">
+        <div class="stat-label">Format</div>
+        <div class="stat-value">${summary.format}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Duration</div>
+        <div class="stat-value">${formatTime(summary.time)}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Turns</div>
+        <div class="stat-value">${summary.turns}</div>
+      </div>
+    </div>
+    <div class="final-standings">
+      <h3>Final Standings</h3>
+      ${summary.players.map((p, i) => `
+        <div class="standing-item">
+          <span class="standing-rank">#${i + 1}</span>
+          <span class="standing-name">${p.name}</span>
+          <span class="standing-life">${p.life} life</span>
+        </div>
+      `).join('')}
+    </div>
+    <button id="summary-new-game" class="action-btn">Start New Game</button>
+  `;
+  
+  document.getElementById('summary-new-game').addEventListener('click', () => {
+    location.reload();
+  });
+}
+
 let clockInterval = null;
 
 // Undo system
