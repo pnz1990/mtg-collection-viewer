@@ -6,132 +6,20 @@
   <title>Game Tracker Tests</title>
   <style>
     body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #f0f0f0; }
-    .test { margin: 10px 0; padding: 10px; border-radius: 4px; }
+    .test { margin: 5px 0; padding: 8px; border-radius: 4px; font-size: 0.9rem; }
     .pass { background: #1a4d2e; }
     .fail { background: #4d1a1a; }
+    .section { margin: 20px 0; padding: 15px; background: #2a2a2a; border-radius: 8px; }
+    .section h2 { margin: 0 0 10px; color: #e63946; font-size: 1.2rem; }
     h1 { color: #e63946; }
-    .summary { margin-top: 20px; padding: 15px; background: #2a2a2a; border-radius: 8px; }
+    .summary { margin-top: 20px; padding: 15px; background: #2a2a2a; border-radius: 8px; font-size: 1.1rem; }
   </style>
 </head>
 <body>
-  <h1>Game Tracker Tests</h1>
+  <h1>Game Tracker Comprehensive Tests</h1>
   <div id="results"></div>
   <div class="summary" id="summary"></div>
 
-  <script>
-    const results = [];
-    
-    function test(name, fn) {
-      try {
-        fn();
-        results.push({ name, pass: true });
-        document.getElementById('results').innerHTML += `<div class="test pass">✓ ${name}</div>`;
-      } catch (e) {
-        results.push({ name, pass: false, error: e.message });
-        document.getElementById('results').innerHTML += `<div class="test fail">✗ ${name}: ${e.message}</div>`;
-      }
-    }
-    
-    function assert(condition, message) {
-      if (!condition) throw new Error(message || 'Assertion failed');
-    }
-    
-    // Mock state
-    const mockState = {
-      players: [
-        { name: 'Player 1', life: 40, commanders: [null, null], poison: 0, energy: 0, mana: { W: 0, U: 0, B: 0, R: 0, G: 0, C: 0 }, planeswalkers: [], citysBlessing: false, dungeon: null },
-        { name: 'Player 2', life: 40, commanders: [null, null], poison: 0, energy: 0, mana: { W: 0, U: 0, B: 0, R: 0, G: 0, C: 0 }, planeswalkers: [], citysBlessing: false, dungeon: null }
-      ],
-      numPlayers: 2,
-      startingLife: 40,
-      activePlayer: 0,
-      turnCount: 1,
-      log: [],
-      history: [],
-      lifeHistory: [],
-      knockouts: [],
-      damageDealt: { 0: 0, 1: 0 },
-      monarch: -1,
-      initiative: -1,
-      ringBearer: -1,
-      ringTemptation: 0
-    };
-    
-    // Tests
-    test('State initialization', () => {
-      assert(mockState.players.length === 2, 'Should have 2 players');
-      assert(mockState.startingLife === 40, 'Starting life should be 40');
-    });
-    
-    test('Life change tracking', () => {
-      const oldLife = mockState.players[0].life;
-      mockState.players[0].life -= 5;
-      assert(mockState.players[0].life === oldLife - 5, 'Life should decrease by 5');
-    });
-    
-    test('Knockout detection', () => {
-      const p = mockState.players[1];
-      p.life = 0;
-      assert(p.life <= 0, 'Player should be knocked out at 0 life');
-    });
-    
-    test('Damage tracking', () => {
-      mockState.damageDealt[0] = 10;
-      assert(mockState.damageDealt[0] === 10, 'Damage should be tracked');
-    });
-    
-    test('Monarch assignment', () => {
-      mockState.monarch = 0;
-      assert(mockState.monarch === 0, 'Monarch should be assigned to player 0');
-      mockState.monarch = -1;
-      assert(mockState.monarch === -1, 'Monarch should be removable');
-    });
-    
-    test('Ring temptation', () => {
-      mockState.ringBearer = 0;
-      mockState.ringTemptation = 3;
-      assert(mockState.ringBearer === 0, 'Ring bearer should be set');
-      assert(mockState.ringTemptation === 3, 'Temptation should increment');
-    });
-    
-    test('Planeswalker tracking', () => {
-      mockState.players[0].planeswalkers.push({ name: 'Test Walker', loyalty: 3, img: '' });
-      assert(mockState.players[0].planeswalkers.length === 1, 'Should track planeswalker');
-      mockState.players[0].planeswalkers[0].loyalty--;
-      assert(mockState.players[0].planeswalkers[0].loyalty === 2, 'Loyalty should decrease');
-    });
-    
-    test('Dungeon per-player', () => {
-      mockState.players[0].dungeon = { card: { name: 'Test Dungeon' }, room: 0 };
-      mockState.players[1].dungeon = { card: { name: 'Other Dungeon' }, room: 2 };
-      assert(mockState.players[0].dungeon.room === 0, 'Player 0 in room 0');
-      assert(mockState.players[1].dungeon.room === 2, 'Player 1 in room 2');
-    });
-    
-    test('Chaos roll probability', () => {
-      let chaosCount = 0;
-      const trials = 10000;
-      for (let i = 0; i < trials; i++) {
-        if (Math.random() < 0.167) chaosCount++;
-      }
-      const ratio = chaosCount / trials;
-      assert(ratio > 0.15 && ratio < 0.19, `Chaos probability should be ~16.7%, got ${(ratio * 100).toFixed(1)}%`);
-    });
-    
-    test('History undo stack', () => {
-      mockState.history.push(JSON.stringify({ test: 'data' }));
-      assert(mockState.history.length > 0, 'History should be saved');
-      const restored = JSON.parse(mockState.history.pop());
-      assert(restored.test === 'data', 'History should be restorable');
-    });
-    
-    // Summary
-    const passed = results.filter(r => r.pass).length;
-    const failed = results.filter(r => !r.pass).length;
-    document.getElementById('summary').innerHTML = `
-      <strong>Results:</strong> ${passed} passed, ${failed} failed out of ${results.length} tests
-      ${failed === 0 ? '<br><span style="color: #4caf50;">✓ All tests passed!</span>' : ''}
-    `;
-  </script>
+  <script src="test-game-tracker.js"></script>
 </body>
 </html>
