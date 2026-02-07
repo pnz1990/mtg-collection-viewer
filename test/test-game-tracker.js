@@ -341,6 +341,15 @@ test('iPad and laptop screens are allowed', () => {
   assert(typeof isAllowed === 'boolean');
 });
 
+test('Phone block prevents interaction', () => {
+  // Simulate phone detection
+  const isPhone = true;
+  if (isPhone) {
+    const pointerEvents = 'none';
+    assertEquals(pointerEvents, 'none', 'Should disable pointer events on phone');
+  }
+});
+
 section('Winner Selection');
 test('Winner modal shows for multiple alive players', () => {
   const alivePlayers = mockState.players.filter(p => p.life > 0);

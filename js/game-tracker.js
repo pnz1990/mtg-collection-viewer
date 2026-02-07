@@ -38,6 +38,12 @@ const state = {
   const isPhone = /iPhone|Android/i.test(navigator.userAgent) && window.innerWidth < 768;
   if (isPhone) {
     document.getElementById('phone-block').classList.remove('hidden');
+    document.getElementById('setup-screen').classList.add('hidden');
+    document.getElementById('game-screen').classList.add('hidden');
+    document.getElementById('dashboard-screen').classList.add('hidden');
+    // Prevent any interaction
+    document.body.style.pointerEvents = 'none';
+    document.getElementById('phone-block').style.pointerEvents = 'auto';
     return;
   }
 })();
