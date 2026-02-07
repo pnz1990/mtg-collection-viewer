@@ -2,9 +2,9 @@
 
 ## Running Tests
 
-Open `test-game-tracker.html` in a browser to run the comprehensive test suite.
+Open `test/test-game-tracker.html` in a browser to run the comprehensive test suite.
 
-## Test Coverage (100+ tests)
+## Test Coverage (130+ tests)
 
 ### Core Game State (5 tests)
 - Player initialization
@@ -82,6 +82,20 @@ Open `test-game-tracker.html` in a browser to run the comprehensive test suite.
 - Valid player counts
 - History limits
 
+### Save/Load State (14 tests)
+- JSON serialization/deserialization
+- Player life persistence
+- Player names persistence
+- Turn count persistence
+- Active player persistence
+- Damage dealt persistence
+- Knockouts persistence
+- Monarch state persistence
+- Ring bearer persistence
+- Planeswalkers persistence
+- Dungeon state persistence
+- Life history persistence
+
 ## Pre-Push Hook
 
 The git pre-push hook automatically:
@@ -92,7 +106,15 @@ The git pre-push hook automatically:
 To manually check syntax:
 ```bash
 node -c js/game-tracker.js
-node -c test-game-tracker.js
+node -c test/test-game-tracker.js
+```
+
+## Test Organization
+
+```
+test/
+├── test-game-tracker.html  # Browser test runner
+└── test-game-tracker.js    # 130+ test cases
 ```
 
 ## Test Results

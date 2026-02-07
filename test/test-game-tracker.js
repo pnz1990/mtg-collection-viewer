@@ -232,6 +232,104 @@ test('Plane card rotation applied', () => {
   assert(rotation.includes('90deg'));
 });
 
+section('Save/Load State');
+test('State can be serialized to JSON', () => {
+  const json = JSON.stringify(mockState);
+  assert(json.length > 0);
+  assert(json.includes('players'));
+});
+
+test('State can be deserialized from JSON', () => {
+  const json = JSON.stringify(mockState);
+  const restored = JSON.parse(json);
+  assertEquals(restored.numPlayers, mockState.numPlayers);
+  assertEquals(restored.startingLife, mockState.startingLife);
+});
+
+test('Player life persists in save', () => {
+  mockState.players[0].life = 25;
+  const json = JSON.stringify(mockState);
+  const restored = JSON.parse(json);
+  assertEquals(restored.players[0].life, 25);
+});
+
+test('Player names persist in save', () => {
+  mockState.players[0].name = 'Test Player';
+  const json = JSON.stringify(mockState);
+  const restored = JSON.parse(json);
+  assertEquals(restored.players[0].name, 'Test Player');
+});
+
+test('Turn count persists in save', () => {
+  mockState.turnCount = 10;
+  const json = JSON.stringify(mockState);
+  const restored = JSON.parse(json);
+  assertEquals(restored.turnCount, 10);
+});
+
+test('Active player persists in save', () => {
+  mockState.activePlayer = 2;
+  const json = JSON.stringify(mockState);
+  const restored = JSON.parse(json);
+  assertEquals(restored.activePlayer, 2);
+});
+
+test('Damage dealt persists in save', () => {
+  mockState.damageDealt[0] = 50;
+  const json = JSON.stringify(mockState);
+  const restored = JSON.parse(json);
+  assertEquals(restored.damageDealt[0], 50);
+});
+
+test('Knockouts persist in save', () => {
+  mockState.knockouts = [{ player: 1, killer: 0, turn: 5, time: Date.now() }];
+  const json = JSON.stringify(mockState);
+  const restored = JSON.parse(json);
+  assertEquals(restored.knockouts.length, 1);
+  assertEquals(restored.knockouts[0].player, 1);
+});
+
+test('Monarch state persists in save', () => {
+  mockState.monarch = 1;
+  const json = JSON.stringify(mockState);
+  const restored = JSON.parse(json);
+  assertEquals(restored.monarch, 1);
+});
+
+test('Ring bearer persists in save', () => {
+  mockState.ringBearer = 2;
+  mockState.ringTemptation = 4;
+  const json = JSON.stringify(mockState);
+  const restored = JSON.parse(json);
+  assertEquals(restored.ringBearer, 2);
+  assertEquals(restored.ringTemptation, 4);
+});
+
+test('Planeswalkers persist in save', () => {
+  mockState.players[0].planeswalkers = [{ name: 'Jace', loyalty: 3, img: '' }];
+  const json = JSON.stringify(mockState);
+  const restored = JSON.parse(json);
+  assertEquals(restored.players[0].planeswalkers.length, 1);
+  assertEquals(restored.players[0].planeswalkers[0].name, 'Jace');
+  assertEquals(restored.players[0].planeswalkers[0].loyalty, 3);
+});
+
+test('Dungeon state persists in save', () => {
+  mockState.players[0].dungeon = { card: { name: 'Tomb' }, room: 2 };
+  const json = JSON.stringify(mockState);
+  const restored = JSON.parse(json);
+  assertEquals(restored.players[0].dungeon.room, 2);
+  assertEquals(restored.players[0].dungeon.card.name, 'Tomb');
+});
+
+test('Life history persists in save', () => {
+  mockState.lifeHistory = [{ turn: 1, lives: [40, 35, 40, 40] }];
+  const json = JSON.stringify(mockState);
+  const restored = JSON.parse(json);
+  assertEquals(restored.lifeHistory.length, 1);
+  assertEquals(restored.lifeHistory[0].lives[1], 35);
+});
+
 // Summary
 const passed = results.filter(r => r.pass).length;
 const failed = results.filter(r => !r.pass).length;

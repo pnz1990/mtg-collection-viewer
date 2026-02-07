@@ -67,13 +67,35 @@ function loadGame() {
     if (confirm('Resume previous game?')) {
       try {
         const loaded = JSON.parse(autosave);
-        Object.assign(state, loaded);
+        // Deep copy all state
+        state.players = loaded.players || state.players;
+        state.numPlayers = loaded.numPlayers || state.numPlayers;
+        state.startingLife = loaded.startingLife || state.startingLife;
+        state.activePlayer = loaded.activePlayer ?? state.activePlayer;
+        state.turnCount = loaded.turnCount || state.turnCount;
+        state.firstPlayer = loaded.firstPlayer ?? state.firstPlayer;
+        state.log = loaded.log || state.log;
+        state.stack = loaded.stack || state.stack;
+        state.turnTimes = loaded.turnTimes || state.turnTimes;
+        state.damageDealt = loaded.damageDealt || state.damageDealt;
+        state.commanderDamageDealt = loaded.commanderDamageDealt || state.commanderDamageDealt;
+        state.knockouts = loaded.knockouts || state.knockouts;
+        state.lifeHistory = loaded.lifeHistory || state.lifeHistory;
+        state.firstBlood = loaded.firstBlood || state.firstBlood;
+        state.monarch = loaded.monarch ?? state.monarch;
+        state.initiative = loaded.initiative ?? state.initiative;
+        state.ringBearer = loaded.ringBearer ?? state.ringBearer;
+        state.ringTemptation = loaded.ringTemptation || state.ringTemptation;
+        state.format = loaded.format || state.format;
         state.gameStartTime = Date.now() - ((Date.now() - loaded.gameStartTime) || 0);
         document.getElementById('setup-screen').classList.add('hidden');
         document.getElementById('game-screen').classList.remove('hidden');
         startClock();
         render();
-      } catch {}
+      } catch (e) {
+        console.error('Failed to load game:', e);
+        alert('Failed to load saved game');
+      }
     } else {
       localStorage.removeItem('mtg-game-autosave');
     }
