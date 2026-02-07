@@ -1700,13 +1700,15 @@ async function openPlanechase() {
 
 async function rollPlane() {
   try {
-    const res = await fetch('https://api.scryfall.com/cards/random?q=t:plane+game:paper');
+    const res = await fetch('https://api.scryfall.com/cards/random?q=type:plane+game:paper');
     const card = await res.json();
     state.currentPlane = card;
     document.getElementById('plane-name').textContent = card.name;
-    document.getElementById('plane-img').src = card.image_uris?.normal || '';
+    const img = document.getElementById('plane-img');
+    img.src = card.image_uris?.normal || card.card_faces?.[0]?.image_uris?.normal || '';
+    img.style.transform = 'rotate(90deg)';
     logAction(`Planeswalked to ${card.name}`);
-  } catch {
+  } catch (e) {
     alert('Failed to fetch plane');
   }
 }
@@ -1714,9 +1716,12 @@ async function rollPlane() {
 document.getElementById('roll-plane')?.addEventListener('click', () => rollPlane());
 document.getElementById('roll-chaos')?.addEventListener('click', () => {
   const roll = Math.random();
-  const result = roll < 0.167 ? '⚡ CHAOS!' : '○ Blank';
-  alert(result);
-  if (roll < 0.167) logAction('Chaos symbol rolled!');
+  if (roll < 0.167) {
+    alert('⚡ CHAOS!');
+    logAction('Chaos symbol rolled!');
+  } else {
+    alert('○ Blank');
+  }
 });
 
 // City's Blessing
