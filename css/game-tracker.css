@@ -27,6 +27,13 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 @keyframes rotate-hint { 0%, 100% { transform: rotate(-15deg); } 50% { transform: rotate(15deg); } }
 @media (max-width: 767px) and (orientation: portrait) { .rotate-warning { display: flex; } }
 
+/* Phone Block */
+.phone-block { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; }
+.phone-block-content { text-align: center; padding: 40px; max-width: 400px; }
+.phone-block-content svg { opacity: 0.6; margin-bottom: 20px; }
+.phone-block-content h2 { font-size: 1.5rem; margin-bottom: 15px; color: var(--text); }
+.phone-block-content p { color: var(--text2); font-size: 1rem; line-height: 1.6; margin-bottom: 10px; }
+
 /* Setup */
 .setup-screen { height: 100%; display: flex; align-items: center; justify-content: center; padding: 20px; background: linear-gradient(135deg, #1a1a2e 0%, #0d0d0d 100%); overflow-y: auto; }
 .setup-card { background: var(--bg2); border-radius: 20px; padding: 40px; width: 100%; max-width: 380px; }
@@ -201,12 +208,22 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 .tool-btn:active { transform: scale(0.9); }
 
 /* Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; backdrop-filter: blur(4px); }
 .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; backdrop-filter: blur(4px); overflow-y: auto; }
 .modal-content { background: var(--bg2); border-radius: 20px; width: 100%; max-width: 360px; max-height: 85vh; overflow-y: auto; margin: auto; overflow-x: hidden; }
 .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid var(--bg3); }
 .modal-header h2 { font-size: 1.2rem; font-weight: 600; }
 .close-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--text2); background: transparent; color: var(--text); font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
 .close-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Winner Modal */
+.winner-modal { background: var(--bg2); border-radius: 20px; padding: 30px; max-width: 400px; width: 100%; }
+.winner-modal h2 { font-size: 1.4rem; margin-bottom: 20px; text-align: center; }
+.winner-players { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.winner-btn { padding: 16px; background: var(--bg); border: 2px solid var(--bg3); border-radius: 12px; color: var(--text); font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.winner-btn:hover { border-color: var(--accent); background: rgba(230,57,70,0.15); color: var(--accent); }
+.winner-modal .modal-close { width: 100%; padding: 12px; background: var(--bg3); border: none; border-radius: 10px; color: var(--text2); font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
+.winner-modal .modal-close:hover { background: var(--bg); }
 
 /* Search Modal */
 .search-content { max-height: 85vh; }

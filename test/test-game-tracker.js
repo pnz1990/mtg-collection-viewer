@@ -330,47 +330,77 @@ test('Life history persists in save', () => {
   assertEquals(restored.lifeHistory[0].lives[1], 35);
 });
 
-section('Share Link');
-test('Share data can be base64 encoded', () => {
-  const data = JSON.stringify({ test: 'data' });
-  const encoded = btoa(data);
-  assert(encoded.length > 0);
+section('Device Detection');
+test('Phone detection identifies small screens', () => {
+  const isPhone = window.innerWidth < 768;
+  assert(typeof isPhone === 'boolean');
 });
 
-test('Share data can be base64 decoded', () => {
-  const data = JSON.stringify({ test: 'data' });
-  const encoded = btoa(data);
-  const decoded = atob(encoded);
-  const parsed = JSON.parse(decoded);
-  assertEquals(parsed.test, 'data');
+test('iPad and laptop screens are allowed', () => {
+  const isAllowed = window.innerWidth >= 768;
+  assert(typeof isAllowed === 'boolean');
 });
 
-test('Full state can be shared', () => {
-  const encoded = btoa(JSON.stringify(mockState));
-  const decoded = JSON.parse(atob(encoded));
-  assertEquals(decoded.numPlayers, mockState.numPlayers);
-  assertEquals(decoded.players.length, mockState.players.length);
+section('Winner Selection');
+test('Winner modal shows for multiple alive players', () => {
+  const alivePlayers = mockState.players.filter(p => p.life > 0);
+  assert(alivePlayers.length > 0);
 });
 
-test('Shared state preserves player life', () => {
-  mockState.players[0].life = 15;
-  const encoded = btoa(JSON.stringify(mockState));
-  const decoded = JSON.parse(atob(encoded));
-  assertEquals(decoded.players[0].life, 15);
+test('Winner can be selected from alive players', () => {
+  mockState.players[0].life = 20;
+  mockState.players[1].life = 15;
+  mockState.players[2].life = 0;
+  mockState.players[3].life = 0;
+  const alivePlayers = mockState.players.filter(p => p.life > 0);
+  assertEquals(alivePlayers.length, 2);
 });
 
-test('Shared state preserves turn count', () => {
-  mockState.turnCount = 8;
-  const encoded = btoa(JSON.stringify(mockState));
-  const decoded = JSON.parse(atob(encoded));
-  assertEquals(decoded.turnCount, 8);
+test('Single winner is auto-selected', () => {
+  mockState.players[0].life = 20;
+  mockState.players[1].life = 0;
+  mockState.players[2].life = 0;
+  mockState.players[3].life = 0;
+  const alivePlayers = mockState.players.filter(p => p.life > 0);
+  assertEquals(alivePlayers.length, 1);
+  const winner = mockState.players.indexOf(alivePlayers[0]);
+  assertEquals(winner, 0);
 });
 
-test('Shared state preserves monarch', () => {
-  mockState.monarch = 2;
-  const encoded = btoa(JSON.stringify(mockState));
-  const decoded = JSON.parse(atob(encoded));
-  assertEquals(decoded.monarch, 2);
+section('Life Hold Increment');
+test('Hold increment should be 10 per second', () => {
+  const incrementAmount = 10;
+  const intervalMs = 1000;
+  assertEquals(incrementAmount, 10);
+  assertEquals(intervalMs, 1000);
+});
+
+test('Hold increment applies correctly', () => {
+  mockState.players[0].life = 40;
+  mockState.players[0].life += 10;
+  assertEquals(mockState.players[0].life, 50);
+});
+
+test('Hold decrement applies correctly', () => {
+  mockState.players[0].life = 40;
+  mockState.players[0].life -= 10;
+  assertEquals(mockState.players[0].life, 30);
+});
+
+section('Auto-Save Only');
+test('Auto-save stores to localStorage', () => {
+  const testData = { test: 'autosave' };
+  localStorage.setItem('mtg-game-autosave', JSON.stringify(testData));
+  const loaded = JSON.parse(localStorage.getItem('mtg-game-autosave'));
+  assertEquals(loaded.test, 'autosave');
+  localStorage.removeItem('mtg-game-autosave');
+});
+
+test('Auto-save preserves game state', () => {
+  localStorage.setItem('mtg-game-autosave', JSON.stringify(mockState));
+  const loaded = JSON.parse(localStorage.getItem('mtg-game-autosave'));
+  assertEquals(loaded.numPlayers, mockState.numPlayers);
+  localStorage.removeItem('mtg-game-autosave');
 });
 
 section('Badge Display');

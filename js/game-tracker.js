@@ -33,6 +33,15 @@ const state = {
   theme: 'dark'
 };
 
+// Phone detection - block phones, allow tablets and laptops
+(function checkDevice() {
+  const isPhone = /iPhone|Android/i.test(navigator.userAgent) && window.innerWidth < 768;
+  if (isPhone) {
+    document.getElementById('phone-block').classList.remove('hidden');
+    return;
+  }
+})();
+
 let clockInterval = null;
 
 // Undo system
@@ -103,52 +112,11 @@ function loadGame() {
 }
 
 function shareGame() {
-  // Save full state for sharing
-  const shareData = JSON.stringify(state);
-  const compressed = btoa(shareData);
-  const url = `${window.location.origin}${window.location.pathname}?share=${compressed}`;
-  navigator.clipboard.writeText(url).then(() => alert('Share link copied to clipboard!'));
+  // Removed - only auto-save/load on refresh
 }
 
 function loadFromShare() {
-  const params = new URLSearchParams(window.location.search);
-  const shareData = params.get('share');
-  if (shareData) {
-    try {
-      const loaded = JSON.parse(atob(shareData));
-      // Deep copy all state
-      state.players = loaded.players || state.players;
-      state.numPlayers = loaded.numPlayers || state.numPlayers;
-      state.startingLife = loaded.startingLife || state.startingLife;
-      state.activePlayer = loaded.activePlayer ?? state.activePlayer;
-      state.turnCount = loaded.turnCount || state.turnCount;
-      state.firstPlayer = loaded.firstPlayer ?? state.firstPlayer;
-      state.log = loaded.log || state.log;
-      state.stack = loaded.stack || state.stack;
-      state.turnTimes = loaded.turnTimes || state.turnTimes;
-      state.damageDealt = loaded.damageDealt || state.damageDealt;
-      state.commanderDamageDealt = loaded.commanderDamageDealt || state.commanderDamageDealt;
-      state.knockouts = loaded.knockouts || state.knockouts;
-      state.lifeHistory = loaded.lifeHistory || state.lifeHistory;
-      state.firstBlood = loaded.firstBlood || state.firstBlood;
-      state.monarch = loaded.monarch ?? state.monarch;
-      state.initiative = loaded.initiative ?? state.initiative;
-      state.ringBearer = loaded.ringBearer ?? state.ringBearer;
-      state.ringTemptation = loaded.ringTemptation || state.ringTemptation;
-      state.format = loaded.format || state.format;
-      state.gameStartTime = loaded.gameStartTime || Date.now();
-      state.turnStartTime = loaded.turnStartTime;
-      document.getElementById('setup-screen').classList.add('hidden');
-      document.getElementById('game-screen').classList.remove('hidden');
-      startClock();
-      render();
-      // Clear URL parameter
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } catch (e) {
-      console.error('Failed to load shared game:', e);
-      alert('Failed to load shared game');
-    }
-  }
+  // Removed - only auto-save/load on refresh
 }
 
 // Auto-save every 30 seconds
@@ -205,7 +173,6 @@ function loadFormats() {
 }
 
 loadFormats();
-loadFromShare();
 loadGame();
 
 document.addEventListener('click', e => {
@@ -578,7 +545,7 @@ function render() {
           animateLife(idx, delta);
           logAction(`${getPlayerName(idx)} ${delta > 0 ? 'gained' : 'lost'} ${Math.abs(delta)} life`);
           render();
-        }, 400);
+        }, 1000);
       }, 500);
       return;
     }
@@ -1136,7 +1103,6 @@ document.getElementById('btn-reset').onclick = () => {
 };
 document.getElementById('btn-menu').onclick = () => location.href = 'index.html';
 document.getElementById('btn-undo')?.addEventListener('click', () => undo());
-document.getElementById('btn-save')?.addEventListener('click', () => shareGame());
 document.getElementById('btn-note')?.addEventListener('click', () => addNote());
 document.getElementById('btn-theme')?.addEventListener('click', () => {
   state.theme = state.theme === 'dark' ? 'light' : 'dark';
@@ -1291,14 +1257,44 @@ function endGame() {
   
   if (alivePlayers.length === 1) {
     winner = state.players.indexOf(alivePlayers[0]);
+    showDashboard(winner);
   } else if (alivePlayers.length > 1) {
-    // Ask who won
-    const names = alivePlayers.map((p, i) => `${state.players.indexOf(p) + 1}. ${getPlayerName(state.players.indexOf(p))}`).join('\n');
-    const choice = prompt(`Multiple players alive. Who won?\n${names}\n\nEnter player number:`);
-    if (choice) winner = parseInt(choice) - 1;
+    // Show modal to select winner
+    showWinnerModal(alivePlayers);
+  } else {
+    showDashboard(-1);
   }
+}
+
+function showWinnerModal(alivePlayers) {
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal winner-modal">
+      <h2>Who Won?</h2>
+      <div class="winner-players">
+        ${alivePlayers.map(p => {
+          const idx = state.players.indexOf(p);
+          return `<button class="winner-btn" data-idx="${idx}">${getPlayerName(idx)}</button>`;
+        }).join('')}
+      </div>
+      <button class="modal-close">Cancel</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
   
-  showDashboard(winner);
+  modal.querySelectorAll('.winner-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const winner = parseInt(btn.dataset.idx);
+      modal.remove();
+      showDashboard(winner);
+    });
+  });
+  
+  modal.querySelector('.modal-close').addEventListener('click', () => {
+    modal.remove();
+    startClock(); // Resume game
+  });
 }
 
 function showDashboard(winner) {

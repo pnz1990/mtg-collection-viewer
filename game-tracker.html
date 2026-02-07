@@ -16,6 +16,16 @@
   <link rel="stylesheet" href="css/game-tracker.css">
 </head>
 <body>
+  <!-- Phone Block -->
+  <div id="phone-block" class="phone-block hidden">
+    <div class="phone-block-content">
+      <svg viewBox="0 0 24 24" width="64" height="64"><path fill="currentColor" d="M7.5 21.5c-.83 0-1.5-.67-1.5-1.5V4c0-.83.67-1.5 1.5-1.5h9c.83 0 1.5.67 1.5 1.5v16c0 .83-.67 1.5-1.5 1.5h-9zM12 18c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z"/></svg>
+      <h2>Phone Not Supported</h2>
+      <p>Game Tracker requires a larger screen.</p>
+      <p>Please use an iPad or laptop.</p>
+    </div>
+  </div>
+
   <!-- Rotate Warning -->
   <div id="rotate-warning" class="rotate-warning">
     <svg viewBox="0 0 24 24" width="64" height="64"><path fill="currentColor" d="M7.5 21.5c-.83 0-1.5-.67-1.5-1.5V4c0-.83.67-1.5 1.5-1.5h9c.83 0 1.5.67 1.5 1.5v16c0 .83-.67 1.5-1.5 1.5h-9zM12 18c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z"/><path fill="currentColor" d="M16.48 2.52c3.27 1.55 5.61 4.72 5.97 8.48h1.5C23.44 4.84 18.29 0 12 0l-.66.03 3.81 3.81 1.33-1.32z"/></svg>
@@ -105,9 +115,6 @@
         </button>
         <button id="btn-undo" class="tool-btn" title="Undo (Ctrl+Z)">
           <svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z" fill="currentColor"/></svg>
-        </button>
-        <button id="btn-save" class="tool-btn" title="Share Game">
-          <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" fill="currentColor"/></svg>
         </button>
         <button id="btn-note" class="tool-btn" title="Add Note (N)">
           <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/></svg>
