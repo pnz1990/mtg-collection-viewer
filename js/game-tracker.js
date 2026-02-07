@@ -282,15 +282,40 @@ document.addEventListener('keydown', e => {
   } else if ((e.key === 'n' || e.key === 'N') && gameStarted) {
     addNote();
   } else if ((e.key === 's' || e.key === 'S') && gameStarted) {
-    openStack();
+    const stackModal = document.getElementById('stack-modal');
+    if (stackModal && !stackModal.classList.contains('hidden')) {
+      closeModal('stack-modal');
+    } else {
+      openStack();
+    }
   } else if ((e.key === 'd' || e.key === 'D') && gameStarted) {
-    openModal('dice-modal');
+    const diceModal = document.getElementById('dice-modal');
+    if (diceModal && !diceModal.classList.contains('hidden')) {
+      closeModal('dice-modal');
+    } else {
+      openModal('dice-modal');
+    }
   } else if ((e.key === 'c' || e.key === 'C') && gameStarted) {
-    openModal('coin-modal');
+    const coinModal = document.getElementById('coin-modal');
+    if (coinModal && !coinModal.classList.contains('hidden')) {
+      closeModal('coin-modal');
+    } else {
+      openModal('coin-modal');
+    }
   } else if ((e.key === 'l' || e.key === 'L') && gameStarted) {
-    document.getElementById('btn-log').click();
+    const logModal = document.getElementById('log-modal');
+    if (logModal && !logModal.classList.contains('hidden')) {
+      closeModal('log-modal');
+    } else {
+      document.getElementById('btn-log').click();
+    }
   } else if ((e.key === 'i' || e.key === 'I') && gameStarted) {
-    showKeyboardShortcuts();
+    const shortcutsModal = document.getElementById('shortcuts-modal');
+    if (shortcutsModal && !shortcutsModal.classList.contains('hidden')) {
+      closeModal('shortcuts-modal');
+    } else {
+      showKeyboardShortcuts();
+    }
   }
 });
 
