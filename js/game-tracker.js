@@ -259,13 +259,13 @@ document.addEventListener('keydown', e => {
   } else if (e.key === 'n') {
     addNote();
   } else if (e.key === 's') {
-    openStackModal();
+    openStack();
   } else if (e.key === 'd') {
-    openDiceModal();
+    openModal('dice-modal');
   } else if (e.key === 'c') {
-    flipCoin();
+    openModal('coin-modal');
   } else if (e.key === 'l') {
-    openLogModal();
+    document.getElementById('btn-log').click();
   } else if (e.key === 'i') {
     showKeyboardShortcuts();
   }
@@ -1122,51 +1122,7 @@ document.getElementById('btn-animations')?.addEventListener('click', () => {
 });
 
 function showKeyboardShortcuts() {
-  const modal = document.createElement('div');
-  modal.className = 'modal-overlay';
-  modal.innerHTML = `
-    <div class="modal shortcuts-modal">
-      <h2>Keyboard Shortcuts</h2>
-      <div class="shortcuts-list">
-        <div class="shortcut-item">
-          <kbd>Space</kbd>
-          <span>Pass Turn</span>
-        </div>
-        <div class="shortcut-item">
-          <kbd>S</kbd>
-          <span>Stack Tracker</span>
-        </div>
-        <div class="shortcut-item">
-          <kbd>D</kbd>
-          <span>Roll Dice</span>
-        </div>
-        <div class="shortcut-item">
-          <kbd>C</kbd>
-          <span>Flip Coin</span>
-        </div>
-        <div class="shortcut-item">
-          <kbd>L</kbd>
-          <span>Game Log</span>
-        </div>
-        <div class="shortcut-item">
-          <kbd>N</kbd>
-          <span>Add Note</span>
-        </div>
-        <div class="shortcut-item">
-          <kbd>I</kbd>
-          <span>Show Shortcuts</span>
-        </div>
-        <div class="shortcut-item">
-          <kbd>Ctrl+Z</kbd>
-          <span>Undo</span>
-        </div>
-      </div>
-      <button class="modal-close">Close</button>
-    </div>
-  `;
-  document.body.appendChild(modal);
-  modal.querySelector('.modal-close').addEventListener('click', () => modal.remove());
-  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  openModal('shortcuts-modal');
 }
 
 // Modal helpers
