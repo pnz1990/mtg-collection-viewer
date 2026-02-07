@@ -256,7 +256,7 @@ document.addEventListener('keydown', e => {
   if ((e.key === 't' || e.key === 'T') && gameStarted) {
     e.preventDefault();
     passTurn();
-  } else if ((e.key === 'r' || e.key === 'R') && gameStarted) {
+  } else if ((e.key === 'b' || e.key === 'B') && gameStarted) {
     e.preventDefault();
     document.getElementById('btn-first').click();
   } else if (e.key === 'Escape' && gameStarted) {
