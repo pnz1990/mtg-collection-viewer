@@ -1603,16 +1603,18 @@ function renderMonarch() {
 
 function setMonarch(idx) {
   state.monarch = state.monarch === idx ? -1 : idx;
-  if (state.monarch >= 0) animateEvent(idx, '👑 MONARCH', '#ffd700');
+  if (state.monarch >= 0) animateEvent(idx, 'MONARCH', '#ffd700');
   logAction(state.monarch >= 0 ? `${getPlayerName(idx)} becomes the monarch` : 'Monarch removed');
   renderMonarch();
+  render(); // Update player panels to show badge
 }
 
 function setInitiative(idx) {
   state.initiative = state.initiative === idx ? -1 : idx;
-  if (state.initiative >= 0) animateEvent(idx, '⚔️ INITIATIVE', '#ff6b6b');
+  if (state.initiative >= 0) animateEvent(idx, 'INITIATIVE', '#ff6b6b');
   logAction(state.initiative >= 0 ? `${getPlayerName(idx)} takes the initiative` : 'Initiative removed');
   renderMonarch();
+  render(); // Update player panels to show badge
 }
 
 // Day/Night
@@ -1714,6 +1716,7 @@ function setRingBearer(idx) {
   state.ringBearer = idx;
   logAction(`${getPlayerName(idx)} becomes the Ring-bearer`);
   renderRing();
+  render(); // Update player panels to show badge
 }
 
 document.getElementById('ring-tempt')?.addEventListener('click', () => {
@@ -1805,9 +1808,10 @@ function renderCitys() {
 
 function toggleCitys(idx) {
   state.players[idx].citysBlessing = !state.players[idx].citysBlessing;
-  if (state.players[idx].citysBlessing) animateEvent(idx, '🏛️ CITY\'S BLESSING', '#4299e1');
+  if (state.players[idx].citysBlessing) animateEvent(idx, 'CITY\'S BLESSING', '#4299e1');
   logAction(`${getPlayerName(idx)} ${state.players[idx].citysBlessing ? 'gained' : 'lost'} the city's blessing`);
   renderCitys();
+  render(); // Update player panels to show badge
 }
 
 // Stack Tracker

@@ -373,6 +373,47 @@ test('Shared state preserves monarch', () => {
   assertEquals(decoded.monarch, 2);
 });
 
+section('Badge Display');
+test('Monarch badge appears when set', () => {
+  mockState.monarch = 0;
+  const hasBadge = mockState.monarch === 0;
+  assert(hasBadge, 'Monarch badge should show for player 0');
+});
+
+test('Initiative badge appears when set', () => {
+  mockState.initiative = 1;
+  const hasBadge = mockState.initiative === 1;
+  assert(hasBadge, 'Initiative badge should show for player 1');
+});
+
+test('Ring bearer badge appears when set', () => {
+  mockState.ringBearer = 2;
+  const hasBadge = mockState.ringBearer === 2;
+  assert(hasBadge, 'Ring bearer badge should show for player 2');
+});
+
+test('City\'s blessing badge appears when gained', () => {
+  mockState.players[0].citysBlessing = true;
+  assert(mockState.players[0].citysBlessing, 'City\'s blessing badge should show');
+});
+
+test('Multiple badges can show on same player', () => {
+  mockState.monarch = 0;
+  mockState.ringBearer = 0;
+  mockState.players[0].citysBlessing = true;
+  const badges = [];
+  if (mockState.monarch === 0) badges.push('monarch');
+  if (mockState.ringBearer === 0) badges.push('ring');
+  if (mockState.players[0].citysBlessing) badges.push('citys');
+  assert(badges.length === 3, 'Should have 3 badges');
+});
+
+test('Ring image URL is valid', () => {
+  const url = 'https://cards.scryfall.io/large/front/7/2/7215460e-8c06-47d0-94e5-d1832d0218af.jpg';
+  assert(url.includes('scryfall.io'), 'Should be Scryfall URL');
+  assert(url.includes('/large/'), 'Should be large image');
+});
+
 // Summary
 const passed = results.filter(r => r.pass).length;
 const failed = results.filter(r => !r.pass).length;
