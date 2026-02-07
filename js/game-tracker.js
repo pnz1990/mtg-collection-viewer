@@ -93,8 +93,6 @@ function animateEvent(idx, text, color = '#e63946') {
   setTimeout(() => anim.remove(), 1500);
 }
 
-let clockInterval = null;
-
 function logAction(msg) {
   const name = state.activePlayer >= 0 ? getPlayerName(state.activePlayer) : 'Setup';
   const turnLabel = state.turnCount > 0 ? `${name} T${state.turnCount}` : 'Setup';
