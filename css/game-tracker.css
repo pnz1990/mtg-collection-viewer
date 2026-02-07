@@ -343,7 +343,9 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 .pw-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: 8px; margin-bottom: 8px; }
 .pw-name { flex: 1; font-weight: 500; }
 .pw-loyalty { display: flex; align-items: center; gap: 8px; }
-.pw-loyalty button { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--text2); background: transparent; color: var(--text); cursor: pointer; }
+.pw-loyalty button { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--text2); background: var(--bg2); color: var(--text); cursor: pointer; font-size: 1.2rem; font-weight: 600; transition: all 0.2s; }
+.pw-loyalty button:hover { border-color: var(--accent); color: var(--accent); background: rgba(230,57,70,0.1); }
+.pw-loyalty button:active { transform: scale(0.9); }
 .pw-loyalty span { font-size: 1.2rem; font-weight: 600; min-width: 30px; text-align: center; }
 .pw-remove { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--text2); background: transparent; color: var(--text2); cursor: pointer; }
 .token-players { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; padding: 10px 20px 20px; }

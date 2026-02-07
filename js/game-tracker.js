@@ -486,14 +486,35 @@ function render() {
       lifeHoldTimer = setTimeout(() => {
         lifeHoldInterval = setInterval(() => {
           const oldLife = state.players[idx].life;
-          state.players[idx].life += delta;
-          if (delta < 0 && !state.firstBlood && oldLife > state.players[idx].life) {
-            state.firstBlood = { attacker: state.activePlayer, victim: idx, turn: state.turnCount };
+          const newLife = oldLife + delta;
+          
+          // Check for knockout
+          if (oldLife > 0 && newLife <= 0) {
+            if (lifeHoldInterval) clearInterval(lifeHoldInterval);
+            if (confirm(`Knock out ${getPlayerName(idx)}?`)) {
+              saveHistory();
+              state.players[idx].life = 0;
+              state.knockouts.push({ player: idx, killer: state.activePlayer, turn: state.turnCount, time: Date.now() });
+              animateEvent(idx, '💀 KNOCKED OUT');
+              logAction(`${getPlayerName(idx)} was knocked out`);
+              render();
+            }
+            return;
           }
+          
+          saveHistory();
+          state.players[idx].life = newLife;
+          
+          if (delta < 0 && !state.firstBlood && state.activePlayer >= 0 && state.activePlayer !== idx) {
+            state.firstBlood = { attacker: state.activePlayer, victim: idx, turn: state.turnCount };
+            state.damageDealt[state.activePlayer] = (state.damageDealt[state.activePlayer] || 0) + Math.abs(delta);
+          }
+          
           state.lifeHistory.push({ turn: state.turnCount, lives: state.players.map(p => p.life) });
+          animateLife(idx, delta);
           logAction(`${getPlayerName(idx)} ${delta > 0 ? 'gained' : 'lost'} ${Math.abs(delta)} life`);
           render();
-        }, 200);
+        }, 400);
       }, 500);
       return;
     }
