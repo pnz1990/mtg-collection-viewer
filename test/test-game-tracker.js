@@ -330,6 +330,49 @@ test('Life history persists in save', () => {
   assertEquals(restored.lifeHistory[0].lives[1], 35);
 });
 
+section('Share Link');
+test('Share data can be base64 encoded', () => {
+  const data = JSON.stringify({ test: 'data' });
+  const encoded = btoa(data);
+  assert(encoded.length > 0);
+});
+
+test('Share data can be base64 decoded', () => {
+  const data = JSON.stringify({ test: 'data' });
+  const encoded = btoa(data);
+  const decoded = atob(encoded);
+  const parsed = JSON.parse(decoded);
+  assertEquals(parsed.test, 'data');
+});
+
+test('Full state can be shared', () => {
+  const encoded = btoa(JSON.stringify(mockState));
+  const decoded = JSON.parse(atob(encoded));
+  assertEquals(decoded.numPlayers, mockState.numPlayers);
+  assertEquals(decoded.players.length, mockState.players.length);
+});
+
+test('Shared state preserves player life', () => {
+  mockState.players[0].life = 15;
+  const encoded = btoa(JSON.stringify(mockState));
+  const decoded = JSON.parse(atob(encoded));
+  assertEquals(decoded.players[0].life, 15);
+});
+
+test('Shared state preserves turn count', () => {
+  mockState.turnCount = 8;
+  const encoded = btoa(JSON.stringify(mockState));
+  const decoded = JSON.parse(atob(encoded));
+  assertEquals(decoded.turnCount, 8);
+});
+
+test('Shared state preserves monarch', () => {
+  mockState.monarch = 2;
+  const encoded = btoa(JSON.stringify(mockState));
+  const decoded = JSON.parse(atob(encoded));
+  assertEquals(decoded.monarch, 2);
+});
+
 // Summary
 const passed = results.filter(r => r.pass).length;
 const failed = results.filter(r => !r.pass).length;

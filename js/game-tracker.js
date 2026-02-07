@@ -103,15 +103,52 @@ function loadGame() {
 }
 
 function shareGame() {
-  const minimal = {
-    players: state.players.map(p => ({ name: p.name, life: p.life, commanders: p.commanders })),
-    format: state.format,
-    turnCount: state.turnCount,
-    startingLife: state.startingLife
-  };
-  const data = btoa(JSON.stringify(minimal));
-  const url = `${window.location.origin}${window.location.pathname}?share=${data}`;
+  // Save full state for sharing
+  const shareData = JSON.stringify(state);
+  const compressed = btoa(shareData);
+  const url = `${window.location.origin}${window.location.pathname}?share=${compressed}`;
   navigator.clipboard.writeText(url).then(() => alert('Share link copied to clipboard!'));
+}
+
+function loadFromShare() {
+  const params = new URLSearchParams(window.location.search);
+  const shareData = params.get('share');
+  if (shareData) {
+    try {
+      const loaded = JSON.parse(atob(shareData));
+      // Deep copy all state
+      state.players = loaded.players || state.players;
+      state.numPlayers = loaded.numPlayers || state.numPlayers;
+      state.startingLife = loaded.startingLife || state.startingLife;
+      state.activePlayer = loaded.activePlayer ?? state.activePlayer;
+      state.turnCount = loaded.turnCount || state.turnCount;
+      state.firstPlayer = loaded.firstPlayer ?? state.firstPlayer;
+      state.log = loaded.log || state.log;
+      state.stack = loaded.stack || state.stack;
+      state.turnTimes = loaded.turnTimes || state.turnTimes;
+      state.damageDealt = loaded.damageDealt || state.damageDealt;
+      state.commanderDamageDealt = loaded.commanderDamageDealt || state.commanderDamageDealt;
+      state.knockouts = loaded.knockouts || state.knockouts;
+      state.lifeHistory = loaded.lifeHistory || state.lifeHistory;
+      state.firstBlood = loaded.firstBlood || state.firstBlood;
+      state.monarch = loaded.monarch ?? state.monarch;
+      state.initiative = loaded.initiative ?? state.initiative;
+      state.ringBearer = loaded.ringBearer ?? state.ringBearer;
+      state.ringTemptation = loaded.ringTemptation || state.ringTemptation;
+      state.format = loaded.format || state.format;
+      state.gameStartTime = loaded.gameStartTime || Date.now();
+      state.turnStartTime = loaded.turnStartTime;
+      document.getElementById('setup-screen').classList.add('hidden');
+      document.getElementById('game-screen').classList.remove('hidden');
+      startClock();
+      render();
+      // Clear URL parameter
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } catch (e) {
+      console.error('Failed to load shared game:', e);
+      alert('Failed to load shared game');
+    }
+  }
 }
 
 // Auto-save every 30 seconds
@@ -168,6 +205,7 @@ function loadFormats() {
 }
 
 loadFormats();
+loadFromShare();
 loadGame();
 
 document.addEventListener('click', e => {
