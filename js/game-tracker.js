@@ -50,26 +50,50 @@ function undo() {
 
 // Auto-save
 function saveGame() {
-  const data = btoa(JSON.stringify(state));
-  const url = `${window.location.origin}${window.location.pathname}?load=${data}`;
-  navigator.clipboard.writeText(url).then(() => alert('Game save link copied to clipboard!'));
+  const data = JSON.stringify(state);
+  localStorage.setItem('mtg-game-save', data);
+  alert('Game saved locally! Use "Share Game" to create a shareable link.');
+}
+
+function autoSave() {
+  if (state.gameStartTime) {
+    localStorage.setItem('mtg-game-autosave', JSON.stringify(state));
+  }
 }
 
 function loadGame() {
-  const params = new URLSearchParams(window.location.search);
-  const data = params.get('load');
-  if (data) {
-    try {
-      const loaded = JSON.parse(atob(data));
-      Object.assign(state, loaded);
-      state.gameStartTime = Date.now() - (loaded.gameTime || 0);
-      document.getElementById('setup-screen').classList.add('hidden');
-      document.getElementById('game-screen').classList.remove('hidden');
-      startClock();
-      render();
-    } catch {}
+  const autosave = localStorage.getItem('mtg-game-autosave');
+  if (autosave) {
+    if (confirm('Resume previous game?')) {
+      try {
+        const loaded = JSON.parse(autosave);
+        Object.assign(state, loaded);
+        state.gameStartTime = Date.now() - ((Date.now() - loaded.gameStartTime) || 0);
+        document.getElementById('setup-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
+        startClock();
+        render();
+      } catch {}
+    } else {
+      localStorage.removeItem('mtg-game-autosave');
+    }
   }
 }
+
+function shareGame() {
+  const minimal = {
+    players: state.players.map(p => ({ name: p.name, life: p.life, commanders: p.commanders })),
+    format: state.format,
+    turnCount: state.turnCount,
+    startingLife: state.startingLife
+  };
+  const data = btoa(JSON.stringify(minimal));
+  const url = `${window.location.origin}${window.location.pathname}?share=${data}`;
+  navigator.clipboard.writeText(url).then(() => alert('Share link copied to clipboard!'));
+}
+
+// Auto-save every 30 seconds
+setInterval(autoSave, 30000);
 
 // Animations
 function animateLife(idx, delta) {
@@ -207,7 +231,7 @@ document.addEventListener('keydown', e => {
     undo();
   } else if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
     e.preventDefault();
-    saveGame();
+    shareGame();
   } else if (e.key === 'n') {
     addNote();
   }
@@ -1020,13 +1044,14 @@ document.getElementById('btn-citys')?.addEventListener('click', () => openCitysM
 document.getElementById('btn-reset').onclick = () => {
   if (confirm('Reset game?')) {
     if (clockInterval) clearInterval(clockInterval);
+    localStorage.removeItem('mtg-game-autosave');
     document.getElementById('game-screen').classList.add('hidden');
     document.getElementById('setup-screen').classList.remove('hidden');
   }
 };
 document.getElementById('btn-menu').onclick = () => location.href = 'index.html';
 document.getElementById('btn-undo')?.addEventListener('click', () => undo());
-document.getElementById('btn-save')?.addEventListener('click', () => saveGame());
+document.getElementById('btn-save')?.addEventListener('click', () => shareGame());
 document.getElementById('btn-note')?.addEventListener('click', () => addNote());
 document.getElementById('btn-theme')?.addEventListener('click', () => {
   state.theme = state.theme === 'dark' ? 'light' : 'dark';
