@@ -464,6 +464,9 @@ function render() {
     const action = e.target.dataset.action || e.target.closest('[data-action]')?.dataset.action;
     
     if (action === 'life') {
+      // Skip if this was a hold action
+      if (isHolding) return;
+      
       const delta = parseInt(e.target.dataset.delta);
       const oldLife = state.players[idx].life;
       const newLife = oldLife + delta;
@@ -561,6 +564,7 @@ function render() {
   let lifeHoldTimer = null;
   let lifeHoldInterval = null;
   let pressTimer = null;
+  let isHolding = false;
   
   c.addEventListener('pointerdown', e => {
     const lifeBtn = e.target.closest('.life-btn');
@@ -570,6 +574,7 @@ function render() {
       const delta = parseInt(lifeBtn.dataset.delta) * 10;
       
       lifeHoldTimer = setTimeout(() => {
+        isHolding = true;
         // Save history once at the start of hold
         saveHistory();
         
@@ -628,6 +633,9 @@ function render() {
     lifeHoldTimer = null;
     lifeHoldInterval = null;
     if (pressTimer) clearTimeout(pressTimer);
+    
+    // Reset holding flag after a short delay to allow click to check it
+    setTimeout(() => { isHolding = false; }, 50);
   });
   
   c.addEventListener('pointerleave', () => {
