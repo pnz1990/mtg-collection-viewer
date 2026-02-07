@@ -601,8 +601,9 @@ function render() {
     } else if (action === 'do-mulligan') {
       const p = state.players[idx];
       p.mulligans++;
-      p.cardsInHand = p.mulligans === 1 ? 7 : Math.max(1, 7 - p.mulligans);
-      logAction(`${getPlayerName(idx)} mulliganed (${p.mulligans} total)`);
+      // First mulligan is free - still draw 7. After that, draw 7 minus mulligans
+      p.cardsInHand = Math.max(1, 7 - (p.mulligans - 1));
+      logAction(`${getPlayerName(idx)} mulliganed (${p.mulligans} total, ${p.cardsInHand} cards)`);
       if (p.mulligans >= 7) p.mulliganActive = false;
       render();
     } else if (action === 'counters') openCounters(idx);
@@ -1504,29 +1505,46 @@ function showDashboard(winner) {
   if (state.lifeHistory.length > 0) {
     const ctx = document.getElementById('life-chart').getContext('2d');
     const colors = ['#e63946', '#457b9d', '#2a9d8f', '#e9c46a', '#f4a261', '#264653'];
+    
+    // Get unique turns
+    const turns = [...new Set(state.lifeHistory.map(h => h.turn))].sort((a, b) => a - b);
+    
     new Chart(ctx, {
       type: 'line',
       data: {
-        labels: [...new Set(state.lifeHistory.map(h => h.turn))],
+        labels: turns,
         datasets: state.players.map((p, i) => ({
           label: getPlayerName(i),
-          data: state.lifeHistory.filter(h => h.lives[i] !== undefined).map(h => ({ x: h.turn, y: h.lives[i] })),
-          borderColor: colors[i],
-          backgroundColor: colors[i] + '20',
-          tension: 0.3
+          data: turns.map(turn => {
+            const entry = state.lifeHistory.find(h => h.turn === turn);
+            return entry ? entry.lives[i] : null;
+          }),
+          borderColor: colors[i % colors.length],
+          backgroundColor: colors[i % colors.length] + '20',
+          tension: 0.3,
+          spanGaps: true
         }))
       },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+      options: { 
+        responsive: true, 
+        maintainAspectRatio: false, 
+        plugins: { legend: { position: 'bottom' } },
+        scales: {
+          y: { beginAtZero: true, title: { display: true, text: 'Life' } },
+          x: { title: { display: true, text: 'Turn' } }
+        }
+      }
     });
   }
   
   // Damage heatmap
+  const maxHeatmapDamage = Math.max(...Object.values(state.damageDealt), 1);
   const heatmap = document.getElementById('damage-heatmap');
   heatmap.innerHTML = `<div class="heatmap-grid">${state.players.map((_, i) => 
     `<div class="heatmap-row"><span class="heatmap-label">${getPlayerName(i)}</span>${state.players.map((_, j) => {
       if (i === j) return '<div class="heatmap-cell self">-</div>';
       const dmg = state.damageDealt[i] || 0;
-      const intensity = dmg > 0 ? Math.min(dmg / maxDamage, 1) : 0;
+      const intensity = dmg > 0 ? Math.min(dmg / maxHeatmapDamage, 1) : 0;
       return `<div class="heatmap-cell" style="background: rgba(230,57,70,${intensity})">${dmg}</div>`;
     }).join('')}</div>`
   ).join('')}</div>`;

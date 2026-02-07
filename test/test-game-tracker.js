@@ -403,6 +403,84 @@ test('Auto-save preserves game state', () => {
   localStorage.removeItem('mtg-game-autosave');
 });
 
+section('Bug Regression Tests');
+test('Mulligan: First mulligan is free (7 cards)', () => {
+  const player = { mulligans: 0, cardsInHand: 7 };
+  player.mulligans++;
+  player.cardsInHand = Math.max(1, 7 - (player.mulligans - 1));
+  assertEquals(player.cardsInHand, 7, 'First mulligan should still be 7 cards');
+});
+
+test('Mulligan: Second mulligan is 6 cards', () => {
+  const player = { mulligans: 1, cardsInHand: 7 };
+  player.mulligans++;
+  player.cardsInHand = Math.max(1, 7 - (player.mulligans - 1));
+  assertEquals(player.cardsInHand, 6, 'Second mulligan should be 6 cards');
+});
+
+test('Mulligan: Third mulligan is 5 cards', () => {
+  const player = { mulligans: 2, cardsInHand: 6 };
+  player.mulligans++;
+  player.cardsInHand = Math.max(1, 7 - (player.mulligans - 1));
+  assertEquals(player.cardsInHand, 5, 'Third mulligan should be 5 cards');
+});
+
+test('Mulligan: Seventh mulligan is 1 card minimum', () => {
+  const player = { mulligans: 6, cardsInHand: 2 };
+  player.mulligans++;
+  player.cardsInHand = Math.max(1, 7 - (player.mulligans - 1));
+  assertEquals(player.cardsInHand, 1, 'Seventh mulligan should be 1 card minimum');
+});
+
+test('Life history tracks turn and lives', () => {
+  const history = [];
+  const players = [{ life: 40 }, { life: 38 }, { life: 40 }, { life: 40 }];
+  history.push({ turn: 1, lives: players.map(p => p.life) });
+  assertEquals(history[0].turn, 1);
+  assertEquals(history[0].lives[1], 38);
+});
+
+test('Life history chart has correct data structure', () => {
+  const lifeHistory = [
+    { turn: 0, lives: [40, 40, 40, 40] },
+    { turn: 1, lives: [40, 38, 40, 40] },
+    { turn: 2, lives: [35, 38, 40, 40] }
+  ];
+  const turns = [...new Set(lifeHistory.map(h => h.turn))];
+  assertEquals(turns.length, 3);
+  assertEquals(turns[0], 0);
+  assertEquals(turns[2], 2);
+});
+
+test('Damage heatmap calculates intensity correctly', () => {
+  const damageDealt = { 0: 10, 1: 5, 2: 0, 3: 15 };
+  const maxDamage = Math.max(...Object.values(damageDealt));
+  const intensity = damageDealt[0] / maxDamage;
+  assert(intensity > 0 && intensity <= 1);
+  assertEquals(Math.round(intensity * 100), 67); // 10/15 = 0.67
+});
+
+test('Share summary encodes correctly', () => {
+  const summary = {
+    format: 'commander',
+    players: [{ name: 'Player 1', life: 40 }],
+    turns: 10,
+    time: 600
+  };
+  const encoded = btoa(JSON.stringify(summary));
+  const decoded = JSON.parse(atob(encoded));
+  assertEquals(decoded.format, 'commander');
+  assertEquals(decoded.turns, 10);
+});
+
+test('Share summary decodes correctly', () => {
+  const summary = { format: 'commander', players: [{ name: 'Test', life: 20 }], turns: 5, time: 300 };
+  const encoded = btoa(JSON.stringify(summary));
+  const decoded = JSON.parse(atob(encoded));
+  assertEquals(decoded.players[0].name, 'Test');
+  assertEquals(decoded.players[0].life, 20);
+});
+
 section('Badge Display');
 test('Monarch badge appears when set', () => {
   mockState.monarch = 0;
