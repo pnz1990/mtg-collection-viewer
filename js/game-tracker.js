@@ -545,6 +545,9 @@ function render() {
       const delta = parseInt(lifeBtn.dataset.delta) * 10;
       
       lifeHoldTimer = setTimeout(() => {
+        // Save history once at the start of hold
+        saveHistory();
+        
         lifeHoldInterval = setInterval(() => {
           const oldLife = state.players[idx].life;
           const newLife = oldLife + delta;
@@ -553,7 +556,6 @@ function render() {
           if (oldLife > 0 && newLife <= 0) {
             if (lifeHoldInterval) clearInterval(lifeHoldInterval);
             if (confirm(`Knock out ${getPlayerName(idx)}?`)) {
-              saveHistory();
               state.players[idx].life = 0;
               state.knockouts.push({ player: idx, killer: state.activePlayer, turn: state.turnCount, time: Date.now() });
               animateEvent(idx, '💀 KNOCKED OUT');
@@ -563,7 +565,6 @@ function render() {
             return;
           }
           
-          saveHistory();
           state.players[idx].life = newLife;
           
           if (delta < 0 && !state.firstBlood && state.activePlayer >= 0 && state.activePlayer !== idx) {
