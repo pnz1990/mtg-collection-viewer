@@ -346,8 +346,8 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 .pw-loyalty button { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--text2); background: transparent; color: var(--text); cursor: pointer; }
 .pw-loyalty span { font-size: 1.2rem; font-weight: 600; min-width: 30px; text-align: center; }
 .pw-remove { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--text2); background: transparent; color: var(--text2); cursor: pointer; }
-.token-players { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 20px 20px; }
-.token-player-btn { flex: 1; min-width: 100px; padding: 12px; background: var(--bg); border: 2px solid var(--bg3); border-radius: 10px; color: var(--text); cursor: pointer; transition: all 0.2s; }
+.token-players { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; padding: 10px 20px 20px; }
+.token-player-btn { padding: 12px; background: var(--bg); border: 2px solid var(--bg3); border-radius: 10px; color: var(--text); cursor: pointer; transition: all 0.2s; }
 .token-player-btn.active { border-color: var(--accent); background: rgba(230,57,70,0.15); color: var(--accent); }
 .empty-state { text-align: center; color: var(--text2); padding: 40px 20px; }
 

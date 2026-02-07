@@ -174,7 +174,8 @@ function initGame() {
     cardsDiscarded: 0,
     planeswalkers: [],
     citysBlessing: false,
-    customCounters: {}
+    customCounters: {},
+    dungeon: null
   }));
   state.gameStartTime = Date.now();
   state.turnStartTime = null;
@@ -1383,11 +1384,27 @@ document.getElementById('dashboard-new-game')?.addEventListener('click', () => {
 
 // Planeswalker Tracker
 let pwSearchTimeout = null;
+let pwSelectedPlayer = -1;
+
 function openPWModal() {
   document.getElementById('pw-search-input').value = '';
   document.getElementById('pw-search-results').innerHTML = '';
   document.getElementById('pw-list').innerHTML = renderAllPW();
+  pwSelectedPlayer = -1;
+  renderPWPlayerSelect();
   openModal('planeswalker-modal');
+}
+
+function renderPWPlayerSelect() {
+  const container = document.getElementById('pw-player-select');
+  container.innerHTML = state.players.map((p, i) => `
+    <button class="token-player-btn ${pwSelectedPlayer === i ? 'active' : ''}" onclick="selectPWPlayer(${i})">${getPlayerName(i)}</button>
+  `).join('');
+}
+
+function selectPWPlayer(idx) {
+  pwSelectedPlayer = idx;
+  renderPWPlayerSelect();
 }
 
 function renderAllPW() {
@@ -1432,7 +1449,7 @@ document.getElementById('pw-search-input')?.addEventListener('input', e => {
   }
   pwSearchTimeout = setTimeout(async () => {
     try {
-      const res = await fetch(`https://api.scryfall.com/cards/search?q=${encodeURIComponent(query)}+t:planeswalker`);
+      const res = await fetch(`https://api.scryfall.com/cards/search?q=${encodeURIComponent(query)}+type:planeswalker`);
       const data = await res.json();
       document.getElementById('pw-search-results').innerHTML = data.data.slice(0, 10).map(c => `
         <div class="search-result" data-card='${JSON.stringify({ name: c.name, img: c.image_uris?.small || c.card_faces?.[0]?.image_uris?.small, loyalty: c.loyalty || c.card_faces?.[0]?.loyalty || 3 })}'>
@@ -1447,16 +1464,16 @@ document.getElementById('pw-search-input')?.addEventListener('input', e => {
 document.getElementById('pw-search-results')?.addEventListener('click', e => {
   const result = e.target.closest('.search-result');
   if (!result) return;
-  const card = JSON.parse(result.dataset.card);
-  const playerNames = state.players.map((p, i) => `${i + 1}. ${getPlayerName(i)}`).join('\n');
-  const pIdx = parseInt(prompt(`Select player:\n${playerNames}`)) - 1;
-  if (pIdx >= 0 && pIdx < state.players.length) {
-    state.players[pIdx].planeswalkers.push(card);
-    logAction(`${getPlayerName(pIdx)} added ${card.name}`);
-    document.getElementById('pw-list').innerHTML = renderAllPW();
-    document.getElementById('pw-search-input').value = '';
-    document.getElementById('pw-search-results').innerHTML = '';
+  if (pwSelectedPlayer < 0) {
+    alert('Select a player first');
+    return;
   }
+  const card = JSON.parse(result.dataset.card);
+  state.players[pwSelectedPlayer].planeswalkers.push(card);
+  logAction(`${getPlayerName(pwSelectedPlayer)} added ${card.name}`);
+  document.getElementById('pw-list').innerHTML = renderAllPW();
+  document.getElementById('pw-search-input').value = '';
+  document.getElementById('pw-search-results').innerHTML = '';
 });
 
 // Monarch/Initiative
@@ -1502,7 +1519,7 @@ function toggleDayNight() {
 
 // Dungeon Tracker
 let dungeonCards = [];
-let currentDungeonIdx = 0;
+let dungeonSelectedPlayer = -1;
 
 async function openDungeonModal() {
   if (dungeonCards.length === 0) {
@@ -1512,32 +1529,62 @@ async function openDungeonModal() {
       dungeonCards = data.data;
     } catch {}
   }
-  if (dungeonCards.length > 0 && !state.currentDungeon) {
-    state.currentDungeon = { card: dungeonCards[0], room: 0 };
-  }
+  dungeonSelectedPlayer = -1;
+  renderDungeonPlayerSelect();
   renderDungeon();
   openModal('dungeon-modal');
 }
 
-function renderDungeon() {
-  if (!state.currentDungeon) return;
-  document.getElementById('dungeon-img').src = state.currentDungeon.card.image_uris?.normal || '';
-  document.getElementById('dungeon-room').textContent = `Room ${state.currentDungeon.room + 1}`;
+function renderDungeonPlayerSelect() {
+  document.getElementById('dungeon-player-select').innerHTML = state.players.map((p, i) => `
+    <button class="token-player-btn ${dungeonSelectedPlayer === i ? 'active' : ''}" onclick="selectDungeonPlayer(${i})">${getPlayerName(i)}</button>
+  `).join('');
 }
 
-document.getElementById('dungeon-next')?.addEventListener('click', () => {
-  if (!state.currentDungeon) return;
-  state.currentDungeon.room++;
-  logAction(`Advanced to room ${state.currentDungeon.room + 1} in ${state.currentDungeon.card.name}`);
+function selectDungeonPlayer(idx) {
+  dungeonSelectedPlayer = idx;
+  renderDungeonPlayerSelect();
   renderDungeon();
-});
+}
 
-document.getElementById('dungeon-change')?.addEventListener('click', () => {
-  if (dungeonCards.length === 0) return;
-  currentDungeonIdx = (currentDungeonIdx + 1) % dungeonCards.length;
-  state.currentDungeon = { card: dungeonCards[currentDungeonIdx], room: 0 };
+function renderDungeon() {
+  if (dungeonSelectedPlayer < 0) {
+    document.getElementById('dungeon-display').innerHTML = '<div class="empty-state">Select a player</div>';
+    return;
+  }
+  const p = state.players[dungeonSelectedPlayer];
+  if (!p.dungeon && dungeonCards.length > 0) {
+    p.dungeon = { card: dungeonCards[0], room: 0 };
+  }
+  if (!p.dungeon) return;
+  
+  document.getElementById('dungeon-display').innerHTML = `
+    <img src="${p.dungeon.card.image_uris?.normal || ''}" style="width: 100%; max-width: 500px; border-radius: 12px; margin-bottom: 15px;">
+    <div style="font-size: 1.2rem; margin-bottom: 10px;">Room: ${p.dungeon.room + 1}</div>
+    <div style="display: flex; gap: 10px; justify-content: center;">
+      <button onclick="advanceDungeon()" class="action-btn">Next Room</button>
+      <button onclick="changeDungeon()" class="action-btn secondary">Change Dungeon</button>
+    </div>
+  `;
+}
+
+function advanceDungeon() {
+  if (dungeonSelectedPlayer < 0) return;
+  const p = state.players[dungeonSelectedPlayer];
+  if (!p.dungeon) return;
+  p.dungeon.room++;
+  logAction(`${getPlayerName(dungeonSelectedPlayer)} advanced to room ${p.dungeon.room + 1}`);
   renderDungeon();
-});
+}
+
+function changeDungeon() {
+  if (dungeonSelectedPlayer < 0 || dungeonCards.length === 0) return;
+  const p = state.players[dungeonSelectedPlayer];
+  const currentIdx = dungeonCards.findIndex(d => d.id === p.dungeon?.card.id);
+  const nextIdx = (currentIdx + 1) % dungeonCards.length;
+  p.dungeon = { card: dungeonCards[nextIdx], room: 0 };
+  renderDungeon();
+}
 
 // Ring Tempts You
 function openRingModal() {

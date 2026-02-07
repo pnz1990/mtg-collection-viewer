@@ -401,6 +401,8 @@
   <div id="planeswalker-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header"><h2>Planeswalker Tracker</h2><button class="close-btn">&times;</button></div>
+      <h3 style="margin: 15px 20px 10px; font-size: 0.9rem;">Select Player</h3>
+      <div id="pw-player-select" class="token-players"></div>
       <div class="search-box">
         <input type="text" id="pw-search-input" placeholder="Search planeswalkers..." autocomplete="off">
       </div>
@@ -422,16 +424,11 @@
   <div id="daynight-status" class="daynight-indicator">☀️ Day</div>
 
   <div id="dungeon-modal" class="modal hidden">
-    <div class="modal-content" style="max-width: 500px;">
+    <div class="modal-content" style="max-width: 600px;">
       <div class="modal-header"><h2>Dungeon</h2><button class="close-btn">&times;</button></div>
-      <div style="padding: 20px; text-align: center;">
-        <img id="dungeon-img" style="width: 100%; border-radius: 12px; margin-bottom: 15px; transform: rotate(90deg); max-height: 400px; object-fit: contain;">
-        <div id="dungeon-room" style="font-size: 1.5rem; color: var(--accent); margin: 15px 0;">Room 1</div>
-        <div style="display: flex; gap: 10px;">
-          <button id="dungeon-next" class="action-btn">Next Room</button>
-          <button id="dungeon-change" class="action-btn secondary">Change Dungeon</button>
-        </div>
-      </div>
+      <h3 style="margin: 15px 20px 10px; font-size: 0.9rem;">Select Player</h3>
+      <div id="dungeon-player-select" class="token-players"></div>
+      <div id="dungeon-display" style="padding: 20px; text-align: center;"></div>
     </div>
   </div>
 
@@ -439,7 +436,7 @@
     <div class="modal-content" style="max-width: 500px;">
       <div class="modal-header"><h2>The Ring Tempts You</h2><button class="close-btn">&times;</button></div>
       <div style="padding: 20px; text-align: center;">
-        <img src="https://cards.scryfall.io/normal/front/d/4/d4eadebc-c30f-4d5f-a1f0-d6b3e876c186.jpg" style="width: 100%; max-width: 300px; border-radius: 12px; margin-bottom: 15px;">
+        <img src="https://cards.scryfall.io/normal/front/d/4/d4eadebc-c30f-4d5f-a1f0-d6b3e876c186.jpg?1686968870" style="width: 100%; max-width: 300px; border-radius: 12px; margin-bottom: 15px;">
         <div style="margin-bottom: 15px;">Ring Bearer: <span id="ring-bearer-name" style="color: var(--accent); font-weight: 600;">None</span></div>
         <div style="margin-bottom: 15px;">Temptation: <span id="ring-temptation" style="font-size: 2rem; color: var(--accent); font-weight: 700;">0</span></div>
         <button id="ring-tempt" class="action-btn" style="margin-bottom: 15px;">The Ring Tempts You</button>
@@ -458,11 +455,13 @@
   </div>
 
   <div id="planechase-modal" class="modal hidden">
-    <div class="modal-content" style="max-width: 600px;">
+    <div class="modal-content" style="max-width: 700px;">
       <div class="modal-header"><h2>Planechase</h2><button class="close-btn">&times;</button></div>
       <div style="padding: 20px; text-align: center;">
         <div id="plane-name" style="font-size: 1.1rem; margin-bottom: 15px; font-weight: 600;">Loading...</div>
-        <img id="plane-img" style="width: 100%; border-radius: 12px; margin-bottom: 15px; transform: rotate(90deg); max-height: 400px; object-fit: contain;">
+        <div style="width: 100%; max-height: 400px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+          <img id="plane-img" style="max-width: 100%; max-height: 400px; border-radius: 12px; object-fit: contain;">
+        </div>
         <div style="display: flex; gap: 10px; justify-content: center;">
           <button id="roll-plane" class="action-btn">🌀 Planeswalk</button>
           <button id="roll-chaos" class="action-btn secondary">⚡ Roll Chaos</button>
