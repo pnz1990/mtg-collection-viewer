@@ -427,6 +427,7 @@ function applyFilters() {
       case 'name': return a.name.localeCompare(b.name);
       case 'rarity': return b.rarity.localeCompare(a.rarity);
       case 'set': return a.setName.localeCompare(b.setName);
+      case 'cmc': return (a.cmc || 0) - (b.cmc || 0);
       default: return (getCardPrice(b) * b.quantity) - (getCardPrice(a) * a.quantity);
     }
   });
