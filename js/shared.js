@@ -385,7 +385,7 @@ function applyFilters() {
   const keywordFilter = document.getElementById('keyword-filter')?.value || '';
   const reservedFilter = document.getElementById('reserved-filter')?.value || '';
   const duplicatesFilter = document.getElementById('duplicates-filter')?.value || '';
-  const sort = document.getElementById('sort')?.value || 'price';
+  const sort = document.getElementById('sort')?.value || 'price-desc';
   const [priceMin, priceMax] = priceSlider ? priceSlider.get().map(Number) : [0, maxPriceValue];
   const cmcFilter = window.cmcFilter;
   
@@ -427,7 +427,10 @@ function applyFilters() {
       case 'name': return a.name.localeCompare(b.name);
       case 'rarity': return b.rarity.localeCompare(a.rarity);
       case 'set': return a.setName.localeCompare(b.setName);
-      case 'cmc': return (a.cmc || 0) - (b.cmc || 0);
+      case 'cmc-asc': return (a.cmc || 0) - (b.cmc || 0);
+      case 'cmc-desc': return (b.cmc || 0) - (a.cmc || 0);
+      case 'price-asc': return (getCardPrice(a) * a.quantity) - (getCardPrice(b) * b.quantity);
+      case 'price-desc':
       default: return (getCardPrice(b) * b.quantity) - (getCardPrice(a) * a.quantity);
     }
   });
@@ -593,11 +596,15 @@ function initApp() {
     
     const refreshPriceDisplay = () => {
       filteredCollection.sort((a, b) => {
-        const sort = document.getElementById('sort')?.value || 'price';
+        const sort = document.getElementById('sort')?.value || 'price-desc';
         switch(sort) {
           case 'name': return a.name.localeCompare(b.name);
           case 'rarity': return b.rarity.localeCompare(a.rarity);
           case 'set': return a.setName.localeCompare(b.setName);
+          case 'cmc-asc': return (a.cmc || 0) - (b.cmc || 0);
+          case 'cmc-desc': return (b.cmc || 0) - (a.cmc || 0);
+          case 'price-asc': return (getCardPrice(a) * a.quantity) - (getCardPrice(b) * b.quantity);
+          case 'price-desc':
           default: return (getCardPrice(b) * b.quantity) - (getCardPrice(a) * a.quantity);
         }
       });
