@@ -380,6 +380,7 @@ function applyFilters() {
   const rarity = document.getElementById('rarity-filter')?.value || '';
   const foil = document.getElementById('foil-filter')?.value || '';
   const typeFilter = document.getElementById('type-filter')?.value || '';
+  const subtypeFilter = document.getElementById('subtype-filter')?.value?.toLowerCase() || '';
   const colorFilter = document.getElementById('color-filter')?.value || '';
   const keywordFilter = document.getElementById('keyword-filter')?.value || '';
   const reservedFilter = document.getElementById('reserved-filter')?.value || '';
@@ -398,6 +399,7 @@ function applyFilters() {
   
   filteredCollection = collection.filter(card => {
     const matchesType = !typeFilter || (card.type_line && card.type_line.includes(typeFilter));
+    const matchesSubtype = !subtypeFilter || (card.type_line && card.type_line.toLowerCase().includes(subtypeFilter));
     const matchesColor = !colorFilter || matchCardColor(card, colorFilter);
     const matchesIdentity = selectedColors.length === 0 || matchColorIdentity(card, selectedColors);
     const matchesKeyword = !keywordFilter || (card.keywords && card.keywords.includes(keywordFilter));
@@ -410,6 +412,7 @@ function applyFilters() {
       (!rarity || card.rarity === rarity) &&
       (!foil || card.foil === foil) &&
       matchesType &&
+      matchesSubtype &&
       matchesColor &&
       matchesIdentity &&
       matchesKeyword &&
@@ -484,6 +487,7 @@ document.getElementById('rarity-filter')?.addEventListener('change', applyFilter
 document.getElementById('foil-filter')?.addEventListener('change', applyFilters);
 document.getElementById('sort')?.addEventListener('change', applyFilters);
 document.getElementById('type-filter')?.addEventListener('change', applyFilters);
+document.getElementById('subtype-filter')?.addEventListener('input', applyFilters);
 document.getElementById('color-filter')?.addEventListener('change', applyFilters);
 document.getElementById('keyword-filter')?.addEventListener('change', applyFilters);
 document.getElementById('reserved-filter')?.addEventListener('change', applyFilters);
@@ -493,6 +497,7 @@ document.querySelectorAll('.color-checkboxes input').forEach(cb => cb.addEventLi
 document.getElementById('clear-filters')?.addEventListener('click', () => {
   document.getElementById('search').value = '';
   document.getElementById('set-filter').value = '';
+  document.getElementById('subtype-filter').value = '';
   document.getElementById('rarity-filter').value = '';
   document.getElementById('foil-filter').value = '';
   document.getElementById('type-filter') && (document.getElementById('type-filter').value = '');
@@ -634,6 +639,21 @@ function initApp() {
     loadCollection().then(() => {
       setupAutocomplete('search', 'search-autocomplete', () => [...new Set(collection.map(c => c.name))]);
       setupAutocomplete('set-filter', 'set-autocomplete', () => [...new Set(collection.map(c => c.setName))]);
+      setupAutocomplete('subtype-filter', 'subtype-autocomplete', () => {
+        const subtypes = new Set();
+        collection.forEach(c => {
+          if (c.type_line) {
+            // Extract subtypes (everything after the dash)
+            const parts = c.type_line.split('—');
+            if (parts[1]) {
+              parts[1].trim().split(' ').forEach(subtype => {
+                if (subtype) subtypes.add(subtype);
+              });
+            }
+          }
+        });
+        return [...subtypes].sort();
+      });
     });
   };
   document.head.appendChild(nouislider);
