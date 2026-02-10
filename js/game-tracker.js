@@ -1200,15 +1200,6 @@ document.getElementById('btn-log').onclick = () => {
 document.getElementById('btn-dice').onclick = () => openModal('dice-modal');
 document.getElementById('btn-coin').onclick = () => openModal('coin-modal');
 document.getElementById('btn-stack').onclick = () => openStack();
-document.getElementById('btn-particles').onclick = () => {
-  state.particlesEnabled = !state.particlesEnabled;
-  document.querySelectorAll('.player-particles').forEach(p => {
-    p.style.display = state.particlesEnabled ? 'block' : 'none';
-  });
-  const btn = document.getElementById('btn-particles');
-  btn.style.opacity = state.particlesEnabled ? '1' : '0.5';
-};
-document.getElementById('btn-phases').onclick = () => openPhases();
 document.getElementById('btn-end').onclick = () => endGame();
 document.getElementById('btn-toggle-tools').onclick = () => {
   state.advancedMode = !state.advancedMode;
@@ -1229,7 +1220,34 @@ document.getElementById('btn-citys')?.addEventListener('click', () => openCitysM
 document.getElementById('btn-reset').onclick = () => {
   if (confirm('Reset game?')) {
     if (clockInterval) clearInterval(clockInterval);
+    if (turnClockInterval) clearInterval(turnClockInterval);
     localStorage.removeItem('mtg-game-autosave');
+    
+    // Reset all state
+    state.activePlayer = -1;
+    state.turnCount = 0;
+    state.firstPlayer = -1;
+    state.log = [];
+    state.gameStartTime = null;
+    state.turnStartTime = null;
+    state.stack = [];
+    state.currentPhase = 0;
+    state.currentStep = 0;
+    state.turnTimes = [];
+    state.damageDealt = {};
+    state.commanderDamageDealt = {};
+    state.knockouts = [];
+    state.dayNight = 'day';
+    state.monarch = -1;
+    state.initiative = -1;
+    state.ringBearer = -1;
+    state.ringTemptation = 0;
+    state.currentPlane = null;
+    state.lifeHistory = [];
+    state.firstBlood = null;
+    state.currentDungeon = null;
+    state.history = [];
+    
     document.getElementById('game-screen').classList.add('hidden');
     document.getElementById('setup-screen').classList.remove('hidden');
   }
@@ -1244,6 +1262,10 @@ document.getElementById('btn-theme')?.addEventListener('click', () => {
 });
 document.getElementById('btn-animations')?.addEventListener('click', () => {
   state.animations = !state.animations;
+  state.particlesEnabled = state.animations;
+  document.querySelectorAll('.player-particles').forEach(p => {
+    p.style.display = state.particlesEnabled ? 'block' : 'none';
+  });
   document.getElementById('btn-animations').style.opacity = state.animations ? '1' : '0.5';
 });
 
