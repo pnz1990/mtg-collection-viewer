@@ -148,9 +148,15 @@ Fully responsive layout that works on desktop, tablet, and mobile devices.
 The app expects a Moxfield-style CSV with these columns:
 - Name, Set Code, Set Name, Collector Number, Foil, Rarity, Quantity, MoxfieldID, Scryfall ID, Price, etc.
 
-## Technology
+## Testing
 
-- Pure HTML, CSS, and JavaScript (no frameworks)
+The project includes comprehensive test suites:
+
+- **test/test-game-tracker.html** - Game tracker functionality tests
+- **test/test-detail.html** - Card detail page tests  
+- **test/test-card-back.html** - Card back visibility tests (3D flip effects)
+
+Open any test file in a browser to run the test suite.
 - [Chart.js](https://www.chartjs.org/) for analytics charts
 - [noUiSlider](https://refreshless.com/nouislider/) for price range slider
 - [Scryfall API](https://scryfall.com/docs/api) for card images and data
