@@ -2442,9 +2442,9 @@ h1 {
   background: var(--card-bg, #2a2a2a);
   border-radius: 12px;
   padding: 30px;
-  max-width: 600px;
+  max-width: 900px;
   width: 100%;
-  max-height: 80vh;
+  max-height: 85vh;
   overflow-y: auto;
   color: var(--text, #f0f0f0);
 }
@@ -2462,19 +2462,102 @@ h1 {
 .version-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 25px;
   margin-bottom: 20px;
 }
 
-.version-item {
+.version-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .version-card-name {
   font-weight: 600;
+  font-size: 1.1rem;
   color: var(--text, #f0f0f0);
+}
+
+.version-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 15px;
+}
+
+.version-card {
+  cursor: pointer;
+  perspective: 1000px;
+  border-radius: 12px;
+  transition: transform 0.2s;
+  position: relative;
+}
+
+.version-card:hover {
+  transform: scale(1.05);
+}
+
+.version-card.selected {
+  box-shadow: 0 0 0 3px #4caf50;
+}
+
+.version-card-inner {
+  position: relative;
+  width: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out;
+  border-radius: 12px;
+  --shimmer-x: 50%;
+  --shimmer-y: 50%;
+}
+
+.version-card-front,
+.version-card-back {
+  width: 100%;
+  display: block;
+  border-radius: 12px;
+  backface-visibility: hidden;
+}
+
+.version-card-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: rotateY(180deg);
+}
+
+.version-card.foil .version-card-inner::before,
+.version-card.etched .version-card-inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--shimmer-x) var(--shimmer-y),
+    rgba(255,255,255,0.4) 0%,
+    rgba(200,200,255,0.3) 20%,
+    rgba(255,200,255,0.2) 40%,
+    transparent 70%
+  );
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 12px;
+}
+
+.version-info {
+  margin-top: 8px;
+  text-align: center;
+}
+
+.version-set {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #aaa);
+  margin-bottom: 4px;
+}
+
+.version-code {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #999);
+  font-family: monospace;
 }
 
 .version-select {

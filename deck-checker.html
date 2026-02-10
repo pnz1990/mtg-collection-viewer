@@ -157,6 +157,7 @@
         const name = parts[0].toLowerCase();
         const setCode = parts[1];
         const collectorNumber = parts[3];
+        const foil = parts[4];
         const scryfallId = parts[8];
         
         if (!scryfallId) continue;
@@ -166,6 +167,7 @@
           scryfallId,
           setCode,
           collectorNumber,
+          foil,
           type_line: cached?.type_line || '',
           setName: parts[2]
         };
@@ -347,31 +349,82 @@
         modal.innerHTML = `
           <div class="version-modal">
             <h2>Select Card Versions</h2>
-            <p>You own multiple versions of these cards. Select which version to use:</p>
+            <p>You own multiple versions of these cards. Click to select which version to use:</p>
             <div class="version-list">
               ${multipleVersions.map((card, idx) => `
-                <div class="version-item">
+                <div class="version-group">
                   <div class="version-card-name">${card.quantity}x ${card.name.charAt(0).toUpperCase() + card.name.slice(1)}</div>
-                  <select class="version-select" data-card="${card.name}">
-                    ${card.versions.map(v => `
-                      <option value="${v.scryfallId}">${v.setName} (${v.setCode.toUpperCase()}) #${v.collectorNumber}</option>
+                  <div class="version-cards">
+                    ${card.versions.map((v, vIdx) => `
+                      <div class="version-card ${vIdx === 0 ? 'selected' : ''} ${v.foil !== 'normal' ? v.foil : ''}" 
+                           data-card="${card.name}" 
+                           data-version="${v.scryfallId}">
+                        <div class="version-card-inner">
+                          <img src="https://cards.scryfall.io/normal/front/${v.scryfallId[0]}/${v.scryfallId[1]}/${v.scryfallId}.jpg" 
+                               alt="${card.name}" 
+                               class="version-card-front"
+                               onerror="this.src='images/back.png'">
+                          <img src="images/back.png" alt="Card back" class="version-card-back">
+                        </div>
+                        <div class="version-info">
+                          <div class="version-set">${v.setName}</div>
+                          <div class="version-code">${v.setCode.toUpperCase()} #${v.collectorNumber}${v.foil !== 'normal' ? ' *' + v.foil.charAt(0).toUpperCase() + '*' : ''}</div>
+                        </div>
+                      </div>
                     `).join('')}
-                  </select>
+                  </div>
                 </div>
               `).join('')}
             </div>
             <div class="modal-actions">
-              <button class="modal-btn confirm">Confirm</button>
+              <button class="modal-btn confirm">Confirm Selection</button>
               <button class="modal-btn cancel">Cancel</button>
             </div>
           </div>
         `;
         document.body.appendChild(modal);
         
+        // Add click handlers for version selection
+        modal.querySelectorAll('.version-card').forEach(card => {
+          card.addEventListener('click', () => {
+            const cardName = card.dataset.card;
+            modal.querySelectorAll(`.version-card[data-card="${CSS.escape(cardName)}"]`).forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+          });
+          
+          // Add 3D tilt effect
+          const inner = card.querySelector('.version-card-inner');
+          let isDragging = false;
+          
+          card.addEventListener('mousedown', e => {
+            isDragging = true;
+            e.preventDefault();
+          });
+          
+          document.addEventListener('mouseup', () => {
+            if (isDragging) {
+              isDragging = false;
+              inner.style.transform = '';
+              inner.style.setProperty('--shimmer-x', '50%');
+              inner.style.setProperty('--shimmer-y', '50%');
+            }
+          });
+          
+          card.addEventListener('mousemove', e => {
+            if (!isDragging) return;
+            const rect = card.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width - 0.5;
+            const y = (e.clientY - rect.top) / rect.height - 0.5;
+            inner.style.transform = `rotateX(${-y * 15}deg) rotateY(${x * 15}deg)`;
+            inner.style.setProperty('--shimmer-x', `${50 + x * 100}%`);
+            inner.style.setProperty('--shimmer-y', `${50 + y * 100}%`);
+          });
+        });
+        
         modal.querySelector('.confirm').addEventListener('click', () => {
-          modal.querySelectorAll('.version-select').forEach(select => {
-            const cardName = select.dataset.card;
-            const scryfallId = select.value;
+          modal.querySelectorAll('.version-card.selected').forEach(card => {
+            const cardName = card.dataset.card;
+            const scryfallId = card.dataset.version;
             const versions = collectionCards.get(cardName);
             const selected = versions.find(v => v.scryfallId === scryfallId);
             selectedVersions.set(cardName, selected);
@@ -394,7 +447,8 @@
       for (const card of currentDeckList) {
         if (selectedVersions.has(card.name)) {
           const version = selectedVersions.get(card.name);
-          output.push(`${card.quantity} ${card.name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} (${version.setCode.toUpperCase()}) ${version.collectorNumber}`);
+          const foilSuffix = version.foil !== 'normal' ? ` *${version.foil.charAt(0).toUpperCase()}*` : '';
+          output.push(`${card.quantity} ${card.name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} (${version.setCode.toUpperCase()}) ${version.collectorNumber}${foilSuffix}`);
         } else {
           // Card not owned, add without version info
           output.push(`${card.quantity} ${card.name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}`);
