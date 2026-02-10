@@ -558,23 +558,20 @@ h1 {
 .card.etched .card-image-inner::after {
   content: '';
   position: absolute;
-  inset: -50%;
+  inset: 0;
   border-radius: 8px;
-  background: linear-gradient(
-    125deg,
-    transparent 0%,
-    rgba(255,255,255,0.15) 25%,
-    rgba(255,200,100,0.3) 35%,
-    rgba(100,200,255,0.3) 45%,
-    rgba(200,100,255,0.3) 55%,
-    rgba(255,255,255,0.15) 75%,
-    transparent 100%
+  background: radial-gradient(
+    circle at var(--shimmer-x, 50%) var(--shimmer-y, 50%),
+    rgba(255,255,255,0.4) 0%,
+    rgba(200,200,255,0.3) 20%,
+    rgba(255,200,255,0.2) 40%,
+    transparent 70%
   );
-  background-size: 200% 200%;
-  background-position: var(--shimmer-x, 50%) var(--shimmer-y, 50%);
+  mix-blend-mode: overlay;
   pointer-events: none;
   z-index: 1;
   backface-visibility: hidden;
+  overflow: hidden;
 }
 
 @keyframes shimmer {
@@ -597,6 +594,7 @@ h1 {
   transform-style: preserve-3d;
   transition: transform 0.1s ease-out;
   border-radius: 8px;
+  overflow: hidden;
 }
 
 .card-image {
@@ -1604,21 +1602,16 @@ h1 {
 .carousel-card.etched::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 60px;
+  inset: 0 0 60px 0;
   border-radius: 12px;
-  background: linear-gradient(
-    125deg,
-    transparent 0%,
-    rgba(255,255,255,0.1) 25%,
-    rgba(255,200,100,0.2) 35%,
-    rgba(100,200,255,0.2) 45%,
-    rgba(200,100,255,0.2) 55%,
-    rgba(255,255,255,0.1) 75%,
-    transparent 100%
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255,255,255,0.4) 0%,
+    rgba(200,200,255,0.3) 20%,
+    rgba(255,200,255,0.2) 40%,
+    transparent 70%
   );
+  mix-blend-mode: overlay;
   pointer-events: none;
 }
 
