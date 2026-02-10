@@ -233,7 +233,7 @@ function getPlayerName(idx) {
 
 // Setup
 function loadFormats() {
-  const formats = ['commander', 'standard', 'modern', 'legacy', 'vintage', 'pioneer', 'pauper'];
+  const formats = ['standard', 'modern', 'legacy', 'vintage', 'pioneer', 'pauper', 'commander'];
   const container = document.getElementById('format-select');
   container.innerHTML = formats.map(f => 
     `<button data-value="${f}" ${f === 'commander' ? 'class="selected"' : ''}>${f.charAt(0).toUpperCase() + f.slice(1)}</button>`
