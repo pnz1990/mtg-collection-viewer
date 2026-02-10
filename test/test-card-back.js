@@ -78,12 +78,12 @@ test('CSS card-image-inner has transform-style: preserve-3d', () => {
       height: 100%;
       transform-style: preserve-3d;
       transition: transform 0.1s ease-out;
-      overflow: hidden;
       border-radius: 8px;
     }
   `;
   assert(css.includes('transform-style: preserve-3d'), 'Missing preserve-3d');
   assert(css.includes('position: relative'), 'Inner must be relative for absolute back');
+  assert(!css.includes('overflow: hidden'), 'overflow: hidden prevents card back visibility');
 });
 
 // Test 4: CSS card-image has backface-visibility: hidden
