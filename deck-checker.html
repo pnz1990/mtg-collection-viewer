@@ -210,7 +210,11 @@
         const rest = match ? match[2] : trimmed;
         
         // Remove set info (anything after "(")
-        const name = rest.split('(')[0].trim();
+        let name = rest.split('(')[0].trim();
+        
+        // Normalize double-faced cards: single slash -> double slash
+        name = name.replace(/\s\/\s/g, ' // ');
+        
         if (name) cards.push({ name: name.toLowerCase(), quantity });
       }
       return cards;
