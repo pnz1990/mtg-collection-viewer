@@ -2407,3 +2407,158 @@ h1 {
   .trade-steps { flex-wrap: wrap; }
   .trade-steps .step { font-size: 0.8rem; padding: 10px 15px; }
 }
+
+/* Deck Converter */
+.convert-btn {
+  margin: 20px auto;
+  display: block;
+  padding: 12px 24px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.convert-btn:hover {
+  background: #45a049;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+}
+
+.version-modal, .result-modal {
+  background: var(--card-bg, #2a2a2a);
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  color: var(--text, #f0f0f0);
+}
+
+.version-modal h2, .result-modal h2 {
+  margin-bottom: 15px;
+  color: var(--text, #f0f0f0);
+}
+
+.version-modal p {
+  margin-bottom: 20px;
+  color: var(--text-secondary, #aaa);
+}
+
+.version-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.version-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.version-card-name {
+  font-weight: 600;
+  color: var(--text, #f0f0f0);
+}
+
+.version-select {
+  padding: 8px;
+  background: var(--bg, #1a1a1a);
+  border: 1px solid var(--border, #444);
+  border-radius: 6px;
+  color: var(--text, #f0f0f0);
+  font-size: 0.9rem;
+}
+
+.warning-box {
+  background: rgba(255, 152, 0, 0.1);
+  border: 1px solid #ff9800;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.warning-box strong {
+  color: #ff9800;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.not-converted-list {
+  color: var(--text-secondary, #aaa);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.deck-output {
+  width: 100%;
+  min-height: 200px;
+  padding: 15px;
+  background: var(--bg, #1a1a1a);
+  border: 1px solid var(--border, #444);
+  border-radius: 8px;
+  color: var(--text, #f0f0f0);
+  font-family: monospace;
+  font-size: 0.9rem;
+  resize: vertical;
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.modal-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-btn.confirm {
+  background: #4caf50;
+  color: white;
+}
+
+.modal-btn.confirm:hover {
+  background: #45a049;
+}
+
+.modal-btn.copy {
+  background: #2196f3;
+  color: white;
+}
+
+.modal-btn.copy:hover {
+  background: #1976d2;
+}
+
+.modal-btn.cancel, .modal-btn.close {
+  background: var(--border, #444);
+  color: var(--text, #f0f0f0);
+}
+
+.modal-btn.cancel:hover, .modal-btn.close:hover {
+  background: var(--border-hover, #555);
+}

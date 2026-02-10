@@ -78,6 +78,8 @@
         </div>
       </div>
       
+      <button type="button" id="convert-deck" class="convert-btn">Convert to Owned Versions</button>
+      
       <div class="results-columns">
         <div class="results-column owned">
           <h3>✓ Cards You Own</h3>
@@ -118,6 +120,10 @@
     });
 
     let collectionNames = new Map(); // name -> { scryfallId, type_line }
+    let collectionCards = new Map(); // name -> array of card versions
+    let currentDeckList = [];
+    let currentOwnedCards = [];
+    let currentMissingCards = [];
     let db;
 
     // IndexedDB for cached card data
@@ -149,11 +155,29 @@
         if (!line.trim()) continue;
         const parts = parseCSVLine(line);
         const name = parts[0].toLowerCase();
+        const setCode = parts[1];
+        const collectorNumber = parts[3];
         const scryfallId = parts[8];
-        if (!collectionNames.has(name) && scryfallId) {
-          const cached = await getCardData(scryfallId);
-          collectionNames.set(name, { scryfallId, type_line: cached?.type_line || '' });
+        
+        if (!scryfallId) continue;
+        
+        const cached = await getCardData(scryfallId);
+        const cardVersion = {
+          scryfallId,
+          setCode,
+          collectorNumber,
+          type_line: cached?.type_line || '',
+          setName: parts[2]
+        };
+        
+        if (!collectionNames.has(name)) {
+          collectionNames.set(name, cardVersion);
         }
+        
+        if (!collectionCards.has(name)) {
+          collectionCards.set(name, []);
+        }
+        collectionCards.get(name).push(cardVersion);
       }
     }
     
@@ -171,20 +195,23 @@
     }
 
     function parseDeckList(text) {
-      const cards = new Set();
+      const cards = [];
       const lines = text.trim().split('\n');
       
       for (const line of lines) {
         let trimmed = line.trim();
         if (!trimmed || trimmed.startsWith('//') || trimmed.startsWith('#')) continue;
         
-        // Remove quantity prefix (e.g., "1 " or "4x ")
-        trimmed = trimmed.replace(/^\d+x?\s+/, '');
+        // Extract quantity
+        const match = trimmed.match(/^(\d+)x?\s+(.+)/);
+        const quantity = match ? parseInt(match[1]) : 1;
+        const rest = match ? match[2] : trimmed;
+        
         // Remove set info (anything after "(")
-        const name = trimmed.split('(')[0].trim();
-        if (name) cards.add(name.toLowerCase());
+        const name = rest.split('(')[0].trim();
+        if (name) cards.push({ name: name.toLowerCase(), quantity });
       }
-      return [...cards].map(name => ({ name }));
+      return cards;
     }
 
     function checkDeck(deckCards) {
@@ -271,6 +298,142 @@
         }
       };
       loadMissingImages();
+    }
+
+    document.getElementById('check-list').addEventListener('click', () => {
+      const text = document.getElementById('deck-list').value.trim();
+      if (!text) return;
+      
+      currentDeckList = parseDeckList(text);
+      const { owned, missing } = checkDeck(currentDeckList);
+      currentOwnedCards = owned;
+      currentMissingCards = missing;
+      displayResults(owned, missing);
+    });
+
+    document.getElementById('convert-deck').addEventListener('click', async () => {
+      await convertDeck();
+    });
+
+    async function convertDeck() {
+      const selectedVersions = new Map();
+      const multipleVersions = [];
+      
+      // Check which cards have multiple versions
+      for (const card of currentDeckList) {
+        if (collectionCards.has(card.name)) {
+          const versions = collectionCards.get(card.name);
+          if (versions.length > 1) {
+            multipleVersions.push({ ...card, versions });
+          } else {
+            selectedVersions.set(card.name, versions[0]);
+          }
+        }
+      }
+      
+      // If there are cards with multiple versions, show selection modal
+      if (multipleVersions.length > 0) {
+        await showVersionSelector(multipleVersions, selectedVersions);
+      }
+      
+      // Generate deck list
+      generateConvertedDeckList(selectedVersions);
+    }
+
+    function showVersionSelector(multipleVersions, selectedVersions) {
+      return new Promise(resolve => {
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+          <div class="version-modal">
+            <h2>Select Card Versions</h2>
+            <p>You own multiple versions of these cards. Select which version to use:</p>
+            <div class="version-list">
+              ${multipleVersions.map((card, idx) => `
+                <div class="version-item">
+                  <div class="version-card-name">${card.quantity}x ${card.name.charAt(0).toUpperCase() + card.name.slice(1)}</div>
+                  <select class="version-select" data-card="${card.name}">
+                    ${card.versions.map(v => `
+                      <option value="${v.scryfallId}">${v.setName} (${v.setCode.toUpperCase()}) #${v.collectorNumber}</option>
+                    `).join('')}
+                  </select>
+                </div>
+              `).join('')}
+            </div>
+            <div class="modal-actions">
+              <button class="modal-btn confirm">Confirm</button>
+              <button class="modal-btn cancel">Cancel</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+        
+        modal.querySelector('.confirm').addEventListener('click', () => {
+          modal.querySelectorAll('.version-select').forEach(select => {
+            const cardName = select.dataset.card;
+            const scryfallId = select.value;
+            const versions = collectionCards.get(cardName);
+            const selected = versions.find(v => v.scryfallId === scryfallId);
+            selectedVersions.set(cardName, selected);
+          });
+          modal.remove();
+          resolve();
+        });
+        
+        modal.querySelector('.cancel').addEventListener('click', () => {
+          modal.remove();
+          resolve();
+        });
+      });
+    }
+
+    function generateConvertedDeckList(selectedVersions) {
+      const output = [];
+      const notConverted = [];
+      
+      for (const card of currentDeckList) {
+        if (selectedVersions.has(card.name)) {
+          const version = selectedVersions.get(card.name);
+          output.push(`${card.quantity} ${card.name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} (${version.setCode.toUpperCase()}) ${version.collectorNumber}`);
+        } else {
+          // Card not owned, add without version info
+          output.push(`${card.quantity} ${card.name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}`);
+          notConverted.push(card.name);
+        }
+      }
+      
+      // Show result modal
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay';
+      modal.innerHTML = `
+        <div class="result-modal">
+          <h2>Converted Deck List</h2>
+          ${notConverted.length > 0 ? `
+            <div class="warning-box">
+              <strong>⚠ Not Converted (${notConverted.length} cards):</strong>
+              <div class="not-converted-list">${notConverted.map(n => n.charAt(0).toUpperCase() + n.slice(1)).join(', ')}</div>
+            </div>
+          ` : ''}
+          <textarea class="deck-output" readonly>${output.join('\n')}</textarea>
+          <div class="modal-actions">
+            <button class="modal-btn copy">Copy to Clipboard</button>
+            <button class="modal-btn close">Close</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      
+      const textarea = modal.querySelector('.deck-output');
+      textarea.style.height = Math.min(400, textarea.scrollHeight) + 'px';
+      
+      modal.querySelector('.copy').addEventListener('click', () => {
+        textarea.select();
+        document.execCommand('copy');
+        modal.querySelector('.copy').textContent = 'Copied!';
+        setTimeout(() => modal.querySelector('.copy').textContent = 'Copy to Clipboard', 2000);
+      });
+      
+      modal.querySelector('.close').addEventListener('click', () => modal.remove());
     }
 
     document.getElementById('check-list').addEventListener('click', () => {
