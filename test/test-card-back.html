@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Card Back Tests - MTG Collection Viewer</title>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #f0f0f0; }
+    .test { margin: 10px 0; padding: 10px; border-left: 3px solid #666; }
+    .test.pass { border-color: #4caf50; background: rgba(76, 175, 80, 0.1); }
+    .test.fail { border-color: #f44336; background: rgba(244, 67, 54, 0.1); }
+    .summary { margin: 20px 0; padding: 15px; background: #2a2a2a; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Card Back Visibility Tests</h1>
+  <div id="results"></div>
+  <div id="summary" class="summary"></div>
+  <script src="test-card-back.js"></script>
+</body>
+</html>

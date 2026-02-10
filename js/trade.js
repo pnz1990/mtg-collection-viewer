@@ -54,6 +54,7 @@ function renderCollection(append = false) {
       <div class="card-image-wrapper">
         <div class="card-image-inner">
           <img alt="${card.name}" class="card-image">
+          <img src="images/back.png" alt="Card back" class="card-back">
         </div>
         <div class="select-overlay">${isSelected ? '✓' : '+'}</div>
       </div>
