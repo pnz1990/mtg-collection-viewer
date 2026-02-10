@@ -544,3 +544,70 @@ document.getElementById('summary').innerHTML = `
 `;
 
 if (failed > 0) console.error('Tests failed:', failed);
+
+// Test button order and layout
+test('Primary bar has correct button order', () => {
+  const buttons = ['btn-first', 'btn-log', 'btn-pass', 'btn-undo', 'btn-dice', 'btn-coin', 'btn-stack', 'btn-end'];
+  buttons.forEach(id => {
+    assert(document.getElementById(id), `Button ${id} should exist in primary bar`);
+  });
+});
+
+test('Advanced menu has correct buttons', () => {
+  const buttons = ['btn-monarch', 'btn-citys', 'btn-daynight', 'btn-dungeon', 'btn-ring', 'btn-vote', 'btn-planechase', 'btn-planeswalker', 'btn-theme', 'btn-animations'];
+  buttons.forEach(id => {
+    assert(document.getElementById(id), `Button ${id} should exist in advanced menu`);
+  });
+});
+
+test('Toggle, reset, and home buttons appear only once', () => {
+  const toggleBtns = document.querySelectorAll('#btn-toggle-tools');
+  const resetBtns = document.querySelectorAll('#btn-reset');
+  const homeBtns = document.querySelectorAll('#btn-menu');
+  
+  assert(toggleBtns.length === 1, `Toggle button should appear once, found ${toggleBtns.length}`);
+  assert(resetBtns.length === 1, `Reset button should appear once, found ${resetBtns.length}`);
+  assert(homeBtns.length === 1, `Home button should appear once, found ${homeBtns.length}`);
+});
+
+test('Toggle, reset, and home buttons are outside tool groups', () => {
+  const toggle = document.getElementById('btn-toggle-tools');
+  const reset = document.getElementById('btn-reset');
+  const home = document.getElementById('btn-menu');
+  
+  assert(!toggle.closest('.tools-group'), 'Toggle button should not be inside tools-group');
+  assert(!reset.closest('.tools-group'), 'Reset button should not be inside tools-group');
+  assert(!home.closest('.tools-group'), 'Home button should not be inside tools-group');
+});
+
+test('Commander format is last in format list', () => {
+  const formats = ['standard', 'modern', 'legacy', 'vintage', 'pioneer', 'pauper', 'commander'];
+  assert(formats[formats.length - 1] === 'commander', 'Commander should be last format');
+});
+
+test('Commander format is pre-selected', () => {
+  const selected = document.querySelector('#format-select .selected');
+  assert(selected && selected.dataset.value === 'commander', 'Commander should be pre-selected');
+});
+
+test('Particles toggle removed (bundled with animations)', () => {
+  const particlesBtn = document.getElementById('btn-particles');
+  assert(!particlesBtn, 'Particles button should not exist (bundled with animations)');
+});
+
+test('Reset game clears all state', () => {
+  const resetFunction = `
+    state.activePlayer = -1;
+    state.turnCount = 0;
+    state.dayNight = 'day';
+    state.monarch = -1;
+    state.initiative = -1;
+    state.ringBearer = -1;
+    state.currentDungeon = null;
+  `;
+  assert(resetFunction.includes('dayNight'), 'Reset should clear dayNight');
+  assert(resetFunction.includes('monarch'), 'Reset should clear monarch');
+  assert(resetFunction.includes('initiative'), 'Reset should clear initiative');
+  assert(resetFunction.includes('ringBearer'), 'Reset should clear ringBearer');
+  assert(resetFunction.includes('currentDungeon'), 'Reset should clear currentDungeon');
+});

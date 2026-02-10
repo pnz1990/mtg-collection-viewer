@@ -32,20 +32,38 @@ A comprehensive game state tracker for MTG games with support for multiple forma
 - Rotate player panels 180° for opposite-side players
 
 **Game Tools:**
-- **Turn Tracker** - Pass turn with clockwise rotation, "Who Goes First" randomizer
-- **Game Clock** - Tracks total game time
-- **Turn Clock** - Resets each turn
-- **Stack Tracker** - Visual card stack with player assignment, duplicate cards for storm
-- **Turn Phases** - Step-by-step phase tracker with all substeps
+- **Who Goes First** - Randomize turn order with shuffle animation
+- **Game Log** - Timestamped action history with filtering
+- **Pass Turn** - Advance to next player with automatic clock reset
+- **Undo** - Revert last action (Ctrl+Z)
 - **Dice Roller** - D6, D12, D20 with animated 3D dice
 - **Coin Flipper** - Animated 3D coin flip
-- **Game Log** - Timestamped action history
+- **Stack Tracker** - Visual card stack with player assignment, duplicate cards for storm
+- **End Game** - View game summary with statistics and winner declaration
+- **Reset Game** - Clear all state and return to setup
+- **Advanced Menu** - Access special game mechanics and settings
+
+**Advanced Game Mechanics:**
+- **Monarch/Initiative** - Track monarch and initiative status
+- **City's Blessing** - Mark players with city's blessing
+- **Day/Night** - Toggle day/night cycle
+- **Dungeon** - Track dungeon progress
+- **The Ring** - Track ring bearer and temptation level
+- **Voting** - Conduct votes with results tracking
+- **Planechase** - Random plane selection
+- **Planeswalker Tracker** - Track planeswalker loyalty counters
+- **Theme Toggle** - Switch between light/dark themes
+- **Animations** - Toggle animations and particles
 
 **Additional Features:**
 - Player name customization (non-Commander formats)
-- Toggle particles on/off
-- Mobile-optimized layout
+- Commander format pre-selected and prominently displayed
+- Keyboard shortcuts for quick actions
+- Mobile-optimized layout (tablets and larger)
+- Phone blocking (requires tablet or laptop)
 - Responsive design for all screen sizes
+- Auto-save game state
+- Share game summary links
 
 ### 🎴 Multiple View Modes
 
@@ -112,6 +130,11 @@ Choose between two price sources:
 ### 🔧 Additional Tools
 
 - **Deck Checker** - Paste a deck list to see which cards you own vs. need
+  - Supports Moxfield format (handles double-faced cards with single slash)
+  - Convert deck to owned versions with foil indicators
+  - Visual version selector with card images, 3D tilt, and foil shimmer
+  - Moxfield bulk edit format output
+  - Copy to clipboard
 - **Trade Calculator** - Compare trade values with visual card selection
   - Select cards from your collection to trade away
   - Enter cards to receive (fetches all printings from Scryfall)
