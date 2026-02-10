@@ -44,6 +44,7 @@ button, input, select, textarea { font-size: 16px; touch-action: manipulation; }
 
 .format-select { display: flex; gap: 8px; flex-wrap: wrap; }
 .format-select button { flex: 1; min-width: 90px; padding: 12px 8px; background: var(--bg); border: 2px solid var(--bg3); border-radius: 12px; color: var(--text2); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: capitalize; white-space: nowrap; }
+.format-select button[data-value="commander"] { flex: 2; font-size: 0.95rem; padding: 16px 12px; }
 .format-select button.selected { border-color: var(--accent); background: rgba(230,57,70,0.15); color: var(--accent); }
 
 .player-select { display: flex; gap: 12px; }
