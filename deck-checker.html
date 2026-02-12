@@ -602,15 +602,6 @@
       modal.querySelector('.close').addEventListener('click', () => modal.remove());
     }
 
-    document.getElementById('check-list').addEventListener('click', () => {
-      const text = document.getElementById('deck-list').value.trim();
-      if (!text) return;
-      
-      const deckCards = parseDeckList(text);
-      const { owned, missing } = checkDeck(deckCards);
-      displayResults(owned, missing);
-    });
-
     loadCollection();
   </script>
 </body>
