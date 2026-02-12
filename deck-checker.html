@@ -458,6 +458,15 @@
       return new Promise(resolve => {
         const modal = document.createElement('div');
         modal.className = 'modal-overlay';
+        
+        // Store versions in a map for easy lookup
+        const versionMap = new Map();
+        multipleVersions.forEach(card => {
+          card.versions.forEach(v => {
+            versionMap.set(v.scryfallId, { cardName: card.name, version: v });
+          });
+        });
+        
         modal.innerHTML = `
           <div class="version-modal">
             <h2>Select Card Versions</h2>
@@ -535,11 +544,11 @@
         
         modal.querySelector('.confirm').addEventListener('click', () => {
           modal.querySelectorAll('.version-card.selected').forEach(card => {
-            const cardName = card.dataset.card;
             const scryfallId = card.dataset.version;
-            const versions = collectionCards.get(cardName);
-            const selected = versions.find(v => v.scryfallId === scryfallId);
-            selectedVersions.set(cardName, selected);
+            const data = versionMap.get(scryfallId);
+            if (data) {
+              selectedVersions.set(data.cardName, data.version);
+            }
           });
           modal.remove();
           resolve();
