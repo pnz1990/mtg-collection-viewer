@@ -388,12 +388,22 @@
       
       // Only convert cards we own (from currentOwnedCards)
       for (const card of currentOwnedCards) {
-        // Check if we have multiple versions in collection
+        // Get all versions for this card (including alternate names)
         const allVersions = [];
         
-        // Check exact name match
+        // Check exact name match first
         if (collectionCards.has(card.name)) {
           allVersions.push(...collectionCards.get(card.name));
+        } else {
+          // Card was found via alternate name lookup during check
+          // We need to find which collection name it matches
+          for (const [collectionName, versions] of collectionCards.entries()) {
+            // Check if any version matches the scryfallId we found during check
+            if (versions.some(v => v.scryfallId === card.scryfallId)) {
+              allVersions.push(...versions);
+              break;
+            }
+          }
         }
         
         if (allVersions.length > 1) {
