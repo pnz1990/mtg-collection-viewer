@@ -320,8 +320,8 @@
       
       const renderCard = (c, isOwned) => `
         <div class="deck-card-tile ${isOwned ? 'owned' : 'missing'}" data-name="${c.name}">
-          <img src="${isOwned ? `https://cards.scryfall.io/small/front/${c.scryfallId[0]}/${c.scryfallId[1]}/${c.scryfallId}.jpg` : 'back.png'}" 
-               alt="${c.name}" onerror="this.src='back.png'">
+          <img src="${isOwned ? `https://cards.scryfall.io/small/front/${c.scryfallId[0]}/${c.scryfallId[1]}/${c.scryfallId}.jpg` : 'images/back.png'}" 
+               alt="${c.name}" onerror="this.src='images/back.png'">
           ${c.type_line ? `<div class="tile-type">${getType(c.type_line)}</div>` : ''}
           ${!isOwned ? `<div class="tile-name">${c.name}</div>` : ''}
         </div>
