@@ -220,20 +220,71 @@
       return cards;
     }
 
-    function checkDeck(deckCards) {
+    async function checkDeck(deckCards) {
       const owned = [];
       const missing = [];
+      const toCheckScryfall = [];
       
+      // First pass: exact name matches
       for (const card of deckCards) {
         if (collectionNames.has(card.name)) {
           const data = collectionNames.get(card.name);
           owned.push({ ...card, scryfallId: data.scryfallId, type_line: data.type_line });
+        } else {
+          toCheckScryfall.push(card);
+        }
+      }
+      
+      // Second pass: check Scryfall for alternate names (flavor names)
+      for (const card of toCheckScryfall) {
+        const alternateMatch = await checkAlternateNames(card.name);
+        if (alternateMatch) {
+          owned.push({ ...card, scryfallId: alternateMatch.scryfallId, type_line: alternateMatch.type_line });
         } else {
           missing.push(card);
         }
       }
       
       return { owned, missing };
+    }
+
+    async function checkAlternateNames(cardName) {
+      try {
+        // Fetch card from Scryfall to get all printings
+        const response = await fetch(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(cardName)}`);
+        if (!response.ok) return null;
+        const card = await response.json();
+        
+        // Get all possible names for this card
+        const namesToCheck = [card.name.toLowerCase()];
+        if (card.flavor_name) namesToCheck.push(card.flavor_name.toLowerCase());
+        
+        // Check if we own any version with any of these names
+        for (const name of namesToCheck) {
+          if (collectionNames.has(name)) {
+            return collectionNames.get(name);
+          }
+        }
+        
+        // Check all printings for flavor names
+        const printingsResponse = await fetch(`https://api.scryfall.com/cards/search?q=!"${encodeURIComponent(card.name)}"&unique=prints`);
+        if (printingsResponse.ok) {
+          const printings = await printingsResponse.json();
+          for (const printing of printings.data) {
+            if (printing.flavor_name) {
+              const flavorName = printing.flavor_name.toLowerCase();
+              if (collectionNames.has(flavorName)) {
+                return collectionNames.get(flavorName);
+              }
+            }
+          }
+        }
+        
+        return null;
+      } catch (e) {
+        console.error('Error checking alternate names:', e);
+        return null;
+      }
     }
 
     async function fetchCardImage(name) {
@@ -306,15 +357,25 @@
       loadMissingImages();
     }
 
-    document.getElementById('check-list').addEventListener('click', () => {
+    document.getElementById('check-list').addEventListener('click', async () => {
       const text = document.getElementById('deck-list').value.trim();
       if (!text) return;
       
-      currentDeckList = parseDeckList(text);
-      const { owned, missing } = checkDeck(currentDeckList);
-      currentOwnedCards = owned;
-      currentMissingCards = missing;
-      displayResults(owned, missing);
+      const btn = document.getElementById('check-list');
+      const originalText = btn.textContent;
+      btn.textContent = 'Checking...';
+      btn.disabled = true;
+      
+      try {
+        currentDeckList = parseDeckList(text);
+        const { owned, missing } = await checkDeck(currentDeckList);
+        currentOwnedCards = owned;
+        currentMissingCards = missing;
+        await displayResults(owned, missing);
+      } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
     });
 
     document.getElementById('convert-deck').addEventListener('click', async () => {
@@ -325,15 +386,14 @@
       const selectedVersions = new Map();
       const multipleVersions = [];
       
-      // Check which cards have multiple versions
+      // Check which cards have multiple versions (including alternate names)
       for (const card of currentDeckList) {
-        if (collectionCards.has(card.name)) {
-          const versions = collectionCards.get(card.name);
-          if (versions.length > 1) {
-            multipleVersions.push({ ...card, versions });
-          } else {
-            selectedVersions.set(card.name, versions[0]);
-          }
+        const allVersions = await getAllVersionsForCard(card.name);
+        
+        if (allVersions.length > 1) {
+          multipleVersions.push({ ...card, versions: allVersions });
+        } else if (allVersions.length === 1) {
+          selectedVersions.set(card.name, allVersions[0]);
         }
       }
       
@@ -344,6 +404,54 @@
       
       // Generate deck list
       generateConvertedDeckList(selectedVersions);
+    }
+
+    async function getAllVersionsForCard(cardName) {
+      const versions = [];
+      
+      // Check exact name match first
+      if (collectionCards.has(cardName)) {
+        versions.push(...collectionCards.get(cardName));
+      }
+      
+      // Check for alternate names via Scryfall
+      try {
+        const response = await fetch(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(cardName)}`);
+        if (!response.ok) return versions;
+        const card = await response.json();
+        
+        // Check actual card name
+        const actualName = card.name.toLowerCase();
+        if (actualName !== cardName && collectionCards.has(actualName)) {
+          versions.push(...collectionCards.get(actualName));
+        }
+        
+        // Check flavor name
+        if (card.flavor_name) {
+          const flavorName = card.flavor_name.toLowerCase();
+          if (collectionCards.has(flavorName)) {
+            versions.push(...collectionCards.get(flavorName));
+          }
+        }
+        
+        // Check all printings for other flavor names
+        const printingsResponse = await fetch(`https://api.scryfall.com/cards/search?q=!"${encodeURIComponent(card.name)}"&unique=prints`);
+        if (printingsResponse.ok) {
+          const printings = await printingsResponse.json();
+          for (const printing of printings.data) {
+            if (printing.flavor_name) {
+              const flavorName = printing.flavor_name.toLowerCase();
+              if (flavorName !== cardName && collectionCards.has(flavorName)) {
+                versions.push(...collectionCards.get(flavorName));
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Error fetching alternate names:', e);
+      }
+      
+      return versions;
     }
 
     function showVersionSelector(multipleVersions, selectedVersions) {
