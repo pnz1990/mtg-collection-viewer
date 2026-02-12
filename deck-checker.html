@@ -395,6 +395,9 @@
         } else if (allVersions.length === 1) {
           selectedVersions.set(card.name, allVersions[0]);
         }
+        
+        // Add delay to avoid rate limiting
+        await new Promise(r => setTimeout(r, 100));
       }
       
       // If there are cards with multiple versions, show selection modal
@@ -414,10 +417,23 @@
         versions.push(...collectionCards.get(cardName));
       }
       
-      // Check for alternate names via Scryfall
+      // If we already found versions, only check Scryfall if we need alternate names
+      // Skip API call if we already have the card
+      if (versions.length > 0) {
+        return versions;
+      }
+      
+      // Check for alternate names via Scryfall (only for cards not in collection)
       try {
         const response = await fetch(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(cardName)}`);
-        if (!response.ok) return versions;
+        if (!response.ok) {
+          if (response.status === 429) {
+            console.warn('Rate limited by Scryfall, waiting...');
+            await new Promise(r => setTimeout(r, 1000));
+            return getAllVersionsForCard(cardName); // Retry
+          }
+          return versions;
+        }
         const card = await response.json();
         
         // Check actual card name
@@ -434,15 +450,17 @@
           }
         }
         
-        // Check all printings for other flavor names
-        const printingsResponse = await fetch(`https://api.scryfall.com/cards/search?q=!"${encodeURIComponent(card.name)}"&unique=prints`);
-        if (printingsResponse.ok) {
-          const printings = await printingsResponse.json();
-          for (const printing of printings.data) {
-            if (printing.flavor_name) {
-              const flavorName = printing.flavor_name.toLowerCase();
-              if (flavorName !== cardName && collectionCards.has(flavorName)) {
-                versions.push(...collectionCards.get(flavorName));
+        // Only check all printings if we still haven't found any versions
+        if (versions.length === 0) {
+          const printingsResponse = await fetch(`https://api.scryfall.com/cards/search?q=!"${encodeURIComponent(card.name)}"&unique=prints`);
+          if (printingsResponse.ok) {
+            const printings = await printingsResponse.json();
+            for (const printing of printings.data) {
+              if (printing.flavor_name) {
+                const flavorName = printing.flavor_name.toLowerCase();
+                if (flavorName !== cardName && collectionCards.has(flavorName)) {
+                  versions.push(...collectionCards.get(flavorName));
+                }
               }
             }
           }
