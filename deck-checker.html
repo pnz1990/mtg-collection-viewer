@@ -386,18 +386,21 @@
       const selectedVersions = new Map();
       const multipleVersions = [];
       
-      // Check which cards have multiple versions (including alternate names)
-      for (const card of currentDeckList) {
-        const allVersions = await getAllVersionsForCard(card.name);
+      // Only convert cards we own (from currentOwnedCards)
+      for (const card of currentOwnedCards) {
+        // Check if we have multiple versions in collection
+        const allVersions = [];
+        
+        // Check exact name match
+        if (collectionCards.has(card.name)) {
+          allVersions.push(...collectionCards.get(card.name));
+        }
         
         if (allVersions.length > 1) {
           multipleVersions.push({ ...card, versions: allVersions });
         } else if (allVersions.length === 1) {
           selectedVersions.set(card.name, allVersions[0]);
         }
-        
-        // Add delay to avoid rate limiting
-        await new Promise(r => setTimeout(r, 100));
       }
       
       // If there are cards with multiple versions, show selection modal
