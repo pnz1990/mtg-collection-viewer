@@ -130,11 +130,15 @@ Choose between two price sources:
 ### 🔧 Additional Tools
 
 - **Deck Checker** - Paste a deck list to see which cards you own vs. need
+  - **Flavor Name Support** - Automatically matches cards with flavor names (e.g., "Gary, the Snail" → "Toxrill, the Corrosive")
   - Supports Moxfield format (handles double-faced cards with single slash)
+  - Two-pass checking: exact matches first, then Scryfall lookup for alternate names
   - Convert deck to owned versions with foil indicators
   - Visual version selector with card images, 3D tilt, and foil shimmer
+  - Handles multiple versions with different names (flavor names, actual names)
   - Moxfield bulk edit format output
   - Copy to clipboard
+  - Rate limiting protection with automatic retry
 - **Trade Calculator** - Compare trade values with visual card selection
   - Select cards from your collection to trade away
   - Enter cards to receive (fetches all printings from Scryfall)
@@ -178,6 +182,8 @@ The project includes comprehensive test suites:
 - **test/test-game-tracker.html** - Game tracker functionality tests
 - **test/test-detail.html** - Card detail page tests  
 - **test/test-card-back.html** - Card back visibility tests (3D flip effects)
+- **test/test-foil-shimmer.html** - Foil shimmer effect standardization tests
+- **test/test-flavor-names.html** - Flavor name support tests (deck checker)
 
 Open any test file in a browser to run the test suite.
 - [Chart.js](https://www.chartjs.org/) for analytics charts
