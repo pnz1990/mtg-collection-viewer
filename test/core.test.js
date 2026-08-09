@@ -4,6 +4,10 @@ const core = require('../js/collection-core.js');
 const collectionExport = require('../js/collection-export.js');
 const exploreLinks = require('../js/explore-links.js');
 const preconMerge = require('../scripts/merge-precon-collection.js');
+const collectionUpdate = require('../scripts/update-owner-collections.js');
+const packPuller = require('../js/pack-puller-core.js');
+const packManifest = require('../data/pack-pullers/marvel-super-heroes-collector.json');
+const packIndex = require('../data/pack-pullers/generated/marvel-super-heroes-collector-cards.json');
 const fs = require('node:fs');
 
 const csv = `Binder Name,Binder Type,Name,Set code,Set name,Collector number,Foil,Rarity,Quantity,ManaBox ID,Scryfall ID,Purchase price,Condition,Language,Purchase price currency,Added date
@@ -519,10 +523,11 @@ test('Scryfall session cache expires after one hour', () => {
   assert.deepEqual(core.readCachedScryfall(['card-1'], storage, now + 3_600_000), {});
 });
 
-test('replacement Monty and Edward collection CSVs load with correct owner metadata', () => {
+test('replacement Monty, Edward and Harry collection CSVs load with correct owner metadata', () => {
   const owners = {
     monty: { id:'monty', name:'Monty’s Manor', shortName:'Monty', badgeClass:'owner-monty' },
-    edward: { id:'edward', name:'Edward’s Exhibit', shortName:'Edward', badgeClass:'owner-edward' }
+    edward: { id:'edward', name:'Edward’s Exhibit', shortName:'Edward', badgeClass:'owner-edward' },
+    harry: { id:'harry', name:'Harry’s Haul', shortName:'Harry', badgeClass:'owner-harry' }
   };
   for (const id of Object.keys(owners)) {
     const parsed = core.parseManaBoxCSV(fs.readFileSync(require.resolve(`../data/collections/${id}.csv`), 'utf8'));
@@ -532,6 +537,17 @@ test('replacement Monty and Edward collection CSVs load with correct owner metad
     assert.equal(owned[0].ownerId, id);
     assert.equal(owned[0].ownerName, owners[id].name);
   }
+});
+
+test('collection replacement preserves configured precon binders and normalises missing binder columns', () => {
+  const current = 'Binder Name,Binder Type,Name,Set code,Collector number,Foil,Quantity,Language\r\nBlood Rites,binder,Precon Card,LCC,1,normal,1,en\r\nold,binder,Old Card,TST,2,normal,1,en\r\n';
+  const replacement = 'Name,Set code,Collector number,Foil,Quantity,Language\r\nNew Card,NEW,3,normal,2,en\r\n';
+  const result = collectionUpdate.replacePreservingBinders(current, replacement, ['Blood Rites']);
+  const parsed = core.parseManaBoxCSV(result.csv);
+  assert.deepEqual(parsed.errors, []);
+  assert.equal(parsed.cards.some(card => card.name === 'Old Card'), false);
+  assert.equal(parsed.cards.find(card => card.name === 'New Card').binderName, '');
+  assert.equal(parsed.cards.find(card => card.name === 'Precon Card').binderName, 'Blood Rites');
 });
 
 test('Edward precon binders contain exactly 100 physical cards with complete IDs', () => {
@@ -561,4 +577,92 @@ test('precon merge consumes unassigned copies and keeps identical cards in separ
 test('precon import rejects malformed deck lists and empty collection CSVs clearly', () => {
   assert.throws(() => preconMerge.parsePreconList('not a deck line'), /Invalid deck-list line 1/);
   assert.throws(() => preconMerge.csvObjects(''), /collection CSV is empty/i);
+});
+
+test('Pack Puller manifest has official product ranges and structured slots', () => {
+  assert.equal(packManifest.id, 'marvel-super-heroes-collector');
+  assert.deepEqual(packManifest.setCodes, ['MSH','MSC','MAR']);
+  assert.equal(packManifest.slots.length, 12);
+  assert.ok(packManifest.slots.every(slot => slot.id && slot.label && Number(slot.count) === 1 || slot.count > 1));
+  assert.ok(packManifest.officialSources.every(source => source.url.startsWith('https://magic.wizards.com/')));
+});
+
+test('Pack Puller eligibility includes and excludes official MSH ranges', () => {
+  for (const collector of ['1','286','297','429']) assert.equal(packPuller.isEligibleCard({ set:'msh', collector_number:collector }, packManifest), true);
+  for (const collector of ['0','287','296','430']) assert.equal(packPuller.isEligibleCard({ set:'msh', collector_number:collector }, packManifest), false);
+});
+
+test('Pack Puller eligibility includes and excludes official MSC ranges', () => {
+  for (const collector of ['1','7','291','512','583','833']) assert.equal(packPuller.isEligibleCard({ set:'msc', collector_number:collector }, packManifest), true);
+  for (const collector of ['8','290','513','582','834']) assert.equal(packPuller.isEligibleCard({ set:'msc', collector_number:collector }, packManifest), false);
+});
+
+test('Pack Puller eligibility includes and excludes official MAR ranges', () => {
+  for (const collector of ['41','100']) assert.equal(packPuller.isEligibleCard({ set:'mar', collector_number:collector }, packManifest), true);
+  for (const collector of ['40','101']) assert.equal(packPuller.isEligibleCard({ set:'mar', collector_number:collector }, packManifest), false);
+});
+
+test('collector-number sorting handles zeroes, suffixes and nonnumeric values', () => {
+  const values = ['10b','2','010','10a','A1','1'].sort(packPuller.compareCollectorNumbers);
+  assert.deepEqual(values, ['1','2','010','10a','10b','A1']);
+});
+
+test('generated Pack Puller cards all satisfy at least one manifest rule', () => {
+  assert.equal(packIndex.cards.length, 959);
+  assert.equal(packIndex.cards.every(card => packPuller.isEligibleCard(card, packManifest)), true);
+  assert.deepEqual(Object.fromEntries(packManifest.setCodes.map(code => [code, packIndex.cards.filter(card => card.setCode === code).length])), { MSH:419, MSC:480, MAR:60 });
+});
+
+test('generated Pack Puller data preserves double-faced cards, treatments and slots', () => {
+  assert.ok(packIndex.cards.some(card => card.cardFaces.length > 1 && card.fullName.includes('//')));
+  assert.ok(packIndex.cards.some(card => card.treatments.includes('source-material') && card.slotTags.includes('source-material')));
+  assert.ok(packIndex.cards.some(card => card.treatments.includes('scene')));
+  assert.ok(packIndex.cards.every(card => card.slotTags.length > 0));
+});
+
+test('Pack Puller pricing respects eligible foil and nonfoil finishes', () => {
+  const card = { prices:{ usd:'4.25', usd_foil:'9.50', usd_etched:null } };
+  assert.equal(packPuller.priceForFinish(card, 'nonfoil'), 4.25);
+  assert.equal(packPuller.priceForFinish(card, 'foil'), 9.5);
+  assert.equal(packPuller.priceForFinish({ prices:{ usd:null, usd_foil:null } }, 'foil'), null);
+});
+
+test('Pack Puller USD to AUD conversion never invents a missing rate', () => {
+  assert.equal(packPuller.convertUsdToAud(10, 1.5), 15);
+  assert.equal(packPuller.convertUsdToAud(10, null), null);
+  assert.equal(packPuller.convertUsdToAud(null, 1.5), null);
+});
+
+test('Pack Puller exchange cache honours its TTL', () => {
+  const cached = JSON.stringify({ rate:1.51, timestamp:1000, updatedAt:'2026-08-04' });
+  assert.equal(packPuller.parseCachedRate(cached, 1000 + 86399999).rate, 1.51);
+  assert.equal(packPuller.parseCachedRate(cached, 1000 + 86400000), null);
+  assert.equal(packPuller.parseCachedRate('bad json', 1000), null);
+});
+
+test('Pack Puller search and combined filters work together', () => {
+  const cards = [
+    { name:'The Mind Stone', fullName:'The Mind Stone', setCode:'MSH', rarity:'mythic', colorIdentity:[], typeLine:'Artifact', treatments:['gauntlet'], eligibleFinishes:['foil'], slotTags:['foil-booster-fun'], collectorBoosterExclusive:true, prices:{usd_foil:'100'} },
+    { name:'Heroic Intervention', fullName:'Heroic Intervention', setCode:'MAR', rarity:'mythic', colorIdentity:['G'], typeLine:'Instant', treatments:['source-material'], eligibleFinishes:['nonfoil','foil'], slotTags:['source-material'], collectorBoosterExclusive:false, prices:{usd:'5'} }
+  ];
+  assert.deepEqual(packPuller.filterCards(cards, { search:'mind', setCode:'MSH', treatment:'gauntlet', finish:'foil', exclusive:true }).map(card => card.name), ['The Mind Stone']);
+  assert.deepEqual(packPuller.filterCards(cards, { color:'G', type:'Instant', priceAvailable:true, minAud:5, rate:1.5 }).map(card => card.name), ['Heroic Intervention']);
+});
+
+test('Pack Puller product lookup and GitHub Pages paths remain relative', () => {
+  const products = require('../data/pack-pullers/index.json');
+  assert.equal(products.some(product => product.id === 'not-a-product'), false);
+  assert.ok(products.every(product => !product.manifest.startsWith('/') && !product.generatedIndex.startsWith('/')));
+  const html = fs.readFileSync(require.resolve('../pack-puller.html'), 'utf8');
+  const splashSource = fs.readFileSync(require.resolve('../js/pack-pullers.js'), 'utf8');
+  assert.match(splashSource, /pack-puller\.html\?product=/);
+  assert.doesNotMatch(html, /href="\/mtg-collection-viewer\//);
+});
+
+test('card detail supports an unowned Pack Puller source state', () => {
+  const source = fs.readFileSync(require.resolve('../js/group-detail.js'), 'utf8');
+  assert.match(source, /source'\) === 'pack-puller'/);
+  assert.match(source, /PACK PULLER INFORMATION/);
+  assert.match(source, /No uploaded library owns this card/);
+  assert.match(source, /pack-puller\.html\?product=/);
 });

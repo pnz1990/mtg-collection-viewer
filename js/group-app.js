@@ -94,6 +94,7 @@
       <div id="nav-links" class="nav-links">
         ${state.owners.map(owner => `<a class="${currentOwner === owner.id ? 'active' : ''}" href="library.html?owner=${owner.id}">${esc(owner.name)}</a>`).join('')}
         <a class="${document.body.dataset.allCollections ? 'active' : ''}" href="all-collections.html">All Collections</a>
+        <a href="pack-pullers.html">Pack Pullers</a>
         <a class="basket-link" href="trade-basket.html">Trade Basket (<span data-basket-count>0</span>)</a>
         <details><summary>Archived Tools</summary><a href="deck-checker.html">Deck Checker</a><a href="decks.html">Commander Decks</a><a href="trivia.html">Trivia</a><a href="game-tracker.html">Game Tracker</a></details>
       </div>`;

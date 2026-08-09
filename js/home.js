@@ -2,7 +2,7 @@
   const Core = window.MTGCollectionCore;
   const owners = await fetch('data/collections/index.json').then(r => r.json());
   const nav = document.getElementById('site-nav');
-  nav.innerHTML = `<a class="brand" href="index.html">Arcane Archive</a><div class="nav-links"><a href="all-collections.html">All Collections</a><a class="basket-link" href="trade-basket.html">Trade Basket (<span data-basket-count>0</span>)</a></div>`;
+  nav.innerHTML = `<a class="brand" href="index.html">Arcane Archive</a><div class="nav-links"><a href="all-collections.html">All Collections</a><a href="pack-pullers.html">Pack Pullers</a><a class="basket-link" href="trade-basket.html">Trade Basket (<span data-basket-count>0</span>)</a></div>`;
   document.getElementById('home-libraries').innerHTML = owners.map(owner =>
     `<a class="library-link" href="library.html?owner=${owner.id}"><strong>${owner.name}</strong><span id="owner-${owner.id}">Checking collection…</span></a>`).join('');
   let cards = [], uploaded = 0;
