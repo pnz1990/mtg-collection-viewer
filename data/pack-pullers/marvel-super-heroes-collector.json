@@ -1,0 +1,77 @@
+{
+  "id": "marvel-super-heroes-collector",
+  "name": "Magic: The Gathering | Marvel Super Heroes",
+  "boosterType": "Collector Booster",
+  "releaseDate": "2026-06-26",
+  "setCodes": ["MSH", "MSC", "MAR"],
+  "verifiedDate": "2026-08-04",
+  "officialSources": [
+    {
+      "label": "Wizards set archive — Collector Booster contents",
+      "url": "https://magic.wizards.com/en/products/card-set-archive"
+    },
+    {
+      "label": "Wizards collecting guide — treatments and slot collation",
+      "url": "https://magic.wizards.com/en/news/feature/collecting-marvel-super-heroes"
+    }
+  ],
+  "eligibility": [
+    { "setCode": "MSH", "collectorNumberRanges": [[1, 286], [297, 429]] },
+    { "setCode": "MSC", "collectorNumberRanges": [[1, 7], [291, 512], [583, 833]] },
+    { "setCode": "MAR", "collectorNumberRanges": [[41, 100]] }
+  ],
+  "treatmentRules": [
+    { "id": "city-basic", "label": "Full-art city basic land", "setCode": "MSH", "collectorNumberRanges": [[277, 286]] },
+    { "id": "scene", "label": "Borderless scene", "setCode": "MSH", "collectorNumberRanges": [[315, 361]] },
+    { "id": "logo", "label": "Borderless logo", "setCode": "MSH", "collectorNumberRanges": [[362, 379]] },
+    { "id": "borderless-land", "label": "Borderless land", "setCode": "MSH", "collectorNumberRanges": [[380, 384]] },
+    { "id": "cosmic-foil", "label": "Cosmic foil", "setCode": "MSH", "collectorNumbers": ["385"], "collectorBoosterExclusive": true },
+    { "id": "gauntlet", "label": "Borderless Gauntlet", "setCode": "MSH", "collectorNumbers": ["386"], "collectorBoosterExclusive": true },
+    { "id": "classic-comic", "label": "Borderless classic comic", "setCode": "MSH", "collectorNumberRanges": [[387, 401]], "collectorBoosterExclusive": true },
+    { "id": "source-material", "label": "Borderless Source Material", "setCode": "MAR", "collectorNumberRanges": [[41, 100]] },
+    { "id": "commander-booster-fun", "label": "Commander Booster Fun", "setCode": "MSC", "collectorNumberRanges": [[1, 7], [291, 512]] }
+  ],
+  "finishRules": [
+    { "setCode": "MSH", "collectorNumberRanges": [[1, 286]], "finishes": ["foil"] },
+    { "setCode": "MSC", "collectorNumberRanges": [[1, 7], [291, 512]], "finishes": ["nonfoil"] },
+    { "setCode": "MSC", "collectorNumberRanges": [[583, 833]], "finishes": ["foil"] },
+    { "setCode": "MAR", "collectorNumberRanges": [[41, 100]], "finishes": ["nonfoil", "foil"] },
+    { "setCode": "MSH", "collectorNumbers": ["385", "386"], "finishes": ["foil"] },
+    { "setCode": "MSH", "collectorNumberRanges": [[387, 401]], "finishes": ["foil"] },
+    { "setCode": "MSH", "collectorNumberRanges": [[277, 286]], "finishes": ["foil"] }
+  ],
+  "specialCards": [
+    {
+      "setCode": "MSH",
+      "collectorNumber": "385",
+      "name": "The Mind Stone",
+      "treatment": "Cosmic foil, textless",
+      "collectorBoosterExclusive": true,
+      "languageNote": "English only",
+      "probabilityText": "Headliner Mythic Rare in <1% of Collector Boosters; Wizards also describes this treatment as appearing in an extremely low quantity.",
+      "notes": "Fewer than 150 printings were produced. Market price may be unavailable or unreliable."
+    },
+    {
+      "setCode": "MSH",
+      "collectorNumber": "386",
+      "name": "The Mind Stone",
+      "treatment": "Borderless Gauntlet",
+      "collectorBoosterExclusive": true,
+      "probabilityText": "Traditional foil version appears in less than 1% of Collector Boosters in the foil Booster Fun slot."
+    }
+  ],
+  "slots": [
+    { "id": "foil-main-common", "label": "Traditional-foil main-set common", "count": 3, "eligibility": [{"setCode":"MSH","collectorNumberRanges":[[1,276]],"rarities":["common"]}], "finishes": ["foil"], "notes": "81 common cards (89%) and 10 common dual lands (11%)." },
+    { "id": "foil-main-uncommon", "label": "Traditional-foil main-set uncommon", "count": 2, "eligibility": [{"setCode":"MSH","collectorNumberRanges":[[1,276]],"rarities":["uncommon"]}], "finishes": ["foil"] },
+    { "id": "foil-msc-common", "label": "Traditional-foil MSC common", "count": 2, "eligibility": [{"setCode":"MSC","collectorNumberRanges":[[583,833]],"rarities":["common"]}], "finishes": ["foil"], "notes": "Jumpstart reprint (50%) or new-to-Magic Jumpstart card (50%)." },
+    { "id": "foil-msc-uncommon", "label": "Traditional-foil MSC uncommon", "count": 1, "eligibility": [{"setCode":"MSC","collectorNumberRanges":[[583,833]],"rarities":["uncommon"]}], "finishes": ["foil"], "notes": "Jumpstart reprint (18.6%) or new-to-Magic Jumpstart card (81.4%)." },
+    { "id": "foil-scene-common-uncommon", "label": "Traditional-foil scene common or uncommon", "count": 1, "eligibility": [{"setCode":"MSH","collectorNumberRanges":[[315,361]],"rarities":["common","uncommon"]}], "finishes": ["foil"], "notes": "Common 20%; uncommon 80%." },
+    { "id": "foil-city-basic", "label": "Traditional-foil city basic land", "count": 1, "eligibility": [{"setCode":"MSH","collectorNumberRanges":[[277,286]]}], "finishes": ["foil"], "notes": "City calm 50%; city chaos 50%." },
+    { "id": "foil-rare-mythic", "label": "Traditional-foil rare or mythic", "count": 1, "eligibility": [{"setCode":"MSH","collectorNumberRanges":[[1,276]],"rarities":["rare","mythic"]},{"setCode":"MSH","collectorNumberRanges":[[316,379]],"rarities":["mythic"],"layouts":["transform","modal_dfc"]},{"setCode":"MSC","collectorNumberRanges":[[583,833]],"rarities":["rare","mythic"]}], "finishes": ["foil"], "notes": "Includes main-set, double-faced scene/logo, Jumpstart and Welcome Deck pools at the published rates." },
+    { "id": "nonfoil-commander-booster-fun", "label": "Non-foil Commander Booster Fun", "count": 1, "eligibility": [{"setCode":"MSC","collectorNumberRanges":[[1,7],[291,512]],"rarities":["rare","mythic"]}], "finishes": ["nonfoil"], "notes": "Extended-art rare 93.6%; extended-art mythic 3.2%; borderless face commander 3.2%." },
+    { "id": "nonfoil-booster-fun", "label": "Non-foil rare or mythic Booster Fun", "count": 1, "eligibility": [{"setCode":"MSH","collectorNumberRanges":[[297,384],[402,429]],"rarities":["rare","mythic"]},{"setCode":"MAR","collectorNumberRanges":[[41,100]]}], "finishes": ["nonfoil"], "notes": "Includes extended art, scene, logo, panel, Scene Box, borderless land and Source Material pools." },
+    { "id": "source-material", "label": "Source Material", "count": 1, "sets": ["MAR"], "treatments": ["source-material"], "finishes": ["nonfoil", "foil"], "notes": "Non-foil 75%; traditional foil 25%. Each of the 60 Source Material cards appears at the same rate." },
+    { "id": "foil-booster-fun", "label": "Foil Booster Fun rare or mythic", "count": 1, "eligibility": [{"setCode":"MSH","collectorNumberRanges":[[297,315],[380,401]],"rarities":["rare","mythic"]},{"setCode":"MSH","collectorNumberRanges":[[316,379]],"rarities":["rare","mythic"],"excludeLayouts":["transform","modal_dfc"]}], "finishes": ["foil"], "notes": "Includes traditional-foil extended art, scene (excluding DFCs), logo (excluding DFCs), panel, borderless land, classic comic and special Mind Stone treatments." },
+    { "id": "art-or-token", "label": "Art card or traditional-foil double-sided token", "count": 1, "nonCard": true, "notes": "Foil token 64%; art card 32%; gold-stamped art card 4%." }
+  ]
+}

@@ -6,6 +6,7 @@
   const query = new URLSearchParams(location.search);
   const id = query.get('id');
   const wanted = (query.get('name') || '').toLowerCase();
+  const packProductId = query.get('source') === 'pack-puller' ? query.get('product') : '';
   const basketKey = 'mtg-trade-basket-v1';
 
   const [owners, config] = await Promise.all([
@@ -21,6 +22,19 @@
         .filter(card => (id && card.scryfallId === id) || (!id && card.name.toLowerCase() === wanted));
     } catch (_) { return []; }
   }))).flat();
+
+  let packContext = null;
+  if (packProductId) {
+    try {
+      const products = await fetch('data/pack-pullers/index.json').then(response => response.ok ? response.json() : []);
+      const product = products.find(item => item.id === packProductId && item.enabled);
+      if (product) {
+        const [manifest, generated] = await Promise.all([fetch(product.manifest).then(response => response.json()), fetch(product.generatedIndex).then(response => response.json())]);
+        const card = generated.cards.find(item => item.id === id);
+        if (card) packContext = { product, manifest, card };
+      }
+    } catch (_) {}
+  }
 
   let meta = id ? Core.readCachedScryfall([id])[id] || null : null;
   try {
@@ -76,7 +90,7 @@
     setCode: meta?.set || records[0]?.setCode || '',
     collectorNumber: meta?.collector_number || records[0]?.collectorNumber || '',
     finish: records.some(card => card.foil === 'etched') ? 'etched'
-      : records.some(card => card.foil === 'foil') ? 'foil' : 'normal',
+      : records.some(card => card.foil === 'foil') || packContext?.card.eligibleFinishes?.includes('foil') ? 'foil' : 'normal',
     scryfallUri: meta?.scryfall_uri || `https://scryfall.com/search?q=${encodeURIComponent(primaryName)}`
   }, ['scryfall', 'edhrec', 'combos', 'mtggoldfish', 'mtgmate', 'reddit', 'ebay-au']);
 
@@ -99,6 +113,7 @@
         </section>
         <p class="detail-type-line">${esc(typeLine)}</p>
         <section class="oracle-panel"><h2>Oracle text</h2>${oracleHtml}</section>
+        ${packContext ? `<section class="pack-detail-panel"><p class="eyebrow">PACK PULLER INFORMATION</p><h2>${esc(packContext.product.name)} — ${esc(packContext.product.boosterType)}</h2><dl><div><dt>Eligible</dt><dd>Yes</dd></div><div><dt>Printing</dt><dd>${esc(packContext.card.setCode)} #${esc(packContext.card.collectorNumber)}</dd></div><div><dt>Eligible finishes</dt><dd>${esc(packContext.card.eligibleFinishes.map(value => value === 'foil' ? 'Traditional foil' : 'Non-foil').join(', '))}</dd></div><div><dt>Treatment</dt><dd>${esc(packContext.card.treatments.join(', ').replaceAll('-', ' '))}</dd></div><div><dt>Booster slots</dt><dd>${esc(packContext.card.slotTags.map(id => packContext.manifest.slots.find(slot => slot.id === id)?.label || id).join(', ') || 'Official eligible range')}</dd></div></dl>${packContext.card.specialInfo ? `<p><strong>${esc(packContext.card.specialInfo.probabilityText || '')}</strong> ${esc(packContext.card.specialInfo.notes || '')}</p>` : ''}<a href="pack-puller.html?product=${encodeURIComponent(packProductId)}">Return to Pull Guide</a></section>` : ''}
         <section class="card-meta-panel">
           <dl>${flavorName ? `<div><dt>Original card</dt><dd>${esc(oracleName)}</dd></div>` : ''}<div><dt>Set</dt><dd>${esc(meta?.set_name || records[0]?.setName || 'Unknown')} (${esc((meta?.set || records[0]?.setCode || '').toUpperCase())} #${esc(meta?.collector_number || records[0]?.collectorNumber || '')})</dd></div>
           <div><dt>Rarity</dt><dd><span class="preview-tag rarity-${esc(meta?.rarity || records[0]?.rarity || '')}">${esc(meta?.rarity || records[0]?.rarity || 'Unknown')}</span></dd></div>

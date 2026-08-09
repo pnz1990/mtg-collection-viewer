@@ -698,3 +698,6 @@ body > header {
   .collection-summary dl,.detail-legalities>div{grid-template-columns:1fr}
   .archive-detail-info>h1{font-size:2rem}
 }
+.pack-detail-panel{margin:1rem 0;padding:1rem 1.15rem;border:1px solid rgba(228,184,106,.45);border-left:4px solid #e4b86a;border-radius:.75rem;background:rgba(52,38,30,.72)}
+.pack-detail-panel dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem 1rem}.pack-detail-panel dl div{display:grid;grid-template-columns:minmax(110px,.45fr) 1fr;gap:.5rem;padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.08)}.pack-detail-panel dt{color:#bcaeaf}.pack-detail-panel dd{margin:0}.pack-detail-panel a{color:#e4b86a}
+@media(max-width:650px){.pack-detail-panel dl{grid-template-columns:1fr}}

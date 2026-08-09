@@ -99,6 +99,58 @@ All internal asset and navigation paths are relative so the site works beneath:
 https://jaemonty.github.io/mtg-collection-viewer/
 ```
 
+## Pack Pullers
+
+**Pack Pullers** is a booster-specific visual reference for identifying physical pulls. The first supported product is **Magic: The Gathering | Marvel Super Heroes — Collector Booster**. Open `pack-pullers.html`, then choose **Open Pull Guide**.
+
+Pack Pullers deliberately does **not** treat a booster as equivalent to every card in its associated sets. Eligibility is controlled by an explicit Wizards-sourced product manifest:
+
+```text
+data/pack-pullers/index.json
+data/pack-pullers/marvel-super-heroes-collector.json
+```
+
+The manifest records the supported set codes, collector-number ranges, eligible finishes and treatments, booster slots, published probabilities, official source URLs and verification date. The generated card index is committed at:
+
+```text
+data/pack-pullers/generated/marvel-super-heroes-collector-cards.json
+```
+
+It contains the eligible Scryfall IDs, printing metadata, small image URLs, finish eligibility, treatment/slot tags and a price snapshot. This lets the guide render from GitHub Pages even when Scryfall is temporarily unavailable. Current prices can be refreshed manually in browser using batched Scryfall `/cards/collection` requests; the maintenance script uses paginated set searches and never issues one request per card.
+
+To regenerate the committed index:
+
+```powershell
+npm run update:pack-pullers
+npm test
+npm run check
+```
+
+Review the generated entries before committing them. The update script obtains card records from Scryfall, but the committed manifest—not a broad Scryfall set search—decides booster eligibility.
+
+### Adding another booster product
+
+1. Find official Wizards booster-content and collation information.
+2. Create a product manifest in `data/pack-pullers/`.
+3. Record eligible set codes and collector-number ranges.
+4. Record slot, finish and treatment rules plus published wording and percentages.
+5. Run `npm run update:pack-pullers -- PRODUCT_ID`.
+6. Review generated entries manually against the official source.
+7. Add tests for known inclusions, exclusions, special treatments and finish-only prices.
+8. Add the product to `data/pack-pullers/index.json` only after verification.
+9. Run `npm test`, `npm run check`, and preview the pages locally.
+10. Commit the manifest and generated index together.
+
+### Prices, AUD conversion and local data
+
+- Scryfall values are labelled market estimates, not guaranteed sale values.
+- A printing uses `usd`, `usd_foil`, or `usd_etched` only for the eligible finish. Missing values remain unavailable rather than becoming zero.
+- One USD→AUD rate is fetched from the keyless [Frankfurter API](https://frankfurter.dev/) and cached for 24 hours. If the live request fails, the last cached rate is used. Without either, the page continues in USD and labels AUD unavailable.
+- Refreshed Scryfall prices are cached for one hour. The pull checklist and view preference are stored only in browser `localStorage`; they never update a committed collection CSV.
+- Card images and metadata are attributed to Scryfall. Booster eligibility and collation are attributed to the official Wizards sources stored in each manifest.
+
+Because this is static hosting, visitors need connectivity for live price/rate refreshes, and stale committed snapshots may remain visible during an outage. Wizards can correct product collation after publication; update the manifest’s source notes and verification date when that happens.
+
 ## Privacy warning
 
 **Any CSV or JSON committed to this public repository can be downloaded by visitors.**
