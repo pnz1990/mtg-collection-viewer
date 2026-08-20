@@ -1,0 +1,12 @@
+[
+  {
+    "id": "marvel-super-heroes-collector",
+    "name": "Magic: The Gathering | Marvel Super Heroes",
+    "boosterType": "Collector Booster",
+    "releaseDate": "2026-06-26",
+    "releaseYear": 2026,
+    "manifest": "data/pack-pullers/marvel-super-heroes-collector.json",
+    "generatedIndex": "data/pack-pullers/generated/marvel-super-heroes-collector-cards.json",
+    "enabled": true
+  }
+]

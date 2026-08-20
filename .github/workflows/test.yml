@@ -10,6 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Run collection data tests
+        run: npm test
+
       - name: Validate JS files
         run: |
           for file in js/*.js test/test.js; do

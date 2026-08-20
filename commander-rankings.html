@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Owned Commander Rankings — Arcane Archive</title>
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="nav-menu">
+    <button type="button" class="menu-toggle" id="menu-toggle">☰</button>
+    <div class="menu-overlay" id="menu-overlay"></div>
+    <div class="menu-dropdown" id="menu-dropdown">
+      <div class="menu-header">MTG Collection</div>
+      <div class="menu-section">
+        <div class="menu-section-title">Collection</div>
+        <a href="index.html" class="menu-item">⊞ Collection Explorer</a>
+      </div>
+      <div class="menu-section">
+        <div class="menu-section-title">Commander tools</div>
+        <a href="commander-rankings.html" class="menu-item active">Owned Commander Rankings</a>
+        <a href="commander-builder.html" class="menu-item">Commander Builder Helper</a>
+        <a href="deck-checker.html" class="menu-item">Deck Checker</a>
+        <a href="decks.html" class="menu-item">My Commander Decks</a>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <p class="eyebrow">OWNED LEGENDARY CREATURES · EDHREC POPULARITY</p>
+    <h1>Commander Rankings</h1>
+    <p class="header-copy">Only Commander-legal legendary creatures you own, ordered by their current EDHREC popularity rank.</p>
+  </header>
+
+  <main class="commander-rankings-shell">
+    <div id="commander-rank-status" class="collection-status loading" role="status">Reading your collection…</div>
+    <section id="commander-rank-summary" class="summary-dashboard" aria-label="Commander summary"></section>
+    <div class="commander-toolbar">
+      <input id="commander-search" type="search" placeholder="Search owned commanders…" aria-label="Search owned commanders">
+      <select id="commander-colour" aria-label="Filter by colour identity">
+        <option value="">All colour identities</option>
+        <option value="W">Includes white</option>
+        <option value="U">Includes blue</option>
+        <option value="B">Includes black</option>
+        <option value="R">Includes red</option>
+        <option value="G">Includes green</option>
+        <option value="C">Colourless</option>
+      </select>
+    </div>
+    <section id="commander-ranking-grid" class="commander-ranking-grid" aria-label="Owned commander rankings"></section>
+  </main>
+
+  <script src="js/collection-core.js"></script>
+  <script src="js/commander-rankings.js"></script>
+</body>
+</html>

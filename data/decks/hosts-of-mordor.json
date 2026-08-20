@@ -1,0 +1,551 @@
+{
+  "name": "Hosts of Mordor",
+  "commander": "Sauron, Lord of the Rings",
+  "mainboard": [
+    {
+      "quantity": 1,
+      "name": "Sauron, Lord of the Rings",
+      "setCode": "LTC",
+      "collectorNumber": "4"
+    },
+    {
+      "quantity": 1,
+      "name": "Anger",
+      "setCode": "LTC",
+      "collectorNumber": "210"
+    },
+    {
+      "quantity": 1,
+      "name": "Animate Dead",
+      "setCode": "5ED",
+      "collectorNumber": "140"
+    },
+    {
+      "quantity": 1,
+      "name": "Arcane Denial",
+      "setCode": "LTC",
+      "collectorNumber": "184"
+    },
+    {
+      "quantity": 1,
+      "name": "Arcane Signet",
+      "setCode": "LTC",
+      "collectorNumber": "273"
+    },
+    {
+      "quantity": 1,
+      "name": "Basalt Monolith",
+      "setCode": "LTC",
+      "collectorNumber": "274"
+    },
+    {
+      "quantity": 1,
+      "name": "Bitter Downfall",
+      "setCode": "LTR",
+      "collectorNumber": "77"
+    },
+    {
+      "quantity": 1,
+      "name": "Blasphemous Act",
+      "setCode": "LTC",
+      "collectorNumber": "211"
+    },
+    {
+      "quantity": 1,
+      "name": "Boon of the Wish-Giver",
+      "setCode": "LTC",
+      "collectorNumber": "185"
+    },
+    {
+      "quantity": 1,
+      "name": "Call of the Ring",
+      "setCode": "LTR",
+      "collectorNumber": "79"
+    },
+    {
+      "quantity": 1,
+      "name": "Cavern-Hoard Dragon",
+      "setCode": "LTC",
+      "collectorNumber": "31"
+    },
+    {
+      "quantity": 1,
+      "name": "Choked Estuary",
+      "setCode": "FIC",
+      "collectorNumber": "379"
+    },
+    {
+      "quantity": 1,
+      "name": "Command Tower",
+      "setCode": "ELD",
+      "collectorNumber": "333"
+    },
+    {
+      "quantity": 1,
+      "name": "Commander's Sphere",
+      "setCode": "LTC",
+      "collectorNumber": "276"
+    },
+    {
+      "quantity": 1,
+      "name": "Consider",
+      "setCode": "LTC",
+      "collectorNumber": "187"
+    },
+    {
+      "quantity": 1,
+      "name": "Corsairs of Umbar",
+      "setCode": "LTC",
+      "collectorNumber": "19"
+    },
+    {
+      "quantity": 1,
+      "name": "Crumbling Necropolis",
+      "setCode": "PLST",
+      "collectorNumber": "C17-244"
+    },
+    {
+      "quantity": 1,
+      "name": "Decree of Pain",
+      "setCode": "LTC",
+      "collectorNumber": "199"
+    },
+    {
+      "quantity": 1,
+      "name": "Desolate Lighthouse",
+      "setCode": "UMA",
+      "collectorNumber": "242"
+    },
+    {
+      "quantity": 1,
+      "name": "Dragonskull Summit",
+      "setCode": "LTC",
+      "collectorNumber": "304"
+    },
+    {
+      "quantity": 1,
+      "name": "Drowned Catacomb",
+      "setCode": "DRC",
+      "collectorNumber": "152"
+    },
+    {
+      "quantity": 1,
+      "name": "Entomb",
+      "setCode": "DMR",
+      "collectorNumber": "304"
+    },
+    {
+      "quantity": 1,
+      "name": "Everflowing Chalice",
+      "setCode": "LTC",
+      "collectorNumber": "278"
+    },
+    {
+      "quantity": 1,
+      "name": "Evolving Wilds",
+      "setCode": "M20",
+      "collectorNumber": "246"
+    },
+    {
+      "quantity": 1,
+      "name": "Fact or Fiction",
+      "setCode": "LTC",
+      "collectorNumber": "190"
+    },
+    {
+      "quantity": 1,
+      "name": "Faithless Looting",
+      "setCode": "LTC",
+      "collectorNumber": "215"
+    },
+    {
+      "quantity": 1,
+      "name": "Feed the Swarm",
+      "setCode": "LTC",
+      "collectorNumber": "200"
+    },
+    {
+      "quantity": 1,
+      "name": "Field of Ruin",
+      "setCode": "THB",
+      "collectorNumber": "242"
+    },
+    {
+      "quantity": 1,
+      "name": "Foreboding Ruins",
+      "setCode": "NCC",
+      "collectorNumber": "403"
+    },
+    {
+      "quantity": 1,
+      "name": "Frostboil Snarl",
+      "setCode": "M3C",
+      "collectorNumber": "344"
+    },
+    {
+      "quantity": 1,
+      "name": "Goblin Dark-Dwellers",
+      "setCode": "LTC",
+      "collectorNumber": "219"
+    },
+    {
+      "quantity": 1,
+      "name": "Grishnákh, Brash Instigator",
+      "setCode": "LTR",
+      "collectorNumber": "134"
+    },
+    {
+      "quantity": 1,
+      "name": "Guttersnipe",
+      "setCode": "LTC",
+      "collectorNumber": "220"
+    },
+    {
+      "quantity": 1,
+      "name": "Hostage Taker",
+      "setCode": "LTC",
+      "collectorNumber": "268"
+    },
+    {
+      "quantity": 1,
+      "name": "In the Darkness Bind Them",
+      "setCode": "LTC",
+      "collectorNumber": "58"
+    },
+    {
+      "quantity": 1,
+      "name": "Inferno Titan",
+      "setCode": "LTC",
+      "collectorNumber": "223"
+    },
+    {
+      "quantity": 6,
+      "name": "Island",
+      "setCode": "J25",
+      "collectorNumber": "86"
+    },
+    {
+      "quantity": 1,
+      "name": "Knollspine Dragon",
+      "setCode": "LTC",
+      "collectorNumber": "224"
+    },
+    {
+      "quantity": 1,
+      "name": "Languish",
+      "setCode": "LTC",
+      "collectorNumber": "202"
+    },
+    {
+      "quantity": 1,
+      "name": "Lidless Gaze",
+      "setCode": "LTC",
+      "collectorNumber": "59"
+    },
+    {
+      "quantity": 1,
+      "name": "Living Death",
+      "setCode": "DDE",
+      "collectorNumber": "31"
+    },
+    {
+      "quantity": 1,
+      "name": "Lord of the Nazgûl",
+      "setCode": "LTC",
+      "collectorNumber": "60"
+    },
+    {
+      "quantity": 1,
+      "name": "Merciless Executioner",
+      "setCode": "LTC",
+      "collectorNumber": "204"
+    },
+    {
+      "quantity": 1,
+      "name": "Mind Stone",
+      "setCode": "LTC",
+      "collectorNumber": "282"
+    },
+    {
+      "quantity": 1,
+      "name": "Monstrosity of the Lake",
+      "setCode": "LTC",
+      "collectorNumber": "22"
+    },
+    {
+      "quantity": 1,
+      "name": "Moria Scavenger",
+      "setCode": "LTC",
+      "collectorNumber": "63"
+    },
+    {
+      "quantity": 8,
+      "name": "Mountain",
+      "setCode": "J25",
+      "collectorNumber": "90"
+    },
+    {
+      "quantity": 1,
+      "name": "Nightscape Familiar",
+      "setCode": "DMR",
+      "collectorNumber": "94"
+    },
+    {
+      "quantity": 1,
+      "name": "Notion Thief",
+      "setCode": "LTC",
+      "collectorNumber": "270"
+    },
+    {
+      "quantity": 1,
+      "name": "Orcish Siegemaster",
+      "setCode": "LTC",
+      "collectorNumber": "33"
+    },
+    {
+      "quantity": 1,
+      "name": "Path of Ancestry",
+      "setCode": "CMR",
+      "collectorNumber": "353"
+    },
+    {
+      "quantity": 1,
+      "name": "Rampaging War Mammoth",
+      "setCode": "LTC",
+      "collectorNumber": "34"
+    },
+    {
+      "quantity": 1,
+      "name": "Reanimate",
+      "setCode": "LTC",
+      "collectorNumber": "206"
+    },
+    {
+      "quantity": 1,
+      "name": "Relic of Sauron",
+      "setCode": "LTC",
+      "collectorNumber": "79"
+    },
+    {
+      "quantity": 1,
+      "name": "Rogue's Passage",
+      "setCode": "PLST",
+      "collectorNumber": "C17-272"
+    },
+    {
+      "quantity": 1,
+      "name": "Saruman, the White Hand",
+      "setCode": "LTC",
+      "collectorNumber": "8"
+    },
+    {
+      "quantity": 1,
+      "name": "Scourge of the Throne",
+      "setCode": "LTC",
+      "collectorNumber": "225"
+    },
+    {
+      "quantity": 1,
+      "name": "Shelob, Dread Weaver",
+      "setCode": "LTC",
+      "collectorNumber": "29"
+    },
+    {
+      "quantity": 1,
+      "name": "Smoldering Marsh",
+      "setCode": "VOC",
+      "collectorNumber": "183"
+    },
+    {
+      "quantity": 1,
+      "name": "Sol Ring",
+      "setCode": "LTC",
+      "collectorNumber": "284"
+    },
+    {
+      "quantity": 1,
+      "name": "Subjugate the Hobbits",
+      "setCode": "LTC",
+      "collectorNumber": "24"
+    },
+    {
+      "quantity": 1,
+      "name": "Sulfur Falls",
+      "setCode": "DRC",
+      "collectorNumber": "173"
+    },
+    {
+      "quantity": 1,
+      "name": "Sulfurous Springs",
+      "setCode": "M3C",
+      "collectorNumber": "381"
+    },
+    {
+      "quantity": 1,
+      "name": "Summons of Saruman",
+      "setCode": "LTC",
+      "collectorNumber": "70"
+    },
+    {
+      "quantity": 1,
+      "name": "Sunken Hollow",
+      "setCode": "C20",
+      "collectorNumber": "318"
+    },
+    {
+      "quantity": 7,
+      "name": "Swamp",
+      "setCode": "J25",
+      "collectorNumber": "89"
+    },
+    {
+      "quantity": 1,
+      "name": "Terramorphic Expanse",
+      "setCode": "CM2",
+      "collectorNumber": "273"
+    },
+    {
+      "quantity": 1,
+      "name": "The Balrog of Moria",
+      "setCode": "LTC",
+      "collectorNumber": "46"
+    },
+    {
+      "quantity": 1,
+      "name": "The Black Gate",
+      "setCode": "LTC",
+      "collectorNumber": "80"
+    },
+    {
+      "quantity": 1,
+      "name": "The Mouth of Sauron",
+      "setCode": "LTR",
+      "collectorNumber": "216"
+    },
+    {
+      "quantity": 1,
+      "name": "Thrill of Possibility",
+      "setCode": "LTC",
+      "collectorNumber": "229"
+    },
+    {
+      "quantity": 1,
+      "name": "Too Greedily, Too Deep",
+      "setCode": "LTC",
+      "collectorNumber": "72"
+    },
+    {
+      "quantity": 1,
+      "name": "Treason of Isengard",
+      "setCode": "LTR",
+      "collectorNumber": "74"
+    },
+    {
+      "quantity": 1,
+      "name": "Treasure Nabber",
+      "setCode": "LTC",
+      "collectorNumber": "230"
+    },
+    {
+      "quantity": 1,
+      "name": "Troll of Khazad-dûm",
+      "setCode": "LTR",
+      "collectorNumber": "111"
+    },
+    {
+      "quantity": 1,
+      "name": "Underground River",
+      "setCode": "M3C",
+      "collectorNumber": "400"
+    },
+    {
+      "quantity": 1,
+      "name": "Victimize",
+      "setCode": "SCD",
+      "collectorNumber": "118"
+    },
+    {
+      "quantity": 1,
+      "name": "Voracious Fell Beast",
+      "setCode": "LTR",
+      "collectorNumber": "113"
+    },
+    {
+      "quantity": 1,
+      "name": "Wake the Dragon",
+      "setCode": "LTC",
+      "collectorNumber": "74"
+    },
+    {
+      "quantity": 1,
+      "name": "Worn Powerstone",
+      "setCode": "LTC",
+      "collectorNumber": "293"
+    }
+  ],
+  "removed": [
+    {
+      "quantity": 2,
+      "name": "Nazgûl",
+      "setCode": "LTR",
+      "collectorNumber": "334"
+    }
+  ],
+  "sideboard": [
+    {
+      "quantity": 1,
+      "name": "Deep Analysis",
+      "setCode": "PLST",
+      "collectorNumber": "EMA-45"
+    },
+    {
+      "quantity": 1,
+      "name": "Extract from Darkness",
+      "setCode": "ZNC",
+      "collectorNumber": "90"
+    },
+    {
+      "quantity": 1,
+      "name": "Fiery Inscription",
+      "setCode": "LTR",
+      "collectorNumber": "126"
+    },
+    {
+      "quantity": 1,
+      "name": "Forbidden Alchemy",
+      "setCode": "PLST",
+      "collectorNumber": "MM3-38"
+    },
+    {
+      "quantity": 1,
+      "name": "Goblin Cratermaker",
+      "setCode": "GRN",
+      "collectorNumber": "103"
+    },
+    {
+      "quantity": 1,
+      "name": "Gríma, Saruman's Footman",
+      "setCode": "LTC",
+      "collectorNumber": "57"
+    },
+    {
+      "quantity": 1,
+      "name": "Revenge of Ravens",
+      "setCode": "ELD",
+      "collectorNumber": "104"
+    },
+    {
+      "quantity": 1,
+      "name": "Shiny Impetus",
+      "setCode": "C20",
+      "collectorNumber": "55"
+    },
+    {
+      "quantity": 1,
+      "name": "Siege-Gang Commander",
+      "setCode": "DOM",
+      "collectorNumber": "143"
+    }
+  ],
+  "wishlist": []
+}

@@ -1,0 +1,23 @@
+{
+  "currency": "AUD",
+  "fallbackUsdToAudRate": 1.5346,
+  "highValueThreshold": 20,
+  "recentDays": 90,
+  "requesterName": "",
+  "tradeBinderTerms": ["trade", "trades", "trade binder", "for trade"],
+  "franchises": {
+    "Lord of the Rings": ["LTR", "LTC", "LTCF"],
+    "Marvel": ["SPM", "FIN"],
+    "Spider-Man": ["SPM"],
+    "Avatar": ["TLA", "TLE"],
+    "Strixhaven": ["STX", "STA", "C21", "SOS", "SOA", "SOC"]
+  },
+  "privacyDefaults": {
+    "hidePurchasePrices": false,
+    "hideTotalCollectionValue": false,
+    "hideBinderNames": false,
+    "disableTradeBinder": false,
+    "disableWishlist": false,
+    "disablePublicDeckPages": false
+  }
+}

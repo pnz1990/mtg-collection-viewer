@@ -1,0 +1,10 @@
+[
+  {"id":"monty","name":"Monty’s Manor","shortName":"Monty","file":"data/collections/monty.csv","badgeClass":"owner-monty"},
+  {"id":"edward","name":"Edward’s Exhibit","shortName":"Edward","file":"data/collections/edward.csv","badgeClass":"owner-edward"},
+  {"id":"luke","name":"Luke’s Library","shortName":"Luke","file":"data/collections/luke.csv","badgeClass":"owner-luke"},
+  {"id":"mitch","name":"Mitch’s Museum","shortName":"Mitch","file":"data/collections/mitch.csv","badgeClass":"owner-mitch"},
+  {"id":"sam","name":"Sam’s Sanctuary","shortName":"Sam","file":"data/collections/sam.csv","badgeClass":"owner-sam"},
+  {"id":"daniel","name":"Daniel’s Delights","shortName":"Daniel","file":"data/collections/daniel.csv","badgeClass":"owner-daniel"},
+  {"id":"harry","name":"Harry’s Haul","shortName":"Harry","file":"data/collections/harry.csv","badgeClass":"owner-harry"},
+  {"id":"jcjc","name":"JCJC’s Jewels","shortName":"JCJC","file":"data/collections/jcjc.csv","badgeClass":"owner-jcjc"}
+]

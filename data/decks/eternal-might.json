@@ -1,0 +1,598 @@
+{
+  "name": "Eternal Might",
+  "commander": "Temmet, Naktamun's Will",
+  "mainboard": [
+    {
+      "quantity": 1,
+      "name": "Temmet, Naktamun's Will",
+      "setCode": "DRC",
+      "collectorNumber": "4"
+    },
+    {
+      "quantity": 1,
+      "name": "Accursed Duneyard",
+      "setCode": "DRC",
+      "collectorNumber": "36"
+    },
+    {
+      "quantity": 1,
+      "name": "Adarkar Wastes",
+      "setCode": "DMU",
+      "collectorNumber": "243"
+    },
+    {
+      "quantity": 1,
+      "name": "Angel of Sanctions",
+      "setCode": "DRC",
+      "collectorNumber": "62"
+    },
+    {
+      "quantity": 1,
+      "name": "Arcane Sanctum",
+      "setCode": "PLST",
+      "collectorNumber": "C18-232"
+    },
+    {
+      "quantity": 1,
+      "name": "Arcane Signet",
+      "setCode": "SCD",
+      "collectorNumber": "257"
+    },
+    {
+      "quantity": 1,
+      "name": "Archfiend of Ifnir",
+      "setCode": "DRC",
+      "collectorNumber": "86"
+    },
+    {
+      "quantity": 1,
+      "name": "Archghoul of Thraben",
+      "setCode": "INR",
+      "collectorNumber": "95"
+    },
+    {
+      "quantity": 1,
+      "name": "Ash Barrens",
+      "setCode": "PLST",
+      "collectorNumber": "CM2-235"
+    },
+    {
+      "quantity": 1,
+      "name": "Binding Mummy",
+      "setCode": "DRC",
+      "collectorNumber": "63"
+    },
+    {
+      "quantity": 1,
+      "name": "Bontu's Monument",
+      "setCode": "DRC",
+      "collectorNumber": "124"
+    },
+    {
+      "quantity": 1,
+      "name": "Cast Out",
+      "setCode": "DRC",
+      "collectorNumber": "64"
+    },
+    {
+      "quantity": 1,
+      "name": "Caves of Koilos",
+      "setCode": "C20",
+      "collectorNumber": "262"
+    },
+    {
+      "quantity": 1,
+      "name": "Cemetery Reaper",
+      "setCode": "DRC",
+      "collectorNumber": "87"
+    },
+    {
+      "quantity": 1,
+      "name": "Champion of Wits",
+      "setCode": "DRC",
+      "collectorNumber": "72"
+    },
+    {
+      "quantity": 1,
+      "name": "Command Tower",
+      "setCode": "ELD",
+      "collectorNumber": "333"
+    },
+    {
+      "quantity": 1,
+      "name": "Corpse Knight",
+      "setCode": "DRC",
+      "collectorNumber": "50"
+    },
+    {
+      "quantity": 1,
+      "name": "Crowded Crypt",
+      "setCode": "DRC",
+      "collectorNumber": "88"
+    },
+    {
+      "quantity": 1,
+      "name": "Cryptbreaker",
+      "setCode": "DRC",
+      "collectorNumber": "41"
+    },
+    {
+      "quantity": 1,
+      "name": "Cryptcaller Chariot",
+      "setCode": "DFT",
+      "collectorNumber": "80"
+    },
+    {
+      "quantity": 1,
+      "name": "Damn",
+      "setCode": "DRC",
+      "collectorNumber": "89"
+    },
+    {
+      "quantity": 1,
+      "name": "Desert of the Glorified",
+      "setCode": "HOU",
+      "collectorNumber": "171"
+    },
+    {
+      "quantity": 1,
+      "name": "Desert of the Mindful",
+      "setCode": "HOU",
+      "collectorNumber": "173"
+    },
+    {
+      "quantity": 1,
+      "name": "Desert of the True",
+      "setCode": "HOU",
+      "collectorNumber": "174"
+    },
+    {
+      "quantity": 1,
+      "name": "Despark",
+      "setCode": "DRC",
+      "collectorNumber": "115"
+    },
+    {
+      "quantity": 1,
+      "name": "Dimir Signet",
+      "setCode": "DRC",
+      "collectorNumber": "129"
+    },
+    {
+      "quantity": 1,
+      "name": "Dread Summons",
+      "setCode": "DRC",
+      "collectorNumber": "90"
+    },
+    {
+      "quantity": 1,
+      "name": "Dreadhorde Invasion",
+      "setCode": "DRC",
+      "collectorNumber": "91"
+    },
+    {
+      "quantity": 1,
+      "name": "Drowned Catacomb",
+      "setCode": "DRC",
+      "collectorNumber": "152"
+    },
+    {
+      "quantity": 1,
+      "name": "Dying to Serve",
+      "setCode": "VOW",
+      "collectorNumber": "109"
+    },
+    {
+      "quantity": 1,
+      "name": "Eternal Skylord",
+      "setCode": "DRC",
+      "collectorNumber": "76"
+    },
+    {
+      "quantity": 1,
+      "name": "Evolving Wilds",
+      "setCode": "M20",
+      "collectorNumber": "246"
+    },
+    {
+      "quantity": 1,
+      "name": "Exotic Orchard",
+      "setCode": "C19",
+      "collectorNumber": "242"
+    },
+    {
+      "quantity": 1,
+      "name": "Fetid Pools",
+      "setCode": "PIP",
+      "collectorNumber": "265"
+    },
+    {
+      "quantity": 1,
+      "name": "Fleshbag Marauder",
+      "setCode": "DRC",
+      "collectorNumber": "92"
+    },
+    {
+      "quantity": 1,
+      "name": "Forgotten Creation",
+      "setCode": "DRC",
+      "collectorNumber": "77"
+    },
+    {
+      "quantity": 1,
+      "name": "Gate to the Afterlife",
+      "setCode": "DRC",
+      "collectorNumber": "130"
+    },
+    {
+      "quantity": 1,
+      "name": "Gempalm Polluter",
+      "setCode": "DRC",
+      "collectorNumber": "93"
+    },
+    {
+      "quantity": 1,
+      "name": "Glacial Fortress",
+      "setCode": "TDC",
+      "collectorNumber": "367"
+    },
+    {
+      "quantity": 1,
+      "name": "Gleaming Overseer",
+      "setCode": "DRC",
+      "collectorNumber": "116"
+    },
+    {
+      "quantity": 1,
+      "name": "God-Eternal Oketra",
+      "setCode": "DRC",
+      "collectorNumber": "66"
+    },
+    {
+      "quantity": 1,
+      "name": "God-Pharaoh's Gift",
+      "setCode": "DRC",
+      "collectorNumber": "131"
+    },
+    {
+      "quantity": 1,
+      "name": "Grave Titan",
+      "setCode": "DRC",
+      "collectorNumber": "42"
+    },
+    {
+      "quantity": 1,
+      "name": "Gravecrawler",
+      "setCode": "DRC",
+      "collectorNumber": "43"
+    },
+    {
+      "quantity": 1,
+      "name": "Hashaton, Scarab's Fist",
+      "setCode": "DRC",
+      "collectorNumber": "1"
+    },
+    {
+      "quantity": 1,
+      "name": "Irrigated Farmland",
+      "setCode": "C20",
+      "collectorNumber": "282"
+    },
+    {
+      "quantity": 4,
+      "name": "Island",
+      "setCode": "J25",
+      "collectorNumber": "86"
+    },
+    {
+      "quantity": 1,
+      "name": "Isolated Chapel",
+      "setCode": "DRC",
+      "collectorNumber": "162"
+    },
+    {
+      "quantity": 1,
+      "name": "Kindred Discovery",
+      "setCode": "CLB",
+      "collectorNumber": "565"
+    },
+    {
+      "quantity": 1,
+      "name": "Liliana, Death's Majesty",
+      "setCode": "PLST",
+      "collectorNumber": "AKH-97"
+    },
+    {
+      "quantity": 1,
+      "name": "Lord of the Accursed",
+      "setCode": "DRC",
+      "collectorNumber": "95"
+    },
+    {
+      "quantity": 1,
+      "name": "Lost Monarch of Ifnir",
+      "setCode": "DRC",
+      "collectorNumber": "11"
+    },
+    {
+      "quantity": 1,
+      "name": "Midnight Reaper",
+      "setCode": "DRC",
+      "collectorNumber": "44"
+    },
+    {
+      "quantity": 1,
+      "name": "Murderous Rider / Swift End",
+      "setCode": "DRC",
+      "collectorNumber": "45"
+    },
+    {
+      "quantity": 1,
+      "name": "Necroduality",
+      "setCode": "INR",
+      "collectorNumber": "365"
+    },
+    {
+      "quantity": 1,
+      "name": "Never / Return",
+      "setCode": "DRC",
+      "collectorNumber": "96"
+    },
+    {
+      "quantity": 1,
+      "name": "On Wings of Gold",
+      "setCode": "DRC",
+      "collectorNumber": "5"
+    },
+    {
+      "quantity": 1,
+      "name": "Orzhov Basilica",
+      "setCode": "AFC",
+      "collectorNumber": "253"
+    },
+    {
+      "quantity": 1,
+      "name": "Orzhov Signet",
+      "setCode": "DRC",
+      "collectorNumber": "134"
+    },
+    {
+      "quantity": 1,
+      "name": "Path of Ancestry",
+      "setCode": "CMR",
+      "collectorNumber": "353"
+    },
+    {
+      "quantity": 1,
+      "name": "Plague Belcher",
+      "setCode": "DRC",
+      "collectorNumber": "97"
+    },
+    {
+      "quantity": 5,
+      "name": "Plains",
+      "setCode": "J25",
+      "collectorNumber": "81"
+    },
+    {
+      "quantity": 1,
+      "name": "Prairie Stream",
+      "setCode": "NCC",
+      "collectorNumber": "421"
+    },
+    {
+      "quantity": 1,
+      "name": "Priest of the Crossing",
+      "setCode": "DRC",
+      "collectorNumber": "6"
+    },
+    {
+      "quantity": 1,
+      "name": "Prophet of the Scarab",
+      "setCode": "DRC",
+      "collectorNumber": "9"
+    },
+    {
+      "quantity": 1,
+      "name": "Reconnaissance Mission",
+      "setCode": "MAR",
+      "collectorNumber": "59"
+    },
+    {
+      "quantity": 1,
+      "name": "Renewed Solidarity",
+      "setCode": "DRC",
+      "collectorNumber": "7"
+    },
+    {
+      "quantity": 1,
+      "name": "Rhet-Tomb Mystic",
+      "setCode": "DRC",
+      "collectorNumber": "10"
+    },
+    {
+      "quantity": 1,
+      "name": "Rooftop Storm",
+      "setCode": "PLST",
+      "collectorNumber": "ISD-71"
+    },
+    {
+      "quantity": 1,
+      "name": "Rot Hulk",
+      "setCode": "DRC",
+      "collectorNumber": "98"
+    },
+    {
+      "quantity": 1,
+      "name": "Sol Ring",
+      "setCode": "DRC",
+      "collectorNumber": "56"
+    },
+    {
+      "quantity": 1,
+      "name": "Sunken Hollow",
+      "setCode": "C20",
+      "collectorNumber": "318"
+    },
+    {
+      "quantity": 5,
+      "name": "Swamp",
+      "setCode": "J25",
+      "collectorNumber": "89"
+    },
+    {
+      "quantity": 1,
+      "name": "Swords to Plowshares",
+      "setCode": "DRC",
+      "collectorNumber": "37"
+    },
+    {
+      "quantity": 1,
+      "name": "Talisman of Dominance",
+      "setCode": "MIC",
+      "collectorNumber": "164"
+    },
+    {
+      "quantity": 1,
+      "name": "Talisman of Hierarchy",
+      "setCode": "MH1",
+      "collectorNumber": "233"
+    },
+    {
+      "quantity": 1,
+      "name": "Temple of Deceit",
+      "setCode": "SCD",
+      "collectorNumber": "324"
+    },
+    {
+      "quantity": 1,
+      "name": "Temple of Silence",
+      "setCode": "M21",
+      "collectorNumber": "255"
+    },
+    {
+      "quantity": 1,
+      "name": "Terramorphic Expanse",
+      "setCode": "CM2",
+      "collectorNumber": "273"
+    },
+    {
+      "quantity": 1,
+      "name": "The Scarab God",
+      "setCode": "DRC",
+      "collectorNumber": "120"
+    },
+    {
+      "quantity": 1,
+      "name": "Timeless Dragon",
+      "setCode": "DRC",
+      "collectorNumber": "67"
+    },
+    {
+      "quantity": 1,
+      "name": "Undead Augur",
+      "setCode": "DRC",
+      "collectorNumber": "100"
+    },
+    {
+      "quantity": 1,
+      "name": "Underground River",
+      "setCode": "M3C",
+      "collectorNumber": "400"
+    },
+    {
+      "quantity": 1,
+      "name": "Unholy Grotto",
+      "setCode": "DRC",
+      "collectorNumber": "182"
+    },
+    {
+      "quantity": 1,
+      "name": "Varina, Lich Queen",
+      "setCode": "2X2",
+      "collectorNumber": "291"
+    },
+    {
+      "quantity": 1,
+      "name": "Vizier of Many Faces",
+      "setCode": "DRC",
+      "collectorNumber": "84"
+    },
+    {
+      "quantity": 1,
+      "name": "Wayward Servant",
+      "setCode": "DRC",
+      "collectorNumber": "121"
+    },
+    {
+      "quantity": 1,
+      "name": "Wonder",
+      "setCode": "TDC",
+      "collectorNumber": "170"
+    },
+    {
+      "quantity": 1,
+      "name": "Zombie Master",
+      "setCode": "DRC",
+      "collectorNumber": "46"
+    }
+  ],
+  "removed": [],
+  "sideboard": [
+    {
+      "quantity": 1,
+      "name": "Commander's Sphere",
+      "setCode": "CM2",
+      "collectorNumber": "182"
+    },
+    {
+      "quantity": 1,
+      "name": "Commence the Endgame",
+      "setCode": "WAR",
+      "collectorNumber": "45"
+    },
+    {
+      "quantity": 1,
+      "name": "Corpse Augur",
+      "setCode": "CMA",
+      "collectorNumber": "52"
+    },
+    {
+      "quantity": 1,
+      "name": "Dusk / Dawn",
+      "setCode": "NCC",
+      "collectorNumber": "198"
+    },
+    {
+      "quantity": 1,
+      "name": "Lazotep Chancellor",
+      "setCode": "MH2",
+      "collectorNumber": "203"
+    },
+    {
+      "quantity": 1,
+      "name": "Maskwood Nexus",
+      "setCode": "PKHM",
+      "collectorNumber": "240p"
+    },
+    {
+      "quantity": 1,
+      "name": "Pull from Tomorrow",
+      "setCode": "CLB",
+      "collectorNumber": "731"
+    },
+    {
+      "quantity": 1,
+      "name": "Twisted Abomination",
+      "setCode": "EMA",
+      "collectorNumber": "110"
+    },
+    {
+      "quantity": 1,
+      "name": "Wizened Mentor",
+      "setCode": "DRC",
+      "collectorNumber": "8"
+    }
+  ],
+  "wishlist": []
+}

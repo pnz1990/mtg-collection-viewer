@@ -1,0 +1,12 @@
+{
+  "name": "arcane-archive-mtg-collection",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "start": "npx --yes http-server . -p 4173 -c-1",
+    "update:pack-pullers": "node scripts/update-pack-puller-data.js",
+    "test": "node --test test/core.test.js",
+    "check": "node --test test/core.test.js && node scripts/validate-static.js"
+  },
+  "license": "MIT"
+}

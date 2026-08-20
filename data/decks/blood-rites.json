@@ -1,0 +1,495 @@
+{
+  "name": "Blood Rites",
+  "commander": "Clavileño, First of the Blessed",
+  "mainboard": [
+    {
+      "quantity": 1,
+      "name": "Clavileño, First of the Blessed",
+      "setCode": "LCC",
+      "collectorNumber": "2"
+    },
+    {
+      "quantity": 1,
+      "name": "Arcane Signet",
+      "setCode": "LCC",
+      "collectorNumber": "299"
+    },
+    {
+      "quantity": 1,
+      "name": "Austere Command",
+      "setCode": "LCC",
+      "collectorNumber": "126"
+    },
+    {
+      "quantity": 1,
+      "name": "Bartolomé del Presidio",
+      "setCode": "LCI",
+      "collectorNumber": "224"
+    },
+    {
+      "quantity": 1,
+      "name": "Blade of the Bloodchief",
+      "setCode": "LCC",
+      "collectorNumber": "300"
+    },
+    {
+      "quantity": 1,
+      "name": "Blood Artist",
+      "setCode": "LCC",
+      "collectorNumber": "182"
+    },
+    {
+      "quantity": 1,
+      "name": "Bloodghast",
+      "setCode": "LCC",
+      "collectorNumber": "184"
+    },
+    {
+      "quantity": 1,
+      "name": "Bloodline Necromancer",
+      "setCode": "LCC",
+      "collectorNumber": "185"
+    },
+    {
+      "quantity": 1,
+      "name": "Bloodtracker",
+      "setCode": "LCC",
+      "collectorNumber": "186"
+    },
+    {
+      "quantity": 1,
+      "name": "Bojuka Bog",
+      "setCode": "LCC",
+      "collectorNumber": "320"
+    },
+    {
+      "quantity": 1,
+      "name": "Butcher of Malakir",
+      "setCode": "LCC",
+      "collectorNumber": "187"
+    },
+    {
+      "quantity": 1,
+      "name": "Carmen, Cruel Skymarcher",
+      "setCode": "LCC",
+      "collectorNumber": "5"
+    },
+    {
+      "quantity": 1,
+      "name": "Champion of Dusk",
+      "setCode": "LCC",
+      "collectorNumber": "188"
+    },
+    {
+      "quantity": 1,
+      "name": "Charismatic Conqueror",
+      "setCode": "LCC",
+      "collectorNumber": "70"
+    },
+    {
+      "quantity": 1,
+      "name": "Command Tower",
+      "setCode": "LCC",
+      "collectorNumber": "325"
+    },
+    {
+      "quantity": 1,
+      "name": "Commander's Sphere",
+      "setCode": "LCC",
+      "collectorNumber": "301"
+    },
+    {
+      "quantity": 1,
+      "name": "Cordial Vampire",
+      "setCode": "LCC",
+      "collectorNumber": "189"
+    },
+    {
+      "quantity": 1,
+      "name": "Crossway Troublemakers",
+      "setCode": "LCC",
+      "collectorNumber": "190"
+    },
+    {
+      "quantity": 1,
+      "name": "Cruel Celebrant",
+      "setCode": "LCC",
+      "collectorNumber": "267"
+    },
+    {
+      "quantity": 1,
+      "name": "Damn",
+      "setCode": "LCC",
+      "collectorNumber": "191"
+    },
+    {
+      "quantity": 1,
+      "name": "Drana, Liberator of Malakir",
+      "setCode": "LCC",
+      "collectorNumber": "193"
+    },
+    {
+      "quantity": 1,
+      "name": "Dusk Legion Sergeant",
+      "setCode": "LCC",
+      "collectorNumber": "80"
+    },
+    {
+      "quantity": 1,
+      "name": "Dusk Legion Zealot",
+      "setCode": "LCC",
+      "collectorNumber": "194"
+    },
+    {
+      "quantity": 1,
+      "name": "Elenda, the Dusk Rose",
+      "setCode": "LCC",
+      "collectorNumber": "268"
+    },
+    {
+      "quantity": 1,
+      "name": "Elenda's Hierophant",
+      "setCode": "LCC",
+      "collectorNumber": "71"
+    },
+    {
+      "quantity": 1,
+      "name": "Etchings of the Chosen",
+      "setCode": "LCC",
+      "collectorNumber": "269"
+    },
+    {
+      "quantity": 1,
+      "name": "Exquisite Blood",
+      "setCode": "LCC",
+      "collectorNumber": "195"
+    },
+    {
+      "quantity": 1,
+      "name": "Falkenrath Noble",
+      "setCode": "LCC",
+      "collectorNumber": "196"
+    },
+    {
+      "quantity": 1,
+      "name": "Glass-Cast Heart",
+      "setCode": "LCC",
+      "collectorNumber": "199"
+    },
+    {
+      "quantity": 1,
+      "name": "Heirloom Blade",
+      "setCode": "LCC",
+      "collectorNumber": "303"
+    },
+    {
+      "quantity": 1,
+      "name": "Indulgent Aristocrat",
+      "setCode": "LCC",
+      "collectorNumber": "200"
+    },
+    {
+      "quantity": 1,
+      "name": "Isolated Chapel",
+      "setCode": "LCC",
+      "collectorNumber": "337"
+    },
+    {
+      "quantity": 1,
+      "name": "Kindred Boon",
+      "setCode": "LCC",
+      "collectorNumber": "129"
+    },
+    {
+      "quantity": 1,
+      "name": "Legion Lieutenant",
+      "setCode": "LCC",
+      "collectorNumber": "275"
+    },
+    {
+      "quantity": 1,
+      "name": "March of the Canonized",
+      "setCode": "LCC",
+      "collectorNumber": "73"
+    },
+    {
+      "quantity": 1,
+      "name": "Martyr of Dusk",
+      "setCode": "LCC",
+      "collectorNumber": "132"
+    },
+    {
+      "quantity": 1,
+      "name": "Master of Dark Rites",
+      "setCode": "LCC",
+      "collectorNumber": "83"
+    },
+    {
+      "quantity": 1,
+      "name": "Mavren Fein, Dusk Apostle",
+      "setCode": "LCC",
+      "collectorNumber": "133"
+    },
+    {
+      "quantity": 1,
+      "name": "Mind Stone",
+      "setCode": "LCC",
+      "collectorNumber": "309"
+    },
+    {
+      "quantity": 1,
+      "name": "Myriad Landscape",
+      "setCode": "LCC",
+      "collectorNumber": "343"
+    },
+    {
+      "quantity": 1,
+      "name": "New Blood",
+      "setCode": "LCC",
+      "collectorNumber": "202"
+    },
+    {
+      "quantity": 1,
+      "name": "Nighthawk Scavenger",
+      "setCode": "LCC",
+      "collectorNumber": "203"
+    },
+    {
+      "quantity": 1,
+      "name": "Oathsworn Vampire",
+      "setCode": "LCC",
+      "collectorNumber": "204"
+    },
+    {
+      "quantity": 1,
+      "name": "Olivia's Wrath",
+      "setCode": "LCC",
+      "collectorNumber": "205"
+    },
+    {
+      "quantity": 1,
+      "name": "Order of Sacred Dusk",
+      "setCode": "LCC",
+      "collectorNumber": "97"
+    },
+    {
+      "quantity": 1,
+      "name": "Orzhov Basilica",
+      "setCode": "LCC",
+      "collectorNumber": "345"
+    },
+    {
+      "quantity": 1,
+      "name": "Orzhov Signet",
+      "setCode": "LCC",
+      "collectorNumber": "310"
+    },
+    {
+      "quantity": 1,
+      "name": "Pact of the Serpent",
+      "setCode": "LCC",
+      "collectorNumber": "206"
+    },
+    {
+      "quantity": 1,
+      "name": "Path of Ancestry",
+      "setCode": "LCC",
+      "collectorNumber": "346"
+    },
+    {
+      "quantity": 1,
+      "name": "Patron of the Vein",
+      "setCode": "LCC",
+      "collectorNumber": "207"
+    },
+    {
+      "quantity": 8,
+      "name": "Plains",
+      "setCode": "LCI",
+      "collectorNumber": "394"
+    },
+    {
+      "quantity": 1,
+      "name": "Promise of Aclazotz / Foul Rebirth",
+      "setCode": "LCC",
+      "collectorNumber": "84"
+    },
+    {
+      "quantity": 1,
+      "name": "Radiant Destiny",
+      "setCode": "LCC",
+      "collectorNumber": "135"
+    },
+    {
+      "quantity": 1,
+      "name": "Redemption Choir",
+      "setCode": "LCC",
+      "collectorNumber": "74"
+    },
+    {
+      "quantity": 1,
+      "name": "Return to Dust",
+      "setCode": "LCC",
+      "collectorNumber": "136"
+    },
+    {
+      "quantity": 1,
+      "name": "Rogue's Passage",
+      "setCode": "LCC",
+      "collectorNumber": "349"
+    },
+    {
+      "quantity": 1,
+      "name": "Sanctum Seeker",
+      "setCode": "LCC",
+      "collectorNumber": "209"
+    },
+    {
+      "quantity": 1,
+      "name": "Secluded Courtyard",
+      "setCode": "LCC",
+      "collectorNumber": "350"
+    },
+    {
+      "quantity": 1,
+      "name": "Shineshadow Snarl",
+      "setCode": "LCC",
+      "collectorNumber": "351"
+    },
+    {
+      "quantity": 1,
+      "name": "Sol Ring",
+      "setCode": "LCC",
+      "collectorNumber": "313"
+    },
+    {
+      "quantity": 1,
+      "name": "Sorin, Lord of Innistrad",
+      "setCode": "LCC",
+      "collectorNumber": "289"
+    },
+    {
+      "quantity": 13,
+      "name": "Swamp",
+      "setCode": "LCI",
+      "collectorNumber": "397"
+    },
+    {
+      "quantity": 1,
+      "name": "Swiftfoot Boots",
+      "setCode": "LCC",
+      "collectorNumber": "314"
+    },
+    {
+      "quantity": 1,
+      "name": "Swords to Plowshares",
+      "setCode": "LCC",
+      "collectorNumber": "137"
+    },
+    {
+      "quantity": 1,
+      "name": "Tainted Field",
+      "setCode": "LCC",
+      "collectorNumber": "356"
+    },
+    {
+      "quantity": 1,
+      "name": "Talisman of Hierarchy",
+      "setCode": "LCC",
+      "collectorNumber": "315"
+    },
+    {
+      "quantity": 1,
+      "name": "Temple of Silence",
+      "setCode": "LCC",
+      "collectorNumber": "358"
+    },
+    {
+      "quantity": 1,
+      "name": "Temple of the False God",
+      "setCode": "LCC",
+      "collectorNumber": "359"
+    },
+    {
+      "quantity": 1,
+      "name": "Timothar, Baron of Bats",
+      "setCode": "LCC",
+      "collectorNumber": "210"
+    },
+    {
+      "quantity": 1,
+      "name": "Twilight Prophet",
+      "setCode": "LCC",
+      "collectorNumber": "211"
+    },
+    {
+      "quantity": 1,
+      "name": "Unclaimed Territory",
+      "setCode": "LCC",
+      "collectorNumber": "366"
+    },
+    {
+      "quantity": 1,
+      "name": "Utter End",
+      "setCode": "LCC",
+      "collectorNumber": "292"
+    },
+    {
+      "quantity": 1,
+      "name": "Vault of the Archangel",
+      "setCode": "LCC",
+      "collectorNumber": "367"
+    },
+    {
+      "quantity": 1,
+      "name": "Village Rites",
+      "setCode": "LCC",
+      "collectorNumber": "212"
+    },
+    {
+      "quantity": 1,
+      "name": "Viscera Seer",
+      "setCode": "LCC",
+      "collectorNumber": "213"
+    },
+    {
+      "quantity": 1,
+      "name": "Voldaren Estate",
+      "setCode": "LCC",
+      "collectorNumber": "369"
+    },
+    {
+      "quantity": 1,
+      "name": "Vona, Butcher of Magan",
+      "setCode": "LCC",
+      "collectorNumber": "293"
+    },
+    {
+      "quantity": 1,
+      "name": "Wayfarer's Bauble",
+      "setCode": "LCC",
+      "collectorNumber": "317"
+    },
+    {
+      "quantity": 1,
+      "name": "Welcoming Vampire",
+      "setCode": "LCC",
+      "collectorNumber": "140"
+    },
+    {
+      "quantity": 1,
+      "name": "Windbrisk Heights",
+      "setCode": "LCC",
+      "collectorNumber": "370"
+    },
+    {
+      "quantity": 1,
+      "name": "Yahenni, Undying Partisan",
+      "setCode": "LCC",
+      "collectorNumber": "214"
+    }
+  ],
+  "removed": [],
+  "sideboard": [],
+  "wishlist": []
+}

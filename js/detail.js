@@ -45,6 +45,7 @@ async function loadCardDetails() {
     const csvResponse = await fetch('data/Collection.csv');
     const csvText = await csvResponse.text();
     const collectionCard = parseCollectionData(csvText, scryfallId);
+    await loadAudExchangeRate();
     
     // Try cache first
     let card = await getCachedCard(scryfallId);
@@ -81,21 +82,14 @@ async function loadCardDetails() {
 }
 
 function parseCollectionData(csvText, scryfallId) {
-  const lines = csvText.split('\n').slice(1);
-  for (const line of lines) {
-    if (!line.trim()) continue;
-    const parts = parseCSVLine(line);
-    if (parts[8] === scryfallId) {
-      return {
-        quantity: parseInt(parts[6]) || 1,
-        price: parseFloat(parts[9]) || 0,
-        foil: parts[4],
-        condition: parts[12],
-        currency: parts[14] || 'USD'
-      };
-    }
-  }
-  return null;
+  const parsed = MTGCollectionCore.parseManaBoxCSV(csvText, { defaultCurrency: 'AUD' });
+  const versions = parsed.cards.filter(card => card.scryfallId === scryfallId);
+  if (!versions.length) return null;
+  return {
+    quantity: versions.reduce((sum, card) => sum + card.quantity, 0),
+    foil: versions[0].foil,
+    condition: versions[0].condition || 'unknown'
+  };
 }
 
 function formatDetailPrice(price, currency = 'USD') {
@@ -105,16 +99,8 @@ function formatDetailPrice(price, currency = 'USD') {
 }
 
 function getDetailPrice(collectionCard, scryfallCard) {
-  const priceSource = localStorage.getItem('priceSource') || 'manabox';
-  if (priceSource === 'scryfall' && scryfallCard.prices) {
-    const p = scryfallCard.prices;
-    let price = 0;
-    if (collectionCard.foil === 'etched' && p.usd_etched) price = parseFloat(p.usd_etched);
-    else if (collectionCard.foil === 'foil' && p.usd_foil) price = parseFloat(p.usd_foil);
-    else if (p.usd) price = parseFloat(p.usd);
-    return { price: price * collectionCard.quantity, currency: 'USD' };
-  }
-  return { price: collectionCard.price * collectionCard.quantity, currency: collectionCard.currency };
+  const usd = MTGCollectionCore.marketPrice({ foil: collectionCard.foil, scryfallPrices: scryfallCard.prices });
+  return { price: usd * getUsdToAudRate() * collectionCard.quantity, currency: 'AUD' };
 }
 
 function renderManaSymbols(text) {
@@ -127,28 +113,18 @@ function renderManaSymbols(text) {
   });
 }
 
+function formatFormatName(format) {
+  const labels = { standardbrawl: 'Standard Brawl', competitivebrawl: 'Competitive Brawl', oathbreaker: 'Oathbreaker' };
+  return labels[format] || format.replaceAll('_', ' ').replace(/\b\w/g, letter => letter.toUpperCase());
+}
+
 function renderCardDetails(card, collectionCard) {
-  const imageUrl = card.image_uris?.large || card.card_faces?.[0]?.image_uris?.large;
-  const artCropUrl = card.image_uris?.art_crop || card.card_faces?.[0]?.image_uris?.art_crop;
+  const faceImages = card.card_faces?.map(face => face.image_uris?.large).filter(Boolean) || [];
+  const imageUrl = card.image_uris?.large || faceImages[0];
   const oracleText = card.oracle_text || card.card_faces?.map(f => f.oracle_text).join('\n---\n') || 'N/A';
   const flavorText = card.flavor_text || '';
   const foilClass = collectionCard?.foil && collectionCard.foil !== 'normal' ? collectionCard.foil : '';
   const colorIdentity = card.color_identity || [];
-  
-  // Set dynamic background with art crop
-  if (artCropUrl) {
-    document.body.style.setProperty('--art-bg', `url(${artCropUrl})`);
-    document.body.classList.add('has-art-bg');
-  }
-  
-  // Create particle container
-  const particleContainer = document.createElement('div');
-  particleContainer.id = 'particles';
-  particleContainer.className = 'particles';
-  document.body.appendChild(particleContainer);
-  
-  // Start particles with color identity (empty = colorless/grey)
-  createParticles(colorIdentity.length > 0 ? colorIdentity : ['C']);
   
   const revealClass = isReveal ? 'reveal' : '';
   
@@ -157,10 +133,11 @@ function renderCardDetails(card, collectionCard) {
       <div class="detail-left">
         <div class="detail-image-wrapper ${foilClass} ${revealClass}">
           <div class="detail-image-inner">
-            <img src="${imageUrl}" alt="${card.name}" class="detail-image">
+            <img src="${imageUrl}" alt="${card.name}" class="detail-image" id="detail-card-face">
             <img src="images/back.png" alt="Card back" class="detail-back">
           </div>
         </div>
+        ${faceImages.length > 1 ? `<div class="face-switcher" aria-label="Card faces">${card.card_faces.map((face, index) => `<button type="button" data-face-index="${index}" class="${index === 0 ? 'active' : ''}">${index === 0 ? 'Front' : 'Back'} · ${face.name}</button>`).join('')}</div>` : ''}
       </div>
       
       <div class="detail-info ${revealClass}">
@@ -195,7 +172,7 @@ function renderCardDetails(card, collectionCard) {
         
         <div class="type-line">${card.type_line}</div>
         
-        ${card.oracle_text ? `
+        ${oracleText !== 'N/A' ? `
         <div class="oracle-box">
           ${renderManaSymbols(oracleText).split('\n').map(line => `<p>${line}</p>`).join('')}
         </div>
@@ -237,7 +214,7 @@ function renderCardDetails(card, collectionCard) {
               .filter(([_, status]) => status === 'legal' || status === 'restricted' || status === 'banned')
               .map(([format, status]) => `
                 <div class="legality-item ${status}">
-                  <span class="format-name">${format}</span>
+                  <span class="format-name">${formatFormatName(format)}</span>
                   <span class="status-badge">${status}</span>
                 </div>
               `).join('')}
@@ -261,6 +238,13 @@ function renderCardDetails(card, collectionCard) {
     </div>
   `;
   
+  document.querySelectorAll('.face-switcher button').forEach(button => button.addEventListener('click', () => {
+    const index = Number(button.dataset.faceIndex);
+    document.getElementById('detail-card-face').src = faceImages[index];
+    document.getElementById('detail-card-face').alt = card.card_faces[index].name;
+    document.querySelectorAll('.face-switcher button').forEach(item => item.classList.toggle('active', item === button));
+  }));
+
   // Load possible upgrades
   loadUpgrades(card, collectionCard);
   

@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Commander Builder Helper — Arcane Archive</title><link rel="stylesheet" href="css/style.css"></head>
+<body class="tool-page"><main class="builder-shell">
+<a class="back-button-inline" href="index.html">← Collection</a>
+<p class="eyebrow">DETERMINISTIC COLLECTION ANALYSIS</p><h1>Commander Builder Helper</h1>
+<p class="header-copy">Choose a legendary creature you own. Recommendations use colour identity, type line, keywords and Oracle-text patterns. They are suggestions—not definitive deck-building advice.</p>
+<div id="builder-status" class="collection-status" role="status">Loading collection…</div>
+<section class="builder-controls"><label>Commander <select id="commander-select"><option>Loading…</option></select></label><button id="analyse-commander">Analyse owned cards</button></section>
+<section id="commander-summary" class="summary-dashboard"></section>
+<section id="builder-results" class="builder-results"></section>
+<section class="candidate-output"><h2>Initial owned candidate list</h2><textarea id="candidate-list" rows="18" readonly></textarea><button id="copy-candidates">Copy list</button></section>
+</main><script src="js/collection-core.js"></script><script src="js/commander-builder.js"></script></body></html>

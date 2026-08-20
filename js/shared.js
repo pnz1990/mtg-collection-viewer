@@ -4,6 +4,7 @@ let filteredCollection = [];
 let db;
 let priceSlider;
 let maxPriceValue = 200;
+let usdToAudRate = Number(localStorage.getItem('mtg-usd-aud-rate')) || 1.5;
 const isMobile = () => window.innerWidth <= 768;
 
 // IndexedDB setup
@@ -153,6 +154,9 @@ function renderCardHTML(card, nameCounts = {}) {
   const keywordTags = (card.keywords || []).slice(0, 3).map(k => `<span class="badge keyword-badge clickable" data-filter="keyword" data-value="${k}">${k}</span>`).join('');
   const duplicateKey = card.oracle_id || card.name;
   const hasDuplicateName = nameCounts[duplicateKey] > 1; // More than 1 card entry with same oracle_id/name
+  let displaySettings = {};
+  try { displaySettings = JSON.parse(localStorage.getItem('mtg-dashboard-settings') || '{}'); } catch (_) {}
+  const market = getCardPrice(card);
   return `
   <div class="card ${foilClass}" data-scryfall-id="${card.scryfallId}">
     <a href="detail.html?id=${card.scryfallId}" class="card-link">
@@ -167,6 +171,12 @@ function renderCardHTML(card, nameCounts = {}) {
         <div class="card-value">${formatPrice(getCardPrice(card) * card.quantity, getCardCurrency(card))}</div>
       </div>
       <div class="card-set clickable" data-filter="set" data-value="${card.setName}"><img src="${setIcon}" class="set-icon" alt="${card.setCode}" onerror="this.src='${fallbackIcon}'">${card.setName}</div>
+      <div class="card-printing">${card.setCode} #${card.collectorNumber}${card.condition ? ` · ${card.condition.replaceAll('_', ' ')}` : ''}${card.language ? ` · ${card.language.toUpperCase()}` : ''}</div>
+      ${!displaySettings.hideBinderNames && card.binderName ? `<div class="card-binder">${card.binderName}</div>` : ''}
+      <div class="card-price-split">
+        <span>Scryfall market</span>
+        <strong>${market ? formatPrice(market * card.quantity, 'AUD') : 'Unavailable'}</strong>
+      </div>
       <div class="card-details">
         <span class="badge rarity-${card.rarity} clickable" data-filter="rarity" data-value="${card.rarity}">${card.rarity}</span>
         ${card.foil !== 'normal' ? `<span class="badge foil-${card.foil} clickable" data-filter="foil" data-value="${card.foil}">${card.foil}</span>` : ''}
@@ -390,33 +400,44 @@ function formatPrice(price, currency = 'USD') {
 }
 
 function getPriceSource() {
-  return localStorage.getItem('priceSource') || 'manabox';
+  return 'scryfall';
 }
 
 function getCardPrice(card) {
-  if (getPriceSource() === 'scryfall' && card.scryfallPrices) {
-    const p = card.scryfallPrices;
-    if (card.foil === 'etched' && p.usd_etched) return parseFloat(p.usd_etched);
-    if (card.foil === 'foil' && p.usd_foil) return parseFloat(p.usd_foil);
-    if (p.usd) return parseFloat(p.usd);
-    // Fallback through all price fields
-    return parseFloat(p.usd_foil || p.usd_etched || '0');
-  }
-  return card.price;
+  return (window.MTGCollectionCore?.marketPrice(card) || 0) * usdToAudRate;
 }
 
 function getCardCurrency(card) {
-  return getPriceSource() === 'scryfall' ? 'USD' : card.currency;
+  return 'AUD';
+}
+
+function getUsdToAudRate() {
+  return usdToAudRate;
+}
+
+async function loadAudExchangeRate() {
+  try {
+    const response = await fetch('https://api.frankfurter.dev/v2/rate/USD/AUD');
+    if (!response.ok) throw new Error(`Exchange-rate service returned ${response.status}`);
+    const data = await response.json();
+    if (!Number.isFinite(Number(data.rate))) throw new Error('Exchange-rate response was invalid');
+    usdToAudRate = Number(data.rate);
+    localStorage.setItem('mtg-usd-aud-rate', String(usdToAudRate));
+    localStorage.setItem('mtg-usd-aud-date', data.date || new Date().toISOString().slice(0, 10));
+    return true;
+  } catch (error) {
+    console.warn('Using the last saved USD to AUD rate:', error);
+    return false;
+  }
 }
 
 function updateStats() {
   const totalCards = filteredCollection.reduce((sum, c) => sum + c.quantity, 0);
   const totalValue = filteredCollection.reduce((sum, c) => sum + getCardPrice(c) * c.quantity, 0);
-  const currency = getPriceSource() === 'scryfall' ? 'USD' : (collection[0]?.currency || 'USD');
   const cardsEl = document.getElementById('total-cards');
   const valueEl = document.getElementById('total-value');
   if (cardsEl) cardsEl.textContent = totalCards;
-  if (valueEl) valueEl.textContent = formatPrice(totalValue, currency);
+  if (valueEl) valueEl.textContent = formatPrice(totalValue, 'AUD');
 }
 
 async function fetchWithFallback(paths) {
@@ -430,7 +451,7 @@ async function fetchWithFallback(paths) {
 async function loadCollection() {
   const response = await fetchWithFallback(['data/Collection.csv', 'data/collection.csv']);
   if (!response.ok) {
-    console.error('Failed to load Collection.csv:', response.status);
+    showCollectionStatus('error', 'Collection.csv could not be loaded. Add a ManaBox export at data/Collection.csv and reload.');
     collection = [];
     filteredCollection = [];
     setupPriceSlider();
@@ -439,46 +460,17 @@ async function loadCollection() {
     return collection;
   }
   const text = await response.text();
-  const lines = text.replace(/\r/g, '').split('\n');
-  const headerLine = lines[0];
-  const headers = parseCSVLine(headerLine).map(h => h.trim().toLowerCase());
-  
-  // Map column names to indices (supports different CSV formats)
-  const col = {
-    name: headers.findIndex(h => h === 'name'),
-    setCode: headers.findIndex(h => h === 'set code' || h === 'edition code' || h === 'set'),
-    setName: headers.findIndex(h => h === 'set name' || h === 'edition'),
-    collectorNumber: headers.findIndex(h => h === 'collector number' || h === 'card number'),
-    foil: headers.findIndex(h => h === 'foil'),
-    rarity: headers.findIndex(h => h === 'rarity'),
-    quantity: headers.findIndex(h => h === 'quantity' || h === 'count'),
-    scryfallId: headers.findIndex(h => h === 'scryfall id'),
-    price: headers.findIndex(h => h === 'price' || h === 'purchase price'),
-    condition: headers.findIndex(h => h === 'condition'),
-    language: headers.findIndex(h => h === 'language'),
-    currency: headers.findIndex(h => h === 'currency' || h === 'purchase price currency')
-  };
-  
-  collection = lines.slice(1)
-    .filter(line => line.trim())
-    .map(line => {
-      const parts = parseCSVLine(line);
-      return {
-        name: parts[col.name] || '',
-        setCode: parts[col.setCode] || '',
-        setName: parts[col.setName] || '',
-        collectorNumber: parts[col.collectorNumber] || '',
-        foil: parts[col.foil] || 'normal',
-        rarity: parts[col.rarity] || 'common',
-        quantity: parseInt(parts[col.quantity]) || 1,
-        scryfallId: parts[col.scryfallId] || '',
-        price: parseFloat(parts[col.price]) || 0,
-        condition: parts[col.condition] || '',
-        language: parts[col.language] || '',
-        currency: parts[col.currency] || 'USD'
-      };
-    })
-    .filter(card => card.name && card.scryfallId);
+  const parsed = window.MTGCollectionCore.parseManaBoxCSV(text, { defaultCurrency: 'AUD' });
+  if (parsed.errors.length) {
+    showCollectionStatus('error', parsed.errors.join(' '));
+    collection = []; filteredCollection = [];
+    setupPriceSlider(); updateStats();
+    if (typeof onCollectionLoaded === 'function') onCollectionLoaded();
+    return collection;
+  }
+  collection = parsed.cards;
+  showCollectionStatus(parsed.warnings.length ? 'warning' : 'success',
+    parsed.warnings.length ? parsed.warnings.join(' ') : `${collection.length} owned card versions loaded.`);
   
   maxPriceValue = Math.ceil(Math.max(...collection.map(c => c.price)));
   setupPriceSlider();
@@ -516,6 +508,14 @@ async function loadCollection() {
   return collection;
 }
 
+function showCollectionStatus(kind, message) {
+  const target = document.getElementById('collection-status');
+  if (!target) return;
+  target.className = `collection-status ${kind}`;
+  target.textContent = message;
+  target.hidden = false;
+}
+
 function setupPriceSlider() {
   const slider = document.getElementById('price-range');
   if (!slider) return; // Skip if no slider element
@@ -546,6 +546,7 @@ function applyFilters() {
   const duplicatesFilter = document.getElementById('duplicates-filter')?.value || '';
   const sort = document.getElementById('sort')?.value || 'price-desc';
   const [priceMin, priceMax] = priceSlider ? priceSlider.get().map(Number) : [0, maxPriceValue];
+  const priceCeiling = priceMax >= maxPriceValue ? Infinity : priceMax;
   const cmcFilter = window.cmcFilter;
   
   // Get selected color identity
@@ -584,7 +585,7 @@ function applyFilters() {
       matchesCmc &&
       matchesReserved &&
       matchesDuplicates &&
-      getCardPrice(card) >= priceMin && getCardPrice(card) <= priceMax;
+      getCardPrice(card) >= priceMin && getCardPrice(card) <= priceCeiling;
   });
   
   filteredCollection.sort((a, b) => {

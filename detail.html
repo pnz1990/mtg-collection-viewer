@@ -1,27 +1,27 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Card Details - MTG Collection Viewer</title>
-  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mana-font@latest/css/mana.min.css">
-  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Card Details — Arcane Archive</title>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="css/detail.css">
+  <link rel="stylesheet" href="css/group.css?v=20260730-4">
+  <link rel="stylesheet" href="css/detail.css?v=3">
 </head>
 <body>
-  <header>
-    <a href="#" class="back-button" onclick="history.back(); return false;">← Back to Collection</a>
-    <h1><a href="index.html" style="color: inherit; text-decoration: none;">MTG Collection Viewer</a></h1>
-  </header>
-
-  <div id="detail-container" class="detail-container">
-    <div class="loading">Loading card details...</div>
-  </div>
-
-  <script src="js/shared.js"></script>
-  <script src="js/detail.js"></script>
+  <nav class="site-nav">
+    <a class="brand" href="index.html">Arcane Archive</a>
+    <div class="nav-links">
+      <a href="all-collections.html">All Collections</a>
+      <a href="pack-pullers.html">Pack Pullers</a>
+      <a class="basket-link" href="trade-basket.html">Trade Basket (<span data-basket-count>0</span>)</a>
+    </div>
+  </nav>
+  <main id="detail-container" class="browser-shell"><div class="collection-status">Loading card and ownership details…</div></main>
+  <div id="live-region" class="sr-only" aria-live="polite"></div>
+  <script src="js/collection-core.js?v=20260730-3"></script>
+  <script src="js/pack-puller-core.js?v=20260804-1"></script>
+  <script src="js/explore-links.js?v=20260801-1"></script>
+  <script src="js/group-detail.js?v=20260801-1"></script>
 </body>
 </html>
